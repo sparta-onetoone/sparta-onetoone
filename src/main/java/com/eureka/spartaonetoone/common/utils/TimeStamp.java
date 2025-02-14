@@ -27,7 +27,7 @@ public abstract class TimeStamp {
 	protected LocalDateTime updatedAt;
 
 	@LastModifiedBy
-	protected LocalDateTime updatedBy;
+	protected String updatedBy;
 
 	protected LocalDateTime deletedAt;
 
