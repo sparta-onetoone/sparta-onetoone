@@ -18,4 +18,10 @@ public class CartItemException extends CustomException {
 			super("장바구니 상품의 최소 수량은 1개입니다.", "CI-001", HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	public static class NotFound extends CartItemException {
+		public NotFound() {
+			super("장바구니 상품을 찾을 수 없습니다.", "CI-002", HttpStatus.NOT_FOUND);
+		}
+	}
 }

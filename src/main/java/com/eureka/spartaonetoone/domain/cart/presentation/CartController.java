@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
-import com.eureka.spartaonetoone.domain.cart.application.CartItemService;
 import com.eureka.spartaonetoone.domain.cart.application.CartService;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class CartController {
 
 	private final CartService cartService;
-	private final CartItemService cartItemService;
 
 	@PostMapping
 	public ResponseEntity<CommonResponse<?>> saveCart(@RequestBody CartCreateRequestDto requestDto) {
@@ -37,8 +35,7 @@ public class CartController {
 		@PathVariable("cart_id") UUID cartId,
 		@RequestBody CartItemCreateRequestDto requestDto
 	) {
-		cartItemService.saveCartItem(cartId, requestDto);
+		cartService.saveCartItem(cartId, requestDto);
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 추가 성공"));
 	}
-
 }
