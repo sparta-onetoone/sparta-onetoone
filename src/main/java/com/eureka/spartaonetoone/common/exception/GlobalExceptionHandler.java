@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @Order(1)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> dataIntegrityViolationExceptionHandle(final DataIntegrityViolationException ex) {
         return ResponseEntity
@@ -20,6 +19,7 @@ public class GlobalExceptionHandler {
                 .body(ErrorMessage.of(ex.getMessage(), "DB-001"));
     }
 
+    @Order(1)
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> customExceptionHandle(CustomException ex) {
         return ResponseEntity
