@@ -2,12 +2,12 @@ package com.eureka.spartaonetoone.domain.cart.domain;
 
 import java.util.UUID;
 
+import org.hibernate.annotations.UuidGenerator;
+
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class Cart extends TimeStamp {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
+	@UuidGenerator
 	private UUID cartId;
 
 	@Column(nullable = false)
