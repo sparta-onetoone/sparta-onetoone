@@ -14,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,12 +59,14 @@ public class CartItem extends TimeStamp {
 		if (quantity == 0) {
 			delete();
 		} else {
+			this.price = (this.price / this.quantity) * quantity; // TODO : 로직 수정
 			this.quantity = quantity;
 		}
 	}
 
 	public void delete() {
 		this.quantity = 0;
+		this.price = 0;
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
 	}

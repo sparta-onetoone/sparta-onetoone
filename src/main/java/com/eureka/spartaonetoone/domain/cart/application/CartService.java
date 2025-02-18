@@ -1,13 +1,16 @@
 package com.eureka.spartaonetoone.domain.cart.application;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eureka.spartaonetoone.domain.cart.application.dtos.CartItemInfo;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemUpdateRequestDto;
+import com.eureka.spartaonetoone.domain.cart.application.dtos.response.CartSearchResponseDto;
 import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartException;
 import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartItemException;
 import com.eureka.spartaonetoone.domain.cart.domain.Cart;
@@ -46,6 +49,19 @@ public class CartService {
 		cart.addCartItem(cartItem);
 
 		cartItemRepository.save(cartItem);
+	}
+
+	@Transactional(readOnly = true)
+	public CartSearchResponseDto getCart(UUID cartId) {
+		Cart cart = cartRepository.findById(cartId)
+			.orElseThrow(CartException.NotFound::new);
+
+		List<CartItemInfo> cartItems = cart.getCartItems().stream()
+			.filter(cartItem -> !cartItem.isDeleted())
+			.map(CartItemInfo::from)
+			.toList();
+
+		return CartSearchResponseDto.of(cart, cartItems);
 	}
 
 	@Transactional

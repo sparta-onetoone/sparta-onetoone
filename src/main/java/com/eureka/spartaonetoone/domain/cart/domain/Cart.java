@@ -45,10 +45,10 @@ public class Cart extends TimeStamp {
 	}
 
 	public void updateCartItem(CartItem cartItem, int quantity) {
-		if(quantity == 0) {
+		cartItem.updateQuantity(quantity);
+		if (cartItem.isDeleted()) {
 			this.cartItems.remove(cartItem);
 		}
-		cartItem.updateQuantity(quantity);
 	}
 
 	public static Cart of(UUID userId) {

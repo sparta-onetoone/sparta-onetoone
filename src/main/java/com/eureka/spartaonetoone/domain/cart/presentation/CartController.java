@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.domain.cart.presentation;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreate
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemUpdateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.response.CartCreateResponseDto;
+import com.eureka.spartaonetoone.domain.cart.application.dtos.response.CartSearchResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,12 @@ public class CartController {
 	public ResponseEntity<CommonResponse<?>> saveCart(@RequestBody CartCreateRequestDto requestDto) {
 		CartCreateResponseDto response = CartCreateResponseDto.from(cartService.saveCart(requestDto));
 		return ResponseEntity.ok(CommonResponse.success(response, "장바구니 생성 성공"));
+	}
+
+	@GetMapping("/{cart_id}")
+	public ResponseEntity<CommonResponse<?>> getCart(@PathVariable("cart_id") UUID cartId) {
+		CartSearchResponseDto response = cartService.getCart(cartId);
+		return ResponseEntity.ok(CommonResponse.success(response, "장바구니 조회 성공"));
 	}
 
 	@PostMapping("/{cart_id}/items")
