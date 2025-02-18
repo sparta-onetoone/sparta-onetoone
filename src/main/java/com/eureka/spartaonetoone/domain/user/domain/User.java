@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -148,11 +149,6 @@ public class User {
 
     // UserDetailsImpl 객체 반환
     public UserDetailsImpl toUserDetails() {
-        return new UserDetailsImpl(
-                this.userId,  // userId
-                this.username,  // username
-                this.password,  // password
-                this.getAuthorities()  // authorities
-        );
+        return new UserDetailsImpl(this); // User 객체를 UserDetailsImpl로 변환
     }
 }

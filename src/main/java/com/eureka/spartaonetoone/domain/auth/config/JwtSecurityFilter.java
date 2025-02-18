@@ -42,7 +42,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
             // 유효성 검사
             if (!jwtUtil.validateToken(token)) {
-                throw new AuthException.InvalidTokenException();  // InvalidTokenException 사용
+                throw new AuthException.InvalidTokenException();
             }
 
             Claims claims = jwtUtil.extractClaims(token);
@@ -55,15 +55,15 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 userId = UUID.fromString(userIdStr);
             } catch (IllegalArgumentException e) {
                 log.error("Invalid UUID format in token subject: {}", userIdStr);
-                throw new AuthException.InvalidTokenException();  // InvalidTokenException 사용
+                throw new AuthException.InvalidTokenException();
             }
 
             // User 조회
             User user = userRepository.findById(userId)
-                    .orElseThrow(AuthException.UserNotFound::new);  // UserNotFound 사용
+                    .orElseThrow(AuthException.UserNotFound::new);
 
-            // UserDetails 생성
-            UserDetailsImpl userDetails = new UserDetailsImpl(user); // User 객체로부터 UserDetails 생성
+            // UserDetailsImpl 생성
+            UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
             // 인증 객체 생성
             JwtAuthenticationToken authentication = new JwtAuthenticationToken(

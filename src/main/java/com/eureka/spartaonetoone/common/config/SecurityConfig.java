@@ -38,7 +38,7 @@ public class SecurityConfig {
                         // 회원 전체 조회는 '관리자'만 가능
                         .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
                         // 회원 수정은 '고객', '가게 주인'만 가능
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/{user_id}").hasAnyRole("CUSTOMER", "OWNER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/{user_id}").hasAnyRole("CUSTOMER", "OWNER", "ADMIN")
                         // 회원 탈퇴는 '고객', '가게 주인', '관리자'만 가능
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{user_id}").hasAnyRole("CUSTOMER", "OWNER", "ADMIN")
                         // 나머지 요청은 인증 필요

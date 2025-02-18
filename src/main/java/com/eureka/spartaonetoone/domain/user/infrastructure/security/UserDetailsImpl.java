@@ -16,20 +16,12 @@ public class UserDetailsImpl implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    // 기존 생성자
-    public UserDetailsImpl(UUID userId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
-    }
-
-    // User 객체를 기반으로 생성하는 생성자 추가
+    // 생성자에서 User 객체를 받도록 수정
     public UserDetailsImpl(User user) {
         this.userId = user.getUserId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.authorities = user.getAuthorities(); // User 엔티티에서 권한 가져오기
+        this.authorities = user.getAuthorities(); // User 엔티티의 getAuthorities() 메서드 호출
     }
 
     @Override
@@ -65,5 +57,34 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    // UserDetailsImpl 객체 반환 (User 객체를 통해 생성)
+    public static UserDetailsImpl fromUser(User user) {
+        return new UserDetailsImpl(user);
+    }
+
+    // UserDetailsImpl 객체에서 User 객체를 반환하는 메서드
+    public User toUser() {
+        // User 클래스의 생성자에 맞는 필드들을 전달해야 합니다.
+        return new User(
+                userId, // 필수 값들에 맞는 인자들을 전달
+                null, // isDeleted
+                null, // addresses
+                username,
+                null, // email
+                password,
+                null, // nickname
+                null, // phoneNumber
+                null, // role
+                null, // grade
+                null, // refreshToken
+                null, // createdBy
+                null, // updatedBy
+                null, // deletedBy
+                null, // createdAt
+                null, // updatedAt
+                null // deletedAt
+        );
     }
 }
