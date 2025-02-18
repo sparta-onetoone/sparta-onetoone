@@ -15,7 +15,6 @@ import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartExceptio
 import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartItemException;
 import com.eureka.spartaonetoone.domain.cart.domain.Cart;
 import com.eureka.spartaonetoone.domain.cart.domain.CartItem;
-import com.eureka.spartaonetoone.domain.cart.domain.repository.CartItemRepository;
 import com.eureka.spartaonetoone.domain.cart.domain.repository.CartRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class CartService {
 	private final int UPDATE_MIN_QUANTITY = 0;
 
 	private final CartRepository cartRepository;
-	private final CartItemRepository cartItemRepository;
 
 	@Transactional
 	public Cart saveCart(CartCreateRequestDto requestDto) {
@@ -47,9 +45,6 @@ public class CartService {
 
 		CartItem cartItem = createCartItem(cart, requestDto);
 		cart.addCartItem(cartItem);
-
-		cartRepository.save(cart);
-		// cartItemRepository.save(cartItem);
 	}
 
 	@Transactional(readOnly = true)
@@ -78,11 +73,10 @@ public class CartService {
 			throw new CartItemException.UpdateMinQuantity();
 		}
 
-		CartItem cartItem = cartItemRepository.findById(cartItemId)
-			.orElseThrow(CartItemException.NotFound::new);
-		if (!cart.getCartItems().contains(cartItem)) {
-			throw new CartItemException.NotFoundInCart();
-		}
+		CartItem cartItem = cart.getCartItems().stream()
+				.filter(item -> item.getCartItemId().equals(cartItemId))
+				.findFirst()
+				.orElseThrow(CartItemException.NotFound::new);
 
 		cart.updateCartItem(cartItem, quantity);
 	}
@@ -107,6 +101,7 @@ public class CartService {
 		UUID productId = UUID.randomUUID();
 		String productName = "상품 이름";
 		String productImage = "상품 이미지";
+		int currentQuantity = 0; // 현재 상품의 재고
 		int productPrice = 10000;
 		int quantity = requestDto.getQuantity();
 		int price = quantity * productPrice;
