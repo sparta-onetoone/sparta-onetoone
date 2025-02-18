@@ -22,7 +22,7 @@ public class PaymentService {
 
     public UUID savePayment(final PaymentCreateRequestDto paymentCreateRequestDto) {
 
-        Payment payment = Payment.from(paymentCreateRequestDto.getBank(), paymentCreateRequestDto.getOrderId(),
+        Payment payment = Payment.of(paymentCreateRequestDto.getBank(), paymentCreateRequestDto.getOrderId(),
                 paymentCreateRequestDto.getPrice(), paymentCreateRequestDto.getIsDeleted());
         paymentRepository.save(payment);
         return payment.getId();
