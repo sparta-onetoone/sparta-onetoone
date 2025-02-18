@@ -10,10 +10,6 @@ import lombok.Getter;
 @Getter
 public class CartItemUpdateRequestDto {
 	@NotNull
-	@JsonProperty("cart_item_id")
-	private UUID cartItemId;
-
-	@NotNull
 	@JsonProperty("quantity")
 	private int quantity;
 }

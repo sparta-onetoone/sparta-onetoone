@@ -65,11 +65,10 @@ public class CartService {
 	}
 
 	@Transactional
-	public void updateCartItems(UUID cartId, CartItemUpdateRequestDto requestDto) {
+	public void updateCartItems(UUID cartId, UUID cartItemId, CartItemUpdateRequestDto requestDto) {
 		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
-		UUID cartItemId = requestDto.getCartItemId();
 		int quantity = requestDto.getQuantity();
 
 		// TODO : Product의 남은 수량을 확인하여 수량이 부족하다면 예외 처리하기

@@ -55,12 +55,13 @@ public class CartController {
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 추가 성공"));
 	}
 
-	@PostMapping("/{cart_id}/item")
+	@PostMapping("/{cart_id}/items/{cart_item_id}")
 	public ResponseEntity<CommonResponse<?>> updateCartItem(
 		@PathVariable("cart_id") UUID cartId,
+		@PathVariable("cart_item_id") UUID cartItemId,
 		@RequestBody CartItemUpdateRequestDto requestDto
 	) {
-		cartService.updateCartItems(cartId, requestDto);
+		cartService.updateCartItems(cartId, cartItemId, requestDto);
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 수정 성공"));
 	}
 }
