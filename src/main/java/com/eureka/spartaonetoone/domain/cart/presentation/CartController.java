@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.domain.cart.presentation;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,12 @@ public class CartController {
 	public ResponseEntity<CommonResponse<?>> getCart(@PathVariable("cart_id") UUID cartId) {
 		CartSearchResponseDto response = cartService.getCart(cartId);
 		return ResponseEntity.ok(CommonResponse.success(response, "장바구니 조회 성공"));
+	}
+
+	@DeleteMapping("/{cart_id}")
+	public ResponseEntity<CommonResponse<?>> deleteCart(@PathVariable("cart_id") UUID cartId) {
+		cartService.deleteCart(cartId);
+		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 삭제 성공"));
 	}
 
 	@PostMapping("/{cart_id}/items")

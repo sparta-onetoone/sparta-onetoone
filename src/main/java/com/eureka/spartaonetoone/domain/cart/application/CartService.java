@@ -87,6 +87,14 @@ public class CartService {
 		cart.updateCartItem(cartItem, quantity);
 	}
 
+	@Transactional
+	public void deleteCart(UUID cartId) {
+		Cart cart = cartRepository.findById(cartId)
+			.orElseThrow(CartException.NotFound::new);
+
+		cart.delete();
+	}
+
 	private CartItem createCartItem(Cart cart, CartItemCreateRequestDto requestDto) {
 		if (requestDto.getQuantity() < MIN_QUANTITY) {
 			throw new CartItemException.MinQuantity();

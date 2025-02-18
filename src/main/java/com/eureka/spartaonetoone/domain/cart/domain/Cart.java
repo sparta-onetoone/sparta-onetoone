@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.domain.cart.domain;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -49,6 +50,12 @@ public class Cart extends TimeStamp {
 		if (cartItem.isDeleted()) {
 			this.cartItems.remove(cartItem);
 		}
+	}
+
+	public void delete() {
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
+		this.cartItems.forEach(CartItem::delete);
 	}
 
 	public static Cart of(UUID userId) {
