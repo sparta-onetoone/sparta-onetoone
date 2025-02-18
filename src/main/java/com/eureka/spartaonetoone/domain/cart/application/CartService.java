@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemDeleteRequestDto;
+import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemUpdateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartException;
 import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartItemException;
 import com.eureka.spartaonetoone.domain.cart.domain.Cart;
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class CartService {
 
 	private final int MIN_QUANTITY = 1;
+	private final int UPDATE_MIN_QUANTITY = 0;
 
 	private final CartRepository cartRepository;
 	private final CartItemRepository cartItemRepository;
@@ -37,10 +38,37 @@ public class CartService {
 		Cart cart = cartRepository.findById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
+		if (requestDto.getQuantity() < MIN_QUANTITY) {
+			throw new CartItemException.MinQuantity();
+		}
+
 		CartItem cartItem = createCartItem(cart, requestDto);
 		cart.addCartItem(cartItem);
 
 		cartItemRepository.save(cartItem);
+	}
+
+	@Transactional
+	public void updateCartItems(UUID cartId, CartItemUpdateRequestDto requestDto) {
+		Cart cart = cartRepository.findById(cartId)
+			.orElseThrow(CartException.NotFound::new);
+
+		UUID cartItemId = requestDto.getCartItemId();
+		int quantity = requestDto.getQuantity();
+
+		// TODO : Product의 남은 수량을 확인하여 수량이 부족하다면 예외 처리하기
+
+		if(quantity < UPDATE_MIN_QUANTITY) {
+			throw new CartItemException.UpdateMinQuantity();
+		}
+
+		CartItem cartItem = cartItemRepository.findById(cartItemId)
+			.orElseThrow(CartItemException.NotFound::new);
+		if (!cart.getCartItems().contains(cartItem)) {
+			throw new CartItemException.NotFoundInCart();
+		}
+
+		cart.updateCartItem(cartItem, quantity);
 	}
 
 	private CartItem createCartItem(Cart cart, CartItemCreateRequestDto requestDto) {

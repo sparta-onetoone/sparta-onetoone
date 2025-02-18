@@ -13,6 +13,7 @@ import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.domain.cart.application.CartService;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
+import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemUpdateRequestDto;
 import com.eureka.spartaonetoone.domain.cart.application.dtos.response.CartCreateResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,14 @@ public class CartController {
 	) {
 		cartService.saveCartItem(cartId, requestDto);
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 추가 성공"));
+	}
+
+	@PostMapping("/{cart_id}/item")
+	public ResponseEntity<CommonResponse<?>> updateCartItem(
+		@PathVariable("cart_id") UUID cartId,
+		@RequestBody CartItemUpdateRequestDto requestDto
+	) {
+		cartService.updateCartItems(cartId, requestDto);
+		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 수정 성공"));
 	}
 }

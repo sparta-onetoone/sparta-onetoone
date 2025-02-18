@@ -1,7 +1,7 @@
 package com.eureka.spartaonetoone.domain.cart.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -35,20 +35,27 @@ public class Cart extends TimeStamp {
 	private UUID userId;
 
 	@OneToMany(mappedBy = "cart")
-	private List<CartItem> cartItems;
+	private Set<CartItem> cartItems;
 
 	@Column(nullable = false)
 	private boolean isDeleted;
 
+	public void addCartItem(CartItem cartItem) {
+		this.cartItems.add(cartItem);
+	}
+
+	public void updateCartItem(CartItem cartItem, int quantity) {
+		if(quantity == 0) {
+			this.cartItems.remove(cartItem);
+		}
+		cartItem.updateQuantity(quantity);
+	}
+
 	public static Cart of(UUID userId) {
 		return Cart.builder()
 			.userId(userId)
-			.cartItems(new ArrayList<>())
+			.cartItems(new HashSet<>())
 			.isDeleted(false)
 			.build();
-	}
-
-	public void addCartItem(CartItem cartItem) {
-		this.cartItems.add(cartItem);
 	}
 }

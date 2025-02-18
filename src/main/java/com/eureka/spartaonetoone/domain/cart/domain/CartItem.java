@@ -1,11 +1,13 @@
 package com.eureka.spartaonetoone.domain.cart.domain;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -16,12 +18,14 @@ import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "p_cart_item")
+@EqualsAndHashCode(of = "cartItemId", callSuper = false)
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,7 +35,7 @@ public class CartItem extends TimeStamp {
 	@UuidGenerator
 	private UUID cartItemId;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
 
@@ -44,7 +48,6 @@ public class CartItem extends TimeStamp {
 	private String productImage;
 
 	@Column(nullable = false)
-	@Min(1)
 	private int quantity;
 
 	@Column(nullable = false)
@@ -53,7 +56,22 @@ public class CartItem extends TimeStamp {
 	@Column(nullable = false)
 	private boolean isDeleted;
 
-	public static CartItem of(Cart cart, UUID productId, String productName, String productImage, int quantity, int price) {
+	public void updateQuantity(int quantity) {
+		if (quantity == 0) {
+			delete();
+		} else {
+			this.quantity = quantity;
+		}
+	}
+
+	public void delete() {
+		this.quantity = 0;
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
+	}
+
+	public static CartItem of(Cart cart, UUID productId, String productName, String productImage, int quantity,
+		int price) {
 		return CartItem.builder()
 			.cart(cart)
 			.productId(productId)
