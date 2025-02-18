@@ -38,7 +38,7 @@ public class CartService {
 
 	@Transactional
 	public void saveCartItem(UUID cartId, CartItemCreateRequestDto requestDto) {
-		Cart cart = cartRepository.findById(cartId)
+		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
 		if (requestDto.getQuantity() < MIN_QUANTITY) {
@@ -53,7 +53,7 @@ public class CartService {
 
 	@Transactional(readOnly = true)
 	public CartSearchResponseDto getCart(UUID cartId) {
-		Cart cart = cartRepository.findById(cartId)
+		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
 		List<CartItemInfo> cartItems = cart.getCartItems().stream()
@@ -66,7 +66,7 @@ public class CartService {
 
 	@Transactional
 	public void updateCartItems(UUID cartId, CartItemUpdateRequestDto requestDto) {
-		Cart cart = cartRepository.findById(cartId)
+		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
 		UUID cartItemId = requestDto.getCartItemId();
@@ -89,7 +89,7 @@ public class CartService {
 
 	@Transactional
 	public void deleteCart(UUID cartId) {
-		Cart cart = cartRepository.findById(cartId)
+		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
 		cart.delete();
