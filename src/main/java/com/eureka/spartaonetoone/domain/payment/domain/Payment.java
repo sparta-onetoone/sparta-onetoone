@@ -40,17 +40,8 @@ public class Payment extends TimeStamp {
     private Integer price;
     @NotNull
     private Boolean isDeleted;
-
-//    public static Payment from(PaymentCreateRequestDto paymentCreateRequestDto) {
-//        return Payment.builder()
-//                .bank(paymentCreateRequestDto.getBank())
-//                .orderId(paymentCreateRequestDto.getOrderId())
-//                .price(paymentCreateRequestDto.getPrice())
-//                .isDeleted(paymentCreateRequestDto.getIsDeleted())
-//                .build();
-//    }
-
-    public static Payment from(final String bank, final UUID orderId, Integer price, Boolean isDeleted) {
+    
+    public static Payment of(final String bank, final UUID orderId, Integer price, Boolean isDeleted) {
         return Payment.builder()
                 .bank(bank)
                 .orderId(orderId)
