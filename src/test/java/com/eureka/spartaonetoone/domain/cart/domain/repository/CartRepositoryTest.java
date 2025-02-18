@@ -32,4 +32,37 @@ class CartRepositoryTest {
 			.extracting("userId", "isDeleted")
 			.containsExactlyInAnyOrder(userId, false);
 	}
+
+	@DisplayName("사용자는 장바구니 id를 통해 장바구니를 조회할 수 있다.")
+	@Test
+	void test() {
+		// // Given
+		// UUID userId = UUID.randomUUID();
+		// Cart cart = Cart.of(userId);
+		// Cart savedCart = cartRepository.save(cart);
+		//
+		// // When
+		// Cart foundCart = cartRepository.findActiveCartById(savedCart.getCartId()).orElse(null);
+		//
+		// // Then
+		// assertThat(foundCart).isNotNull()
+		// 	.extracting("userId", "isDeleted")
+		// 	.containsExactlyInAnyOrder(userId, false);
+	}
+
+	@DisplayName("사용자는 삭제 처리(soft delete)된 장바구니를 조회할 수 없다.")
+	@Test
+	void cart_soft_delete_test() {
+		// Given
+		UUID userId = UUID.randomUUID();
+		Cart cart = Cart.of(userId);
+		Cart savedCart = cartRepository.save(cart);
+
+		// When
+		savedCart.delete();
+		Cart deletedCart = cartRepository.findActiveCartById(savedCart.getCartId()).orElse(null);
+
+		// Then
+		assertThat(deletedCart).isNull();
+	}
 }

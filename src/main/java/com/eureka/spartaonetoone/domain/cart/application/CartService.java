@@ -48,7 +48,8 @@ public class CartService {
 		CartItem cartItem = createCartItem(cart, requestDto);
 		cart.addCartItem(cartItem);
 
-		cartItemRepository.save(cartItem);
+		cartRepository.save(cart);
+		// cartItemRepository.save(cartItem);
 	}
 
 	@Transactional(readOnly = true)
