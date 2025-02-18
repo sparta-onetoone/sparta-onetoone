@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,8 +38,7 @@ public class User {
     private Boolean isDeleted;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<UserAddress> addresses = new ArrayList<>(); // 필드 초기화 추가
+    private List<UserAddress> addresses = new ArrayList<>(); // 사용자와 주소의 1:N 관계
 
     @Column(name = "username", length = 50, nullable = false)
     private String username;
@@ -59,7 +59,9 @@ public class User {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
+    // 권한 반환 메서드 추가
     public List<SimpleGrantedAuthority> getAuthorities() {
+        // UserRole을 SimpleGrantedAuthority로 변환
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
@@ -68,7 +70,7 @@ public class User {
     private UserGrade grade = UserGrade.SILVER;
 
     @Column(name = "refresh_token")
-    private String refreshToken;
+    private String refreshToken; // 리프레시 토큰 저장
 
     @Column(name = "created_by", columnDefinition = "UUID")
     private UUID createdBy;
@@ -86,43 +88,51 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    private LocalDateTime deletedAt; // 계정 삭제 일자
 
+    // 리프레시 토큰 업데이트
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
+    // 비밀번호 업데이트
     public void updatePassword(String password) {
         this.password = password;
     }
 
+    // 사용자 이름 업데이트
     public void updateUsername(String username) {
         this.username = username;
     }
 
+    // 이메일 업데이트
     public void updateEmail(String email) {
         this.email = email;
     }
 
+    // 논리적 삭제 처리 메서드
     public void deleteUser(UUID deletedBy) {
         this.isDeleted = true;
         this.deletedBy = deletedBy;
         this.deletedAt = LocalDateTime.now();
     }
 
+    // 주소 추가 편의 메서드
     public void addAddress(UserAddress address) {
         addresses.add(address);
-        address.setUser(this);
+        address.setUser(this); // 양방향 관계 설정
     }
 
+    // 논리적 삭제 처리 메서드 (Setter 역할 수행)
     public void markAsDeleted(UUID deletedBy) {
         this.isDeleted = true;
         this.deletedBy = deletedBy;
         this.deletedAt = LocalDateTime.now();
     }
 
+    // 회원가입 요청으로부터 User 생성 (from 메서드)
     public static User from(AuthSignupRequestDto request, PasswordEncoder passwordEncoder) {
-        User user = User.builder()
+        return User.builder()
                 .userId(UUID.randomUUID())
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -131,29 +141,14 @@ public class User {
                 .phoneNumber(request.getPhoneNumber())
                 .role(UserRole.valueOf(request.getRole().toUpperCase()))
                 .grade(UserGrade.SILVER)
-                .isDeleted(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .isDeleted(false) // 삭제 여부 기본값 설정
+                .createdAt(LocalDateTime.now()) // 생성 시간 설정
+                .updatedAt(LocalDateTime.now()) // 수정 시간 설정
                 .build();
-
-        UserAddress address = UserAddress.builder()
-                .addressId(UUID.randomUUID())
-                .city(request.getCity())
-                .district(request.getDistrict())
-                .roadName(request.getRoadName())
-                .zipCode(request.getZipCode())
-                .detail(request.getDetail())
-                .isDeleted(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        user.addAddress(address);
-
-        return user;
     }
 
+    // UserDetailsImpl 객체 반환
     public UserDetailsImpl toUserDetails() {
-        return new UserDetailsImpl(this);
+        return new UserDetailsImpl(this); // User 객체를 UserDetailsImpl로 변환
     }
 }

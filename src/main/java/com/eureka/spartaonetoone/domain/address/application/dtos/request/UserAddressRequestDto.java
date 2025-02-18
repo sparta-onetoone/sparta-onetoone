@@ -15,7 +15,7 @@ public class UserAddressRequestDto {
     private String district;
 
     @NotBlank(message = "도로명은 필수 입력 값입니다.")
-    private String loadName;
+    private String roadName;
 
     @NotBlank(message = "우편번호는 필수 입력 값입니다.")
     private String zipCode;

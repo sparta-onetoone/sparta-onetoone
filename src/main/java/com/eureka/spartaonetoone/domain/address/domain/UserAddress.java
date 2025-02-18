@@ -13,7 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "p_user_address")
+@Table(
+        name = "p_user_address"
+)
 public class UserAddress {
 
     @Id
@@ -23,25 +25,25 @@ public class UserAddress {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // 사용자와의 N:1 관계
 
     @Column(name = "city", length = 255, nullable = false)
-    private String city;
+    private String city; // 시/도
 
     @Column(name = "district", length = 255, nullable = false)
-    private String district;
+    private String district; // 군/구
 
     @Column(name = "road_name", length = 255, nullable = false)
-    private String roadName;
+    private String roadName; // 도로명
 
     @Column(name = "zip_code", length = 50, nullable = false)
-    private String zipCode;
+    private String zipCode; // 우편번호
 
     @Column(name = "detail", length = 255)
-    private String detail;
+    private String detail; // 상세주소
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted; // 삭제 여부 (논리적 삭제)
 
     @Column(name = "created_by", columnDefinition = "UUID")
     private UUID createdBy;
@@ -61,6 +63,7 @@ public class UserAddress {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    // 주소 정보 업데이트 메서드
     public void updateAddress(String city, String district, String loadName, String zipCode, String detail) {
         this.city = city;
         this.district = district;
@@ -70,16 +73,17 @@ public class UserAddress {
         this.updatedAt = LocalDateTime.now();
     }
 
+    // 논리적 삭제 처리 메서드
     public void deleteAddress(UUID deletedBy) {
         this.isDeleted = true;
         this.deletedBy = deletedBy;
         this.deletedAt = LocalDateTime.now();
     }
-
+    // 사용자 설정 메서드 추가
     public void setUser(User user) {
         this.user = user;
         if (!user.getAddresses().contains(this)) {
-            user.getAddresses().add(this);
+            user.getAddresses().add(this); // 양방향 관계 편의 메서드
         }
     }
 }

@@ -2,7 +2,6 @@ package com.eureka.spartaonetoone.domain.auth.application;
 
 import com.eureka.spartaonetoone.domain.address.domain.UserAddress;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSigninRequestDto;
-import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignoutRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSigninResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSignupResponseDto;
@@ -12,16 +11,13 @@ import com.eureka.spartaonetoone.domain.user.domain.User;
 import com.eureka.spartaonetoone.domain.user.domain.UserGrade;
 import com.eureka.spartaonetoone.domain.user.domain.UserRole;
 import com.eureka.spartaonetoone.domain.user.domain.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
 
 
 @Service
@@ -33,47 +29,40 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    //회원가입
+    // 회원가입 로직
     @Transactional
     public AuthSignupResponseDto signup(AuthSignupRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AuthException.DuplicateEmail(); // 이메일 중복 예외 처리
         }
 
-        // User 엔티티 생성
-        // 사용자 생성
         User user = User.builder()
-                .userId(UUID.randomUUID())
                 .username(request.getUsername())
                 .email(request.getEmail())
+                .nickname("nodaji")
                 .password(passwordEncoder.encode(request.getPassword()))
-                .nickname(request.getNickname())
-                .phoneNumber(request.getPhoneNumber())
-                .role(UserRole.valueOf(request.getRole().toUpperCase()))
+                .role(UserRole.of(request.getRole())) // 문자열 → Enum 변환
+                .isDeleted(false)
+                .phoneNumber("010101010101")
                 .grade(UserGrade.SILVER)
-                .isDeleted(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .addresses(new ArrayList<>()) // 초기 주소 리스트
                 .build();
 
-        // 주소 생성 및 연결
+        // 주소 생성
         UserAddress address = UserAddress.builder()
-                .addressId(UUID.randomUUID())
-                .city(request.getCity())
-                .district(request.getDistrict())
-                .roadName(request.getRoadName())
-                .zipCode(request.getZipCode())
-                .detail(request.getDetail())
+                .city("오")
+                .district("어")
+                .roadName("어")
+                .zipCode("2323124")
                 .isDeleted(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
-        user.addAddress(address); // 사용자와 주소 연결
+        address.setUser(user);  // 주소에 사용자 설정
+        user.getAddresses().add(address); // 사용자에 주소 추가
 
-        // 사용자 저장 (주소도 함께 저장됨)
         userRepository.save(user);
 
+        // 회원가입 후 바로 로그인은 하지 않음
         return AuthSignupResponseDto.from(user);
     }
 

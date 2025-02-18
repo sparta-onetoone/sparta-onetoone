@@ -20,13 +20,13 @@ public class AuthSignupResponseDto {
 
         // 팩토리 메서드로 DTO 생성
         public static AuthSignupResponseDto from(User user) {
-            return AuthSignupResponseDto.builder()
-                    .userId(user.getUserId().toString())
-                    .username(user.getUsername())
-                    .email(user.getEmail())
-                    .nickname(user.getNickname())
-                    .phoneNumber(user.getPhoneNumber())
-                    .role(user.getRole().name())
-                    .build();
+                return AuthSignupResponseDto.builder()
+                        .userId(user.getUserId().toString())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .nickname(user.getNickname())
+                        .phoneNumber(user.getPhoneNumber())
+                        .role(user.getRole().name())
+                        .build();
         }
-    }
+}

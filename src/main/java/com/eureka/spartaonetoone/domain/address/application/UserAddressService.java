@@ -41,7 +41,7 @@ public class UserAddressService {
         UserAddress address = UserAddress.builder()
                 .city(request.getCity())
                 .district(request.getDistrict())
-                .roadName(request.getLoadName())
+                .roadName(request.getRoadName())
                 .zipCode(request.getZipCode())
                 .detail(request.getDetail())
                 .isDeleted(false)

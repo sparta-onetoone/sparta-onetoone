@@ -21,6 +21,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    //회원가입
     @PostMapping("/api/v1/auth/signup")
     public ResponseEntity<CommonResponse<AuthSignupResponseDto>> signup(
             @Valid @RequestBody AuthSignupRequestDto request) {

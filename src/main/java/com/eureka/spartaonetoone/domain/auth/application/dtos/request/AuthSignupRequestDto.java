@@ -28,24 +28,11 @@ public class AuthSignupRequestDto {
     @NotBlank(message = "닉네임은 필수입니다.")
     private String nickname;
 
-    @Pattern(regexp = "^\\d{10,11}$", message = "전화번호는 숫자만 포함해야 하며, 10~11자리여야 합니다.")
+    @NotBlank(message = "전화번호는 필수입니다.")
     private String phoneNumber;
 
     @NotBlank(message = "사용자 역할은 필수입니다.")
     private String role;
 
-    // 주소 정보 추가
-    @NotBlank(message = "시/도는 필수 입력 값입니다.")
-    private String city;
 
-    @NotBlank(message = "군/구는 필수 입력 값입니다.")
-    private String district;
-
-    @NotBlank(message = "도로명은 필수 입력 값입니다.")
-    private String roadName;
-
-    @NotBlank(message = "우편번호는 필수 입력 값입니다.")
-    private String zipCode;
-
-    private String detail; // 상세주소 (선택)
 }
