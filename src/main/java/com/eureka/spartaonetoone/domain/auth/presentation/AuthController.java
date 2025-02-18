@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.domain.auth.presentation;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.domain.auth.application.AuthService;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSigninRequestDto;
+import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignoutRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSigninResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSignupResponseDto;
@@ -34,13 +35,13 @@ public class AuthController {
 
         return ResponseEntity.ok(CommonResponse.success(authService.signin(request), "로그인 성공"));
     }
-    // 로그아웃
+    //로그아웃
     @PostMapping("/api/v1/auth/signout")
     public ResponseEntity<CommonResponse<String>> signout(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader("Authorization") String token,
+            @RequestBody AuthSignoutRequestDto request) {
 
-        authService.signout(token);
-
+        authService.signout(request.getEmail(), token);
         return ResponseEntity.ok(CommonResponse.success("로그아웃 성공", "로그아웃 성공"));
     }
 }

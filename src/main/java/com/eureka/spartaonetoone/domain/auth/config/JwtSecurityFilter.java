@@ -1,8 +1,11 @@
 package com.eureka.spartaonetoone.domain.auth.config;
 
+import com.eureka.spartaonetoone.domain.auth.application.exception.AuthException;
 import com.eureka.spartaonetoone.domain.auth.application.utils.JwtUtil;
+import com.eureka.spartaonetoone.domain.user.application.exception.UserException;
 import com.eureka.spartaonetoone.domain.user.domain.User;
 import com.eureka.spartaonetoone.domain.user.domain.repository.UserRepository;
+import com.eureka.spartaonetoone.domain.user.infrastructure.security.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,25 +40,41 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring(7);
 
-            if (jwtUtil.validateToken(token)) {
-                Claims claims = jwtUtil.extractClaims(token);
-                User user = userRepository.findById(UUID.fromString(claims.getSubject()))
-                        .orElseThrow(() -> new RuntimeException("User not found"));
-
-                // JWT 토큰에서 정보를 사용하여 인증 처리
-                List<SimpleGrantedAuthority> authorities = List.of(
-                        new SimpleGrantedAuthority(user.getRole().getAuthority())
-                );
-
-                JwtAuthenticationToken authentication = new JwtAuthenticationToken(
-                        user.getUserId().toString(),
-                        null,
-                        authorities // 권한 전달
-                );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            // 유효성 검사
+            if (!jwtUtil.validateToken(token)) {
+                throw new AuthException.InvalidTokenException();  // InvalidTokenException 사용
             }
+
+            Claims claims = jwtUtil.extractClaims(token);
+
+            String userIdStr = claims.getSubject();
+            log.info("Extracted userId from token: {}", userIdStr);
+
+            UUID userId = null;
+            try {
+                userId = UUID.fromString(userIdStr);
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid UUID format in token subject: {}", userIdStr);
+                throw new AuthException.InvalidTokenException();  // InvalidTokenException 사용
+            }
+
+            // User 조회
+            User user = userRepository.findById(userId)
+                    .orElseThrow(AuthException.UserNotFound::new);  // UserNotFound 사용
+
+            // UserDetails 생성
+            UserDetailsImpl userDetails = new UserDetailsImpl(user); // User 객체로부터 UserDetails 생성
+
+            // 인증 객체 생성
+            JwtAuthenticationToken authentication = new JwtAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
         chain.doFilter(request, response);
     }
 }

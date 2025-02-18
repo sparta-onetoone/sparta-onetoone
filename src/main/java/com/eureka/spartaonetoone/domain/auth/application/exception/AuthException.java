@@ -32,4 +32,11 @@ public class AuthException extends CustomException {
             super("AU-004", "유효하지 않은 역할: " + role, HttpStatus.FORBIDDEN);
         }
     }
+
+    // 유효하지 않은 토큰 예외
+    public static class InvalidTokenException extends AuthException {
+        public InvalidTokenException() {
+            super("AU-005", "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

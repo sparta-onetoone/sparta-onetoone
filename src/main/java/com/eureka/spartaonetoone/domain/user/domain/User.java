@@ -2,6 +2,7 @@ package com.eureka.spartaonetoone.domain.user.domain;
 
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
 import com.eureka.spartaonetoone.domain.address.domain.UserAddress;
+import com.eureka.spartaonetoone.domain.user.infrastructure.security.UserDetailsImpl;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -128,7 +129,6 @@ public class User {
         this.deletedAt = LocalDateTime.now();
     }
 
-
     // 회원가입 요청으로부터 User 생성 (from 메서드)
     public static User from(AuthSignupRequestDto request, PasswordEncoder passwordEncoder) {
         return User.builder()
@@ -144,5 +144,15 @@ public class User {
                 .createdAt(LocalDateTime.now()) // 생성 시간 설정
                 .updatedAt(LocalDateTime.now()) // 수정 시간 설정
                 .build();
+    }
+
+    // UserDetailsImpl 객체 반환
+    public UserDetailsImpl toUserDetails() {
+        return new UserDetailsImpl(
+                this.userId,  // userId
+                this.username,  // username
+                this.password,  // password
+                this.getAuthorities()  // authorities
+        );
     }
 }

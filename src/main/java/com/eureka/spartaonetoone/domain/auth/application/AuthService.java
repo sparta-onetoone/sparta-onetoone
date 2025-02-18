@@ -2,6 +2,7 @@ package com.eureka.spartaonetoone.domain.auth.application;
 
 import com.eureka.spartaonetoone.domain.address.domain.UserAddress;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSigninRequestDto;
+import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignoutRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSigninResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSignupResponseDto;
@@ -89,21 +90,20 @@ public class AuthService {
 
         return AuthSigninResponseDto.of(accessToken, refreshToken);
     }
-
-    // 로그아웃 로직
+    //로그아웃
     @Transactional
-    public void signout(String token) {
+    public void signout(String email, String token) {
+        // 이메일을 사용해 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(AuthException.UserNotFound::new);
+
+        // JWT 토큰 검증
         String jwtToken = token.replace("Bearer ", "");
-
-        if (jwtUtil.validateToken(jwtToken)) {
-            Claims claims = jwtUtil.extractClaims(jwtToken);
-            User user = userRepository.findById(UUID.fromString(claims.getSubject()))
-                    .orElseThrow(AuthException.UserNotFound::new);
-
-            // 리프레시 토큰 무효화
-            user.updateRefreshToken(null);
-        } else {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        if (!jwtUtil.validateToken(jwtToken)) {
+            throw new AuthException.InvalidTokenException();
         }
+
+        // 리프레시 토큰 무효화
+        user.updateRefreshToken(null);
     }
 }
