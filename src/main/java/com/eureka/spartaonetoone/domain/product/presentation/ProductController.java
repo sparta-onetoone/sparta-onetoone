@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.domain.product.presentation;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.domain.product.application.ProductService;
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductCreateRequestDto;
+import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchDto;
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductUpdateRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,13 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<?> getProducts(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "limit", defaultValue = "10") int limit) {
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        Pageable pageable = getPageable(page, limit);
         return ResponseEntity.ok(CommonResponse.success(productService.getProducts(pageable), "상품목록이 성공적으로 조회되었습니다."));
+    }
+
+    private Pageable getPageable(int page, int limit) {
+        return PageRequest.of(page - 1, limit);
+
     }
 
     @PutMapping("{product_id}")
@@ -45,6 +51,14 @@ public class ProductController {
     @DeleteMapping("{product_id}")
     public ResponseEntity<?> deleteProduct(@PathVariable(name = "product_id") UUID product_id) {
         return ResponseEntity.ok(CommonResponse.success(productService.deleteProduct(product_id), "상품이 성공적으로 삭제되었습니다."));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProducts(ProductSearchDto productSearchDto,
+                                            @RequestParam(name = "page", defaultValue = "1") int page,
+                                            @RequestParam(name = "limit", defaultValue = "10") int limit) {
+        Pageable pageable = getPageable(page, limit);
+        return ResponseEntity.ok(CommonResponse.success(productService.searchProducts(productSearchDto, pageable), "상품목록 검색결과가 성공적으로 조회되었습니다."));
     }
 
 
