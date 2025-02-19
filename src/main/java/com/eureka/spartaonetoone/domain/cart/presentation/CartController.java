@@ -64,4 +64,13 @@ public class CartController {
 		cartService.updateCartItems(cartId, cartItemId, requestDto);
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 수정 성공"));
 	}
+
+	@DeleteMapping("/{cart_id}/items/{cart_item_id}")
+	public ResponseEntity<CommonResponse<?>> deleteCartItem(
+		@PathVariable("cart_id") UUID cartId,
+		@PathVariable("cart_item_id") UUID cartItemId
+	) {
+		cartService.deleteCartItem(cartId, cartItemId);
+		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 삭제 성공"));
+	}
 }

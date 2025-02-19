@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class CartService {
 
 	private final int MIN_QUANTITY = 1;
-	private final int UPDATE_MIN_QUANTITY = 0;
 
 	private final CartRepository cartRepository;
 
@@ -69,8 +68,8 @@ public class CartService {
 
 		// TODO : Product의 남은 수량을 확인하여 수량이 부족하다면 예외 처리하기
 
-		if(quantity < UPDATE_MIN_QUANTITY) {
-			throw new CartItemException.UpdateMinQuantity();
+		if(quantity < MIN_QUANTITY) {
+			throw new CartItemException.MinQuantity();
 		}
 
 		CartItem cartItem = cart.getCartItems().stream()
@@ -79,6 +78,19 @@ public class CartService {
 				.orElseThrow(CartItemException.NotFound::new);
 
 		cart.updateCartItem(cartItem, quantity);
+	}
+
+	@Transactional
+	public void deleteCartItem(UUID cartId, UUID cartItemId) {
+		Cart cart = cartRepository.findActiveCartById(cartId)
+			.orElseThrow(CartException.NotFound::new);
+
+		CartItem cartItem = cart.getCartItems().stream()
+			.filter(item -> item.getCartItemId().equals(cartItemId))
+			.findFirst()
+			.orElseThrow(CartItemException.NotFoundInCart::new);
+
+		cartItem.delete();
 	}
 
 	@Transactional
@@ -101,7 +113,7 @@ public class CartService {
 		UUID productId = UUID.randomUUID();
 		String productName = "상품 이름";
 		String productImage = "상품 이미지";
-		int currentQuantity = 0; // 현재 상품의 재고
+		int stock = 0; // 현재 상품의 재고
 		int productPrice = 10000;
 		int quantity = requestDto.getQuantity();
 		int price = quantity * productPrice;

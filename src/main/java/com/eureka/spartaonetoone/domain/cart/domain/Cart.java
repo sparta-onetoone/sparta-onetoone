@@ -48,9 +48,6 @@ public class Cart extends TimeStamp {
 
 	public void updateCartItem(CartItem cartItem, int quantity) {
 		cartItem.updateQuantity(quantity);
-		if (cartItem.isDeleted()) {
-			this.cartItems.remove(cartItem);
-		}
 	}
 
 	public void delete() {

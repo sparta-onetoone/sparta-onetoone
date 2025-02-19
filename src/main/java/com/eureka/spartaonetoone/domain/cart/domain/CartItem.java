@@ -55,12 +55,8 @@ public class CartItem extends TimeStamp {
 	private boolean isDeleted;
 
 	public void updateQuantity(int quantity) {
-		if (quantity == 0) {
-			delete();
-		} else {
-			this.price = (this.price / this.quantity) * quantity; // TODO : 로직 수정
-			this.quantity = quantity;
-		}
+		this.price = (this.price / this.quantity) * quantity; // TODO : 로직 수정
+		this.quantity = quantity;
 	}
 
 	public void delete() {

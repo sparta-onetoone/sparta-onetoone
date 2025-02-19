@@ -25,15 +25,9 @@ public class CartItemException extends CustomException {
 		}
 	}
 
-	public static class UpdateMinQuantity extends CartItemException {
-		public UpdateMinQuantity() {
-			super("수정할 장바구니 상품의 최소 수량은 0개입니다.", "CI-003", HttpStatus.BAD_REQUEST);
-		}
-	}
-
 	public static class NotFoundInCart extends CartItemException {
 		public NotFoundInCart() {
-			super("장바구니에 해당 상품이 존재하지 않습니다.", "CI-004", HttpStatus.NOT_FOUND);
+			super("장바구니에 해당 상품이 존재하지 않습니다.", "CI-003", HttpStatus.NOT_FOUND);
 		}
 	}
 }
