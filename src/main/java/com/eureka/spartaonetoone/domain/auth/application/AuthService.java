@@ -29,7 +29,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 
-	// 회원가입 로직
+	// 회원가입
 	@Transactional
 	public AuthSignupResponseDto signup(AuthSignupRequestDto request) {
 		if (userRepository.existsByEmail(request.getEmail())) {
@@ -66,7 +66,7 @@ public class AuthService {
 		return AuthSignupResponseDto.from(user);
 	}
 
-	// 로그인 로직
+	// 로그인
 	public AuthSigninResponseDto signin(AuthSigninRequestDto request) {
 		// 이메일로 사용자 조회
 		User user = userRepository.findByEmail(request.getEmail())
