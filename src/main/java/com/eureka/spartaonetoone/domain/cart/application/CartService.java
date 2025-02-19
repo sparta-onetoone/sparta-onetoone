@@ -27,7 +27,6 @@ public class CartService {
 
 	private final CartRepository cartRepository;
 
-	@Transactional
 	public Cart saveCart(CartCreateRequestDto requestDto) {
 		Cart cart = Cart.of(requestDto.getUserId());
 		return cartRepository.save(cart);
@@ -102,10 +101,6 @@ public class CartService {
 	}
 
 	private CartItem createCartItem(Cart cart, CartItemCreateRequestDto requestDto) {
-		if (requestDto.getQuantity() < MIN_QUANTITY) {
-			throw new CartItemException.MinQuantity();
-		}
-
 		/*
 		 TODO-1 : Product domain에서 상품 정보를 가져와 CartItem 생성하기
 		 TODO-2 : 중복된 상품이 있는지 확인하고 중복된 상품이 있다면 수량과 가격만 증가시키기
