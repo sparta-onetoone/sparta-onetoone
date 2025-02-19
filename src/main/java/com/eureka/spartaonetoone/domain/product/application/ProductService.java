@@ -47,7 +47,8 @@ public class ProductService {
                 .findById(productId)
                 .orElseThrow(ProductException.ProductNotFoundException::new);
 
-        product.updateProduct(productUpdateRequestDto);
+        product.updateProduct(productUpdateRequestDto.getName(), productUpdateRequestDto.getDescription(),
+                productUpdateRequestDto.getPrice(), productUpdateRequestDto.getQuantity());
 
         productRepository.save(product);
 
