@@ -7,7 +7,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -34,7 +33,7 @@ public class CartItem extends TimeStamp {
 	@UuidGenerator
 	private UUID cartItemId;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
 
