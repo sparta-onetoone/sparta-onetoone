@@ -2,7 +2,7 @@ package com.eureka.spartaonetoone.domain.product.application;
 
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductCreateRequestDto;
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductGetResponseDto;
-import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchDto;
+import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductUpdateRequestDto;
 import com.eureka.spartaonetoone.domain.product.application.exception.ProductException;
 import com.eureka.spartaonetoone.domain.product.domain.Product;
@@ -62,7 +62,7 @@ public class ProductService {
         return product.getId();
     }
 
-    public Page<ProductGetResponseDto> searchProducts(final ProductSearchDto productSearchDto, final Pageable pageable) {
-        return productRepository.searchByCondition(productSearchDto, pageable);
+    public Page<ProductGetResponseDto> searchProducts(final ProductSearchRequestDto productSearchRequestDto, final Pageable pageable) {
+        return productRepository.searchByCondition(productSearchRequestDto, pageable);
     }
 }

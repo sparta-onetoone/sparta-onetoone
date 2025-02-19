@@ -1,7 +1,7 @@
 package com.eureka.spartaonetoone.domain.product.infrastructure;
 
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductGetResponseDto;
-import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchDto;
+import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.domain.product.domain.Product;
 import com.eureka.spartaonetoone.domain.product.domain.QProduct;
 import com.eureka.spartaonetoone.domain.product.domain.repository.CustomProductRepository;
@@ -41,13 +41,13 @@ public class ProductRepositoryImpl implements CustomProductRepository {
     }
 
     @Override
-    public Page<ProductGetResponseDto> searchByCondition(ProductSearchDto productSearchDto, Pageable pageable) {
+    public Page<ProductGetResponseDto> searchByCondition(ProductSearchRequestDto productSearchRequestDto, Pageable pageable) {
 
         List<Product> products = queryFactory
                 .selectFrom(QProduct.product)
                 .from(QProduct.product)
-                .where(searchByMaxPrice(productSearchDto.getMaxPrice()), searchByMinPrice(productSearchDto.getMinPrice()),
-                        searchByName(productSearchDto.getName()), searchByStore(productSearchDto.getStoreId()))
+                .where(searchByMaxPrice(productSearchRequestDto.getMaxPrice()), searchByMinPrice(productSearchRequestDto.getMinPrice()),
+                        searchByName(productSearchRequestDto.getName()), searchByStore(productSearchRequestDto.getStoreId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
