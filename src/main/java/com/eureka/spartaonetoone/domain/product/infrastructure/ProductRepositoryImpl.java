@@ -23,10 +23,6 @@ public class ProductRepositoryImpl implements CustomProductRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public Boolean existsByStoreIdAndProductName(UUID storeId, String productName) {
-        return null;
-    }
 
     @Override
     public Page<ProductGetResponseDto> getProducts(Pageable pageable) {
