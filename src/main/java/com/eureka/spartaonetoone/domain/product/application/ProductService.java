@@ -2,6 +2,7 @@ package com.eureka.spartaonetoone.domain.product.application;
 
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductCreateRequestDto;
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductGetResponseDto;
+import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchDto;
 import com.eureka.spartaonetoone.domain.product.application.dtos.ProductUpdateRequestDto;
 import com.eureka.spartaonetoone.domain.product.application.exception.ProductException;
 import com.eureka.spartaonetoone.domain.product.domain.Product;
@@ -20,7 +21,9 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public UUID saveProduct(ProductCreateRequestDto productCreateRequestDto) {
-        Product product = Product.from(productCreateRequestDto);
+        Product product = Product.of(productCreateRequestDto.getStoreId(), productCreateRequestDto.getName(), productCreateRequestDto.getDescription(),
+                productCreateRequestDto.getPrice(), productCreateRequestDto.getQuantity(), productCreateRequestDto.getIsDeleted());
+
         Boolean isExistsSameProduct = productRepository.existsByStoreIdAndName(product.getStoreId(), product.getName());
         if (isExistsSameProduct) {
             throw new ProductException.ProductAlreadyExistsException();
@@ -56,5 +59,9 @@ public class ProductService {
         product.deleteProduct();
         productRepository.save(product);
         return product.getId();
+    }
+
+    public Page<ProductGetResponseDto> searchProducts(final ProductSearchDto productSearchDto, final Pageable pageable) {
+        return productRepository.searchByCondition(productSearchDto, pageable);
     }
 }
