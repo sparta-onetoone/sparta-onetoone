@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.eureka.spartaonetoone.common.utils.TimeStamp;
 import com.eureka.spartaonetoone.domain.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -28,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Table(
 	name = "p_user_address"
 )
-public class UserAddress {
+public class UserAddress extends TimeStamp {
 
 	@Id
 	@UuidGenerator
@@ -57,24 +58,6 @@ public class UserAddress {
 	@Column(name = "is_deleted", nullable = false)
 	private Boolean isDeleted; // 삭제 여부 (논리적 삭제)
 
-	@Column(name = "created_by", columnDefinition = "UUID")
-	private UUID createdBy;
-
-	@Column(name = "updated_by", columnDefinition = "UUID")
-	private UUID updatedBy;
-
-	@Column(name = "deleted_by", columnDefinition = "UUID")
-	private UUID deletedBy;
-
-	@Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	private LocalDateTime updatedAt;
-
-	@Column(name = "deleted_at")
-	private LocalDateTime deletedAt;
-
 	// 주소 정보 업데이트 메서드
 	public void updateAddress(String city, String district, String loadName, String zipCode, String detail) {
 		this.city = city;
@@ -88,7 +71,7 @@ public class UserAddress {
 	// 논리적 삭제 처리 메서드
 	public void deleteAddress(UUID deletedBy) {
 		this.isDeleted = true;
-		this.deletedBy = deletedBy;
+		this.deletedBy = String.valueOf(deletedBy);
 		this.deletedAt = LocalDateTime.now();
 	}
 

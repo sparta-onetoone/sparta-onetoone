@@ -67,26 +67,9 @@ public class UserDetailsImpl implements UserDetails {
 	}
 
 	// UserDetailsImpl 객체에서 User 객체를 반환하는 메서드
+	// User 객체를 생성하는 메서드
 	public User toUser() {
-		// User 클래스의 생성자에 맞는 필드들을 전달해야 함
-		return new User(
-			userId, // 필수 값들에 맞는 인자들을 전달
-			null, // isDeleted
-			null, // addresses
-			username,
-			null, // email
-			password,
-			null, // nickname
-			null, // phoneNumber
-			null, // role
-			null, // grade
-			null, // refreshToken
-			null, // createdBy
-			null, // updatedBy
-			null, // deletedBy
-			null, // createdAt
-			null, // updatedAt
-			null // deletedAt
-		);
+		// User.of()를 통해 User 객체를 생성
+		return User.of(userId, username, password);
 	}
 }

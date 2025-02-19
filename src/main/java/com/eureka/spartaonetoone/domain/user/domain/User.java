@@ -2,7 +2,7 @@ package com.eureka.spartaonetoone.domain.user.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +10,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.eureka.spartaonetoone.common.utils.TimeStamp;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
 import com.eureka.spartaonetoone.domain.user.infrastructure.security.UserDetailsImpl;
 import com.eureka.spartaonetoone.domain.useraddress.domain.UserAddress;
@@ -32,10 +33,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PRIVATE)
 @Table(name = "p_user", uniqueConstraints = {@UniqueConstraint(name = "unique_email", columnNames = "email")})
-public class User {
+public class User extends TimeStamp {
 
 	@Id
 	@UuidGenerator
@@ -67,36 +68,12 @@ public class User {
 	@Column(name = "role", nullable = false)
 	private UserRole role;
 
-	// 권한 반환 메서드 추가
-	public List<SimpleGrantedAuthority> getAuthorities() {
-		// UserRole을 SimpleGrantedAuthority로 변환
-		return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
-	}
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "grade", length = 50, nullable = false)
 	private UserGrade grade = UserGrade.SILVER;
 
 	@Column(name = "refresh_token")
 	private String refreshToken; // 리프레시 토큰 저장
-
-	@Column(name = "created_by", columnDefinition = "UUID")
-	private UUID createdBy;
-
-	@Column(name = "updated_by", columnDefinition = "UUID")
-	private UUID updatedBy;
-
-	@Column(name = "deleted_by", columnDefinition = "UUID")
-	private UUID deletedBy;
-
-	@Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	private LocalDateTime updatedAt;
-
-	@Column(name = "deleted_at")
-	private LocalDateTime deletedAt; // 계정 삭제 일자
 
 	// 리프레시 토큰 업데이트
 	public void updateRefreshToken(String refreshToken) {
@@ -127,14 +104,13 @@ public class User {
 	// 논리적 삭제 처리 메서드 (Setter 역할 수행)
 	public void markAsDeleted(UUID deletedBy) {
 		this.isDeleted = true;
-		this.deletedBy = deletedBy;
+		this.deletedBy = String.valueOf(deletedBy);
 		this.deletedAt = LocalDateTime.now();
 	}
 
 	// 회원가입 요청으로부터 User 생성 (from 메서드)
 	public static User from(AuthSignupRequestDto request, PasswordEncoder passwordEncoder) {
 		return User.builder()
-			.userId(UUID.randomUUID())
 			.username(request.getUsername())
 			.email(request.getEmail())
 			.password(passwordEncoder.encode(request.getPassword()))
@@ -143,9 +119,36 @@ public class User {
 			.role(UserRole.valueOf(request.getRole().toUpperCase()))
 			.grade(UserGrade.SILVER)
 			.isDeleted(false) // 삭제 여부 기본값 설정
-			.createdAt(LocalDateTime.now()) // 생성 시간 설정
-			.updatedAt(LocalDateTime.now()) // 수정 시간 설정
 			.build();
+	}
+
+	public static User of(String username, String email, String password, String nickname, String phoneNumber,
+		UserRole role) {
+		User user = new User();
+		user.username = username;
+		user.email = email;
+		user.password = password;
+		user.nickname = nickname;
+		user.phoneNumber = phoneNumber;
+		user.role = role;
+		user.grade = UserGrade.SILVER; // 기본값
+		user.isDeleted = false; // 기본값
+		user.addresses = new ArrayList<>(); // 기본값
+
+		return user;
+	}
+
+	// User.of() 팩토리 메서드
+	public static User of(UUID userId, String username, String password) {
+		return new User(userId, false, new ArrayList<>(), username, null, password, null, null, null, null, null);
+	}
+
+	// 권한 정보 반환
+	public Collection<SimpleGrantedAuthority> getAuthorities() {
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		// UserRole에서 권한을 가져와서 GrantedAuthority로 변환
+		authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name())); // ROLE_ 접두사 추가
+		return authorities;
 	}
 
 	// UserDetailsImpl 객체 반환

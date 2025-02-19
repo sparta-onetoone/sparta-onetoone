@@ -1,7 +1,5 @@
 package com.eureka.spartaonetoone.domain.auth.application;
 
-import java.util.ArrayList;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +11,6 @@ import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSignu
 import com.eureka.spartaonetoone.domain.auth.application.exception.AuthException;
 import com.eureka.spartaonetoone.domain.auth.application.utils.JwtUtil;
 import com.eureka.spartaonetoone.domain.user.domain.User;
-import com.eureka.spartaonetoone.domain.user.domain.UserGrade;
 import com.eureka.spartaonetoone.domain.user.domain.UserRole;
 import com.eureka.spartaonetoone.domain.user.domain.repository.UserRepository;
 import com.eureka.spartaonetoone.domain.useraddress.domain.UserAddress;
@@ -36,17 +33,14 @@ public class AuthService {
 			throw new AuthException.DuplicateEmail(); // 이메일 중복 예외 처리
 		}
 
-		User user = User.builder()
-			.username(request.getUsername())
-			.email(request.getEmail())
-			.nickname("nodaji")
-			.password(passwordEncoder.encode(request.getPassword()))
-			.role(UserRole.of(request.getRole())) // 문자열 → Enum 변환
-			.isDeleted(false)
-			.phoneNumber("010101010101")
-			.grade(UserGrade.SILVER)
-			.addresses(new ArrayList<>()) // 초기 주소 리스트
-			.build();
+		User user = User.of(
+			request.getUsername(),
+			request.getEmail(),
+			passwordEncoder.encode(request.getPassword()),
+			"nodaji", // nickname
+			"010101010101", // phoneNumber
+			UserRole.valueOf(request.getRole().toUpperCase()) // role
+		);
 
 		// 주소 생성
 		UserAddress address = UserAddress.builder()
@@ -67,6 +61,7 @@ public class AuthService {
 	}
 
 	// 로그인
+	@Transactional
 	public AuthSigninResponseDto signin(AuthSigninRequestDto request) {
 		// 이메일로 사용자 조회
 		User user = userRepository.findByEmail(request.getEmail())
@@ -87,7 +82,7 @@ public class AuthService {
 		return AuthSigninResponseDto.of(accessToken, refreshToken);
 	}
 
-	//로그아웃
+	// 로그아웃
 	@Transactional
 	public void signout(String email, String token) {
 		// 이메일을 사용해 사용자 조회

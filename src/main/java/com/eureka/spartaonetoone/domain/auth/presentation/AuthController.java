@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
@@ -19,12 +20,13 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
 	private final AuthService authService;
 
 	//회원가입
-	@PostMapping("/api/v1/auth/signup")
+	@PostMapping("/signup")
 	public ResponseEntity<CommonResponse<AuthSignupResponseDto>> signup(
 		@Valid @RequestBody AuthSignupRequestDto request) {
 
@@ -32,7 +34,7 @@ public class AuthController {
 	}
 
 	//로그인
-	@PostMapping("/api/v1/auth/signin")
+	@PostMapping("/signin")
 	public ResponseEntity<CommonResponse<AuthSigninResponseDto>> signin(
 		@Valid @RequestBody AuthSigninRequestDto request) {
 
@@ -40,7 +42,7 @@ public class AuthController {
 	}
 
 	//로그아웃
-	@PostMapping("/api/v1/auth/signout")
+	@PostMapping("/signout")
 	public ResponseEntity<CommonResponse<String>> signout(
 		@RequestHeader("Authorization") String token,
 		@RequestBody AuthSignoutRequestDto request) {
