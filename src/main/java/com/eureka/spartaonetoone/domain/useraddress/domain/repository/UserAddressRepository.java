@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.domain.address.domain.repository;
+package com.eureka.spartaonetoone.domain.useraddress.domain.repository;
 
-import com.eureka.spartaonetoone.domain.address.domain.UserAddress;
+import com.eureka.spartaonetoone.domain.useraddress.domain.UserAddress;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

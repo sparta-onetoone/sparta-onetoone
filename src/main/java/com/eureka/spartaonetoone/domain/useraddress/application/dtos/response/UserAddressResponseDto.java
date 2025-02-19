@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.domain.address.application.dtos.response;
+package com.eureka.spartaonetoone.domain.useraddress.application.dtos.response;
 
-import com.eureka.spartaonetoone.domain.address.domain.UserAddress;
+import com.eureka.spartaonetoone.domain.useraddress.domain.UserAddress;
 import lombok.Builder;
 import lombok.Getter;
 
