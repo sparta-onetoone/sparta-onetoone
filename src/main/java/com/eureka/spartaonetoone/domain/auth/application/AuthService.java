@@ -1,11 +1,14 @@
 package com.eureka.spartaonetoone.domain.auth.application;
 
+import java.util.UUID;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSigninRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
+import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthRefreshResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSigninResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSignupResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.exception.AuthException;
@@ -13,8 +16,10 @@ import com.eureka.spartaonetoone.domain.auth.application.utils.JwtUtil;
 import com.eureka.spartaonetoone.domain.user.domain.User;
 import com.eureka.spartaonetoone.domain.user.domain.UserRole;
 import com.eureka.spartaonetoone.domain.user.domain.repository.UserRepository;
+import com.eureka.spartaonetoone.domain.useraddress.application.dtos.request.UserAddressRequestDto;
 import com.eureka.spartaonetoone.domain.useraddress.domain.UserAddress;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,78 +29,98 @@ public class AuthService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-	private final JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil; // jwtUtil 선언 추가
 
-	// 회원가입
 	@Transactional
 	public AuthSignupResponseDto signup(AuthSignupRequestDto request) {
 		if (userRepository.existsByEmail(request.getEmail())) {
-			throw new AuthException.DuplicateEmail(); // 이메일 중복 예외 처리
+			throw new AuthException.DuplicateEmail();
 		}
 
+		// User 생성
 		User user = User.of(
 			request.getUsername(),
 			request.getEmail(),
 			passwordEncoder.encode(request.getPassword()),
-			"nodaji", // nickname
-			"010101010101", // phoneNumber
-			UserRole.valueOf(request.getRole().toUpperCase()) // role
+			request.getNickname(),
+			request.getPhoneNumber(),
+			UserRole.valueOf(request.getRole().toUpperCase())
 		);
 
-		// 주소 생성
-		UserAddress address = UserAddress.builder()
-			.city("오")
-			.district("어")
-			.roadName("어")
-			.zipCode("2323124")
+		// 회원가입 요청에서 주소 정보 가져오기
+		UserAddressRequestDto addressDto = request.getAddress();
+		UserAddress userAddress = UserAddress.builder()
+			.city(addressDto.getCity())
+			.district(addressDto.getDistrict())
+			.roadName(addressDto.getRoadName())
+			.zipCode(addressDto.getZipCode())
 			.isDeleted(false)
 			.build();
 
-		address.setUser(user);  // 주소에 사용자 설정
-		user.getAddresses().add(address); // 사용자에 주소 추가
-
+		user.setDefaultAddress(userAddress);
 		userRepository.save(user);
 
-		// 회원가입 후 바로 로그인은 하지 않음
 		return AuthSignupResponseDto.from(user);
 	}
 
-	// 로그인
 	@Transactional
 	public AuthSigninResponseDto signin(AuthSigninRequestDto request) {
-		// 이메일로 사용자 조회
 		User user = userRepository.findByEmail(request.getEmail())
 			.orElseThrow(AuthException.UserNotFound::new);
 
-		// 비밀번호 검증
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new AuthException.InvalidPassword();
 		}
 
-		// JWT 토큰 생성
 		String accessToken = jwtUtil.createAccessToken(user);
 		String refreshToken = jwtUtil.createRefreshToken(user);
-
-		// 리프레시 토큰 저장
 		user.updateRefreshToken(refreshToken);
 
 		return AuthSigninResponseDto.of(accessToken, refreshToken);
 	}
 
-	// 로그아웃
 	@Transactional
 	public void signout(String email, String token) {
-		// 이메일을 사용해 사용자 조회
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(AuthException.UserNotFound::new);
 
-		// JWT 토큰 검증
 		String jwtToken = token.replace("Bearer ", "");
 		if (!jwtUtil.validateToken(jwtToken)) {
 			throw new AuthException.InvalidTokenException();
 		}
 
-		// 리프레시 토큰 무효화
 		user.updateRefreshToken(null);
+	}
+
+	// 리프레시 토큰으로 액세스 토큰 재발급
+	@Transactional
+	public AuthRefreshResponseDto refreshToken(String refreshToken) {
+		// 리프레시 토큰 검증
+		if (!jwtUtil.validateToken(refreshToken)) {
+			throw new AuthException.InvalidTokenException();
+		}
+
+		// Claims에서 사용자 정보 추출
+		Claims claims = jwtUtil.extractClaims(refreshToken);
+		String userIdStr = claims.getSubject();
+		UUID userId;
+		try {
+			userId = UUID.fromString(userIdStr);
+		} catch (IllegalArgumentException e) {
+			throw new AuthException.InvalidTokenException();
+		}
+
+		// 사용자 조회
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new AuthException.UserNotFound());
+
+		// 새로운 액세스 토큰 발급
+		String newAccessToken = jwtUtil.createAccessToken(user);
+
+		// 새로운 리프레시 토큰 발급 (필요 시)
+		String newRefreshToken = jwtUtil.createRefreshToken(user);
+		user.updateRefreshToken(newRefreshToken);
+
+		return AuthRefreshResponseDto.of(newAccessToken, newRefreshToken);
 	}
 }

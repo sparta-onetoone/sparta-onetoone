@@ -75,7 +75,7 @@ public class UserAddress extends TimeStamp {
 		this.deletedAt = LocalDateTime.now();
 	}
 
-	// 사용자 설정 메서드 추가
+	// 사용자 설정 메서드
 	public void setUser(User user) {
 		this.user = user;
 		if (!user.getAddresses().contains(this)) {

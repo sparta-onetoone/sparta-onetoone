@@ -88,8 +88,15 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
+
+		// 경로 끝에 슬래시가 있으면 제거하여 일관되게 비교
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+
 		for (String excludedPath : EXCLUDED_PATHS) {
-			if (path.equals(excludedPath)) {
+			// 경로가 정확히 일치하는지 비교
+			if (excludedPath.equals(path)) {
 				return true;  // 필터링 제외 대상이면 true 반환
 			}
 		}

@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.domain.auth.application.AuthService;
+import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthRefreshRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSigninRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignoutRequestDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.request.AuthSignupRequestDto;
+import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthRefreshResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSigninResponseDto;
 import com.eureka.spartaonetoone.domain.auth.application.dtos.response.AuthSignupResponseDto;
 
@@ -49,5 +51,15 @@ public class AuthController {
 
 		authService.signout(request.getEmail(), token);
 		return ResponseEntity.ok(CommonResponse.success("로그아웃 성공", "로그아웃 성공"));
+	}
+
+	// 리프레시 토큰을 이용한 토큰 재발급
+	@PostMapping("/refresh")
+	public ResponseEntity<CommonResponse<AuthRefreshResponseDto>> refreshToken(
+		@RequestBody AuthRefreshRequestDto request) {
+
+		// 리프레시 토큰을 사용하여 새로운 액세스 토큰 발급
+		AuthRefreshResponseDto response = authService.refreshToken(request.getRefreshToken());
+		return ResponseEntity.ok(CommonResponse.success(response, "새로운 액세스 토큰 발급 성공"));
 	}
 }
