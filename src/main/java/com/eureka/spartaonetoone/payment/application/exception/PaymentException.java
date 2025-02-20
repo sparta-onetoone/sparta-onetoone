@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.payment.application.exception;
+package com.eureka.spartaonetoone.payment.application.exception;
 
 import com.eureka.spartaonetoone.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
