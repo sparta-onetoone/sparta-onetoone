@@ -95,7 +95,7 @@ public class Store extends TimeStamp {
 	}
 
 	// 엔티티 내부 업데이트 메서드: Service에서 개별 필드를 전달해 업데이트
-	public void updateFrom(String name, StoreState state, String tellNumber,
+	public void update(String name, StoreState state, String tellNumber,
 				String description, Integer minOrderPrice, Integer deliveryFee,
 				Float rating, Integer reviewCount, UUID categoryId) {
 		this.name = name;
