@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.store.application.dtos;
+package com.eureka.spartaonetoone.store.application.dtos.response;
 
 import com.eureka.spartaonetoone.store.domain.Store;
 import lombok.AccessLevel;
