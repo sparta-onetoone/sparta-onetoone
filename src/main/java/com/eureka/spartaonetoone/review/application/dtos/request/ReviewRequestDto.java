@@ -1,10 +1,12 @@
-package com.eureka.spartaonetoone.review.application.dto.request;
+package com.eureka.spartaonetoone.review.application.dtos.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
+
+import com.eureka.spartaonetoone.review.domain.Review;
 
 @Getter
 @NoArgsConstructor
@@ -18,4 +20,8 @@ public class ReviewRequestDto {
 	private String content;
 	// 리뷰 관련 이미지 URL
 	private String image;
+
+	public Review createReview() {
+		return Review.createReview(orderId, rating, content, image);
+	}
 }

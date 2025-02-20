@@ -1,8 +1,8 @@
 package com.eureka.spartaonetoone.review.presentation;
 
 import com.eureka.spartaonetoone.review.application.ReviewService;
-import com.eureka.spartaonetoone.review.application.dto.request.ReviewRequestDto;
-import com.eureka.spartaonetoone.review.application.dto.response.ReviewResponseDto;
+import com.eureka.spartaonetoone.review.application.dtos.request.ReviewRequestDto;
+import com.eureka.spartaonetoone.review.application.dtos.response.ReviewResponseDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

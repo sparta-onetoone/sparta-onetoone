@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.review.application.dto.response;
+package com.eureka.spartaonetoone.review.application.dtos.response;
 
 import com.eureka.spartaonetoone.review.domain.Review;
 import lombok.AccessLevel;

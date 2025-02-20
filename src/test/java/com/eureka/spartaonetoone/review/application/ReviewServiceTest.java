@@ -1,7 +1,7 @@
 package com.eureka.spartaonetoone.review.application;
 
-import com.eureka.spartaonetoone.review.application.dto.request.ReviewRequestDto;
-import com.eureka.spartaonetoone.review.application.dto.response.ReviewResponseDto;
+import com.eureka.spartaonetoone.review.application.dtos.request.ReviewRequestDto;
+import com.eureka.spartaonetoone.review.application.dtos.response.ReviewResponseDto;
 import com.eureka.spartaonetoone.review.domain.Review;
 import com.eureka.spartaonetoone.review.domain.repository.ReviewRepository;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class ReviewServiceTest {
 			orderId, 5, "훌륭한 리뷰 내용", "http://example.com/image.png"
 		);
 		// Review.of()를 통해 생성된 Review 엔티티
-		Review review = Review.of(orderId, 5, "훌륭한 리뷰 내용", "http://example.com/image.png");
+		Review review = Review.createReview(orderId, 5, "훌륭한 리뷰 내용", "http://example.com/image.png");
 		when(reviewRepository.save(any(Review.class))).thenReturn(review);
 
 		// when : createReview 메서드 호출
@@ -56,7 +56,7 @@ public class ReviewServiceTest {
 		// given
 		UUID reviewId = UUID.randomUUID();
 		UUID orderId = UUID.randomUUID();
-		Review review = Review.of(orderId, 4, "좋은 리뷰", "http://example.com/img.jpg");
+		Review review = Review.createReview(orderId, 4, "좋은 리뷰", "http://example.com/img.jpg");
 		when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
 
 		// when: getReviewById 호출
@@ -75,7 +75,7 @@ public class ReviewServiceTest {
 		// given: 기존 리뷰 엔티티 생성 및 모의
 		UUID reviewId = UUID.randomUUID();
 		UUID orderId = UUID.randomUUID();
-		Review existingReview = Review.of(orderId, 3, "평균 리뷰", "oldImg.png");
+		Review existingReview = Review.createReview(orderId, 3, "평균 리뷰", "oldImg.png");
 		when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
 		when(reviewRepository.save(existingReview)).thenReturn(existingReview);
 
@@ -101,7 +101,7 @@ public class ReviewServiceTest {
 		// given: 기존 리뷰 엔티티 생성 및 모의
 		UUID reviewId = UUID.randomUUID();
 		UUID orderId = UUID.randomUUID();
-		Review existingReview = Review.of(orderId, 5, "삭제될 리뷰", "deleteImg.png");
+		Review existingReview = Review.createReview(orderId, 5, "삭제될 리뷰", "deleteImg.png");
 		when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
 		when(reviewRepository.save(existingReview)).thenReturn(existingReview);
 
@@ -118,8 +118,8 @@ public class ReviewServiceTest {
 	public void testGetReviewsByOrderId() {
 		// given: 특정 주문 ID로 Review 목록 조회 모의
 		UUID orderId = UUID.randomUUID();
-		Review review1 = Review.of(orderId, 4, "리뷰 1", "img1.png");
-		Review review2 = Review.of(orderId, 5, "리뷰 2", "img2.png");
+		Review review1 = Review.createReview(orderId, 4, "리뷰 1", "img1.png");
+		Review review2 = Review.createReview(orderId, 5, "리뷰 2", "img2.png");
 		when(reviewRepository.findByOrderId(orderId)).thenReturn(Arrays.asList(review1, review2));
 		Pageable pageable = Pageable.unpaged();
 
