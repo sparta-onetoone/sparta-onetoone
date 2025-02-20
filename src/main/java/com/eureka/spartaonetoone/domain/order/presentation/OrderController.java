@@ -35,4 +35,9 @@ public class OrderController {
 	public ResponseEntity<CommonResponse<?>> getOrder(@PathVariable("order_id") UUID orderId) {
 		return ResponseEntity.ok(CommonResponse.success(orderService.getOrder(orderId), "주문 조회 성공"));
 	}
+
+	@GetMapping
+	public ResponseEntity<CommonResponse<?>> getOrders() {
+		return ResponseEntity.ok(CommonResponse.success(orderService.getOrdersByUserRole(), "주문 목록 조회 성공"));
+	}
 }
