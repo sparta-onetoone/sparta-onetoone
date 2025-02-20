@@ -1,10 +1,10 @@
-package com.eureka.spartaonetoone.domain.product.infrastructure;
+package com.eureka.spartaonetoone.product.infrastructure;
 
-import com.eureka.spartaonetoone.domain.product.application.dtos.ProductGetResponseDto;
-import com.eureka.spartaonetoone.domain.product.application.dtos.ProductSearchDto;
-import com.eureka.spartaonetoone.domain.product.domain.Product;
-import com.eureka.spartaonetoone.domain.product.domain.QProduct;
-import com.eureka.spartaonetoone.domain.product.domain.repository.CustomProductRepository;
+import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetResponseDto;
+import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
+import com.eureka.spartaonetoone.product.domain.Product;
+import com.eureka.spartaonetoone.product.domain.QProduct;
+import com.eureka.spartaonetoone.product.domain.repository.CustomProductRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +41,13 @@ public class ProductRepositoryImpl implements CustomProductRepository {
     }
 
     @Override
-    public Page<ProductGetResponseDto> searchByCondition(ProductSearchDto productSearchDto, Pageable pageable) {
+    public Page<ProductGetResponseDto> searchByCondition(UUID storeId, Integer minPrice, Integer maxPrice, String name, Pageable pageable) {
 
         List<Product> products = queryFactory
                 .selectFrom(QProduct.product)
                 .from(QProduct.product)
-                .where(searchByMaxPrice(productSearchDto.getMaxPrice()), searchByMinPrice(productSearchDto.getMinPrice()),
-                        searchByName(productSearchDto.getName()), searchByStore(productSearchDto.getStoreId()))
+                .where(searchByMaxPrice(maxPrice), searchByMinPrice(minPrice),
+                        searchByName(name), searchByStore(storeId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
