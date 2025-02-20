@@ -1,11 +1,8 @@
-package com.eureka.spartaonetoone.domain.payment.domain;
+package com.eureka.spartaonetoone.payment.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 //import com.eureka.spartaonetoone.domain.payment.application.dtos.PaymentCreateRequestDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -33,25 +30,39 @@ public class Payment extends TimeStamp {
     @NotNull
     @Length(max = 100)
     private String bank;
-    @Length(max = 100)
-    private String state;
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    private State state;
     @NotNull
     @Min(1000)
     private Integer price;
     @NotNull
     private Boolean isDeleted;
-    
-    public static Payment of(final String bank, final UUID orderId, Integer price, Boolean isDeleted) {
+
+
+    public static Payment createPayment(final String bank, final UUID orderId, Integer price, Boolean isDeleted) {
         return Payment.builder()
                 .bank(bank)
                 .orderId(orderId)
                 .price(price)
                 .isDeleted(isDeleted)
+                .state(State.SUCCESS)
                 .build();
     }
 
     public void deleteProduct() {
         this.isDeleted = true;
+    }
+
+    @Getter
+    public enum State {
+        SUCCESS("성공"), FAILED("실패");
+
+        private String value;
+
+        State(String value) {
+            this.value = value;
+        }
     }
 
 

@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.domain.payment.application.dtos;
+package com.eureka.spartaonetoone.payment.application.dtos;
 
-import com.eureka.spartaonetoone.domain.payment.domain.Payment;
+import com.eureka.spartaonetoone.payment.domain.Payment;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +23,7 @@ public class PaymentGetResponseDto {
         return PaymentGetResponseDto.builder()
                 .paymentId(payment.getId())
                 .orderId(payment.getOrderId())
-                .paymentState(payment.getState())
+                .paymentState(payment.getState().toString())
                 .deletedBy(payment.getDeletedBy())
                 .deletedAt(payment.getDeletedAt())
                 .build();
