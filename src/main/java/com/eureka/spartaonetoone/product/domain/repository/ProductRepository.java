@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.domain.product.domain.repository;
+package com.eureka.spartaonetoone.product.domain.repository;
 
-import com.eureka.spartaonetoone.domain.product.domain.Product;
+import com.eureka.spartaonetoone.product.domain.Product;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 

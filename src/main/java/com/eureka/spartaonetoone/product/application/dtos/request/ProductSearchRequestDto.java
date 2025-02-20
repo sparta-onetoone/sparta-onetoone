@@ -1,6 +1,5 @@
-package com.eureka.spartaonetoone.domain.product.application.dtos;
+package com.eureka.spartaonetoone.product.application.dtos.request;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class ProductSearchDto {
+public class ProductSearchRequestDto {
     private String name;
     private String description;
     private Integer minPrice;

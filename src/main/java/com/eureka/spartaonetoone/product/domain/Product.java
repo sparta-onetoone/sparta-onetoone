@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.product.domain;
+package com.eureka.spartaonetoone.product.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 import jakarta.persistence.*;
@@ -32,6 +32,8 @@ public class Product extends TimeStamp {
     @Column(name = "store_id")
     private UUID storeId;
     @NotNull
+    private String imageUrl;
+    @NotNull
     @Min(value = 1000, message = "상품가격은 1000원 이상이어야 합니다.")
     private Integer price;
     @NotNull
@@ -46,11 +48,12 @@ public class Product extends TimeStamp {
     @NotNull
     private Boolean isDeleted;
 
-    public static Product of(final UUID storeId, final String name
+    public static Product createProduct(final UUID storeId, final String name, final String imageUrl
             , final String description, final Integer price, final Integer quantity, final Boolean isDeleted) {
         return Product.builder()
                 .storeId(storeId)
                 .name(name)
+                .imageUrl(imageUrl)
                 .description(description)
                 .price(price)
                 .quantity(quantity)
