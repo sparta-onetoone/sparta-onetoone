@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.payment.application.dtos;
+package com.eureka.spartaonetoone.payment.application.dtos;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

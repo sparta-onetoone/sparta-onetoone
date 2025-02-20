@@ -1,11 +1,11 @@
-package com.eureka.spartaonetoone.domain.payment.application;
+package com.eureka.spartaonetoone.payment.application;
 
-import com.eureka.spartaonetoone.domain.payment.application.dtos.PaymentCreateRequestDto;
-import com.eureka.spartaonetoone.domain.payment.application.dtos.PaymentGetResponseDto;
-import com.eureka.spartaonetoone.domain.payment.application.dtos.PaymentSearchDto;
-import com.eureka.spartaonetoone.domain.payment.application.exception.PaymentException;
-import com.eureka.spartaonetoone.domain.payment.domain.Payment;
-import com.eureka.spartaonetoone.domain.payment.domain.repository.PaymentRepository;
+import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
+import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
+import com.eureka.spartaonetoone.payment.application.dtos.PaymentSearchRequestDto;
+import com.eureka.spartaonetoone.payment.application.exception.PaymentException;
+import com.eureka.spartaonetoone.payment.domain.Payment;
+import com.eureka.spartaonetoone.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ public class PaymentService {
 
     public UUID savePayment(final PaymentCreateRequestDto paymentCreateRequestDto) {
 
-        Payment payment = Payment.of(paymentCreateRequestDto.getBank(), paymentCreateRequestDto.getOrderId(),
+        Payment payment = Payment.createPayment(paymentCreateRequestDto.getBank(), paymentCreateRequestDto.getOrderId(),
                 paymentCreateRequestDto.getPrice(), paymentCreateRequestDto.getIsDeleted());
         paymentRepository.save(payment);
         return payment.getId();
@@ -52,8 +52,8 @@ public class PaymentService {
 
 
     @Transactional(readOnly = true)
-    public Page<PaymentGetResponseDto> searchPayments(final PaymentSearchDto paymentSearchDto, final Pageable pageable) {
-        return paymentRepository.searchPayments(paymentSearchDto, pageable);
+    public Page<PaymentGetResponseDto> searchPayments(final PaymentSearchRequestDto request, final Pageable pageable) {
+        return paymentRepository.searchPayments(request.getBank(), request.getState(), request.getPrice(), pageable);
     }
 
 
