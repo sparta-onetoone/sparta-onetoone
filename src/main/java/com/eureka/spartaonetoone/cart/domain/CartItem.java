@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.domain;
+package com.eureka.spartaonetoone.cart.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

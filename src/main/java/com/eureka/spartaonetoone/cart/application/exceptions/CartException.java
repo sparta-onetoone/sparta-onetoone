@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.application.exceptions;
+package com.eureka.spartaonetoone.cart.application.exceptions;
 
 import org.springframework.http.HttpStatus;
 

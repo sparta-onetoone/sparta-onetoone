@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.application.dtos.request;
+package com.eureka.spartaonetoone.cart.application.dtos.request;
 
 import java.util.UUID;
 
