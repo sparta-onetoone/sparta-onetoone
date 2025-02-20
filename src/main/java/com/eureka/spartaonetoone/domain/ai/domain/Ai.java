@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
-import com.eureka.spartaonetoone.domain.ai.application.dto.request.AiRequestDto;
-import com.eureka.spartaonetoone.domain.ai.application.dto.response.AiResponseDto;
+import com.eureka.spartaonetoone.domain.ai.application.dto.request.AiProductRecommendationRequestDto;
+import com.eureka.spartaonetoone.domain.ai.application.dto.response.AiProductRecommendationResponseDto;
 import com.eureka.spartaonetoone.domain.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -48,7 +48,8 @@ public class Ai extends TimeStamp {
 	}
 
 	// 정적 팩토리 메서드
-	public static Ai fromRequestDtoAndResponseDtoToAI(AiRequestDto requestDto, AiResponseDto responseDto, User user) {
+	public static Ai fromRequestDtoAndResponseDtoToAI(AiProductRecommendationRequestDto requestDto,
+		AiProductRecommendationResponseDto responseDto, User user) {
 		return Ai.builder()
 			.prompt(requestDto.getPrompt())
 			.answer(responseDto.getAnswer())

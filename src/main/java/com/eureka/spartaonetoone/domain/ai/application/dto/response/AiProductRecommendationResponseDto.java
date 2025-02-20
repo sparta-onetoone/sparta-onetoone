@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AiResponseDto {
+public class AiProductRecommendationResponseDto {
 	private String answer;
 
 }
