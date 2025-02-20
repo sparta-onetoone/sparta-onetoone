@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.eureka.spartaonetoone.domain.cart.domain.Cart;
+import com.eureka.spartaonetoone.cart.domain.Cart;
+import com.eureka.spartaonetoone.cart.domain.repository.CartRepository;
 
 @DataJpaTest
 @ActiveProfiles("test")

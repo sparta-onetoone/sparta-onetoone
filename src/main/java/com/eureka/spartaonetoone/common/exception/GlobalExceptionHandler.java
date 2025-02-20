@@ -6,12 +6,34 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> ex(MethodArgumentNotValidException ex) {
+        List<FieldError> fieldErrors = ex.getFieldErrors();
+
+        List<DataFormatError.ErrorField> errorFields = new ArrayList<>();
+        fieldErrors.forEach(errorField -> {
+            errorFields.add(new DataFormatError.ErrorField(errorField.getRejectedValue(), errorField.getField(), errorField.getDefaultMessage()));
+        });
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(DataFormatError.of("올바른 입력값을 입력해주세요.", errorFields));
+
+    }
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> dataIntegrityViolationExceptionHandle(final DataIntegrityViolationException ex) {
@@ -38,4 +60,26 @@ public class GlobalExceptionHandler {
             return new ErrorMessage(message, errorCode);
         }
     }
+
+    @AllArgsConstructor
+    @Getter
+    public static class DataFormatError {
+        private String message;
+        private List<ErrorField> errorFields;
+
+        public static DataFormatError of(String message, List<ErrorField> errorFields) {
+            return new DataFormatError(message, errorFields);
+        }
+
+        @AllArgsConstructor
+        @Getter
+        public static class ErrorField {
+            private Object value;
+            private String field;
+            private String message;
+        }
+
+    }
+
+
 }
