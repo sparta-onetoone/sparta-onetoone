@@ -6,7 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
-
+//
 	private final Object principal; // 사용자 ID 또는 UserDetails 객체
 	private Object credentials;     // 인증 정보 (비밀번호 등)
 
