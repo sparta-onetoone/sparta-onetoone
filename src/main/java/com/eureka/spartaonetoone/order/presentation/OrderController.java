@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.order.presentation;
+package com.eureka.spartaonetoone.order.presentation;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
-import com.eureka.spartaonetoone.domain.order.application.OrderService;
-import com.eureka.spartaonetoone.domain.order.application.dtos.request.OrderCreateRequestDto;
-import com.eureka.spartaonetoone.domain.order.application.dtos.response.OrderCreateResponseDto;
-import com.eureka.spartaonetoone.domain.order.application.dtos.response.OrderSearchResponseDto;
+import com.eureka.spartaonetoone.order.application.OrderService;
+import com.eureka.spartaonetoone.order.application.dtos.request.OrderCreateRequestDto;
+import com.eureka.spartaonetoone.order.application.dtos.response.OrderCreateResponseDto;
+import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResponseDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

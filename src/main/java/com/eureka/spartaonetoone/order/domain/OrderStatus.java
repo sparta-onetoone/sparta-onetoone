@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.order.domain;
+package com.eureka.spartaonetoone.order.domain;
 
 public enum OrderStatus {
 	PENDING,

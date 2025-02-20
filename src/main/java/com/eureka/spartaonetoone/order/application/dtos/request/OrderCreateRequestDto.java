@@ -1,8 +1,8 @@
-package com.eureka.spartaonetoone.domain.order.application.dtos.request;
+package com.eureka.spartaonetoone.order.application.dtos.request;
 
 import java.util.UUID;
 
-import com.eureka.spartaonetoone.domain.order.domain.OrderType;
+import com.eureka.spartaonetoone.order.domain.OrderType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotNull;

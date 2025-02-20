@@ -1,8 +1,8 @@
-package com.eureka.spartaonetoone.domain.order.application.dtos;
+package com.eureka.spartaonetoone.order.application.dtos;
 
 import java.util.UUID;
 
-import com.eureka.spartaonetoone.domain.order.domain.OrderItem;
+import com.eureka.spartaonetoone.order.domain.OrderItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;

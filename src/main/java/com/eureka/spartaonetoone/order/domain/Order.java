@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.order.domain;
+package com.eureka.spartaonetoone.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

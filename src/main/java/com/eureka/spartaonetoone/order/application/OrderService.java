@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.order.application;
+package com.eureka.spartaonetoone.order.application;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.eureka.spartaonetoone.common.client.CartClient;
 import com.eureka.spartaonetoone.common.dtos.response.CartResponse;
-import com.eureka.spartaonetoone.domain.order.application.dtos.request.OrderCreateRequestDto;
-import com.eureka.spartaonetoone.domain.order.application.dtos.response.OrderSearchResponseDto;
-import com.eureka.spartaonetoone.domain.order.application.exceptions.OrderException;
-import com.eureka.spartaonetoone.domain.order.domain.Order;
-import com.eureka.spartaonetoone.domain.order.domain.OrderItem;
-import com.eureka.spartaonetoone.domain.order.domain.repository.OrderRepository;
+import com.eureka.spartaonetoone.order.application.dtos.request.OrderCreateRequestDto;
+import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResponseDto;
+import com.eureka.spartaonetoone.order.application.exceptions.OrderException;
+import com.eureka.spartaonetoone.order.domain.Order;
+import com.eureka.spartaonetoone.order.domain.OrderItem;
+import com.eureka.spartaonetoone.order.domain.repository.OrderRepository;
 
 import lombok.RequiredArgsConstructor;
 

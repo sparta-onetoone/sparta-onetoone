@@ -1,12 +1,12 @@
-package com.eureka.spartaonetoone.domain.order.application.dtos.response;
+package com.eureka.spartaonetoone.order.application.dtos.response;
 
 import java.util.List;
 import java.util.UUID;
 
-import com.eureka.spartaonetoone.domain.order.application.dtos.OrderItemInfo;
-import com.eureka.spartaonetoone.domain.order.domain.Order;
-import com.eureka.spartaonetoone.domain.order.domain.OrderStatus;
-import com.eureka.spartaonetoone.domain.order.domain.OrderType;
+import com.eureka.spartaonetoone.order.application.dtos.OrderItemInfo;
+import com.eureka.spartaonetoone.order.domain.Order;
+import com.eureka.spartaonetoone.order.domain.OrderStatus;
+import com.eureka.spartaonetoone.order.domain.OrderType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;
