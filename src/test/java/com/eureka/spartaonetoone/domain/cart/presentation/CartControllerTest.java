@@ -16,10 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.eureka.spartaonetoone.cart.presentation.CartController;
 import com.eureka.spartaonetoone.common.config.SecurityConfig;
-import com.eureka.spartaonetoone.domain.cart.application.CartService;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.domain.Cart;
+import com.eureka.spartaonetoone.cart.application.CartService;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartCreateRequestDto;
+import com.eureka.spartaonetoone.cart.domain.Cart;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(

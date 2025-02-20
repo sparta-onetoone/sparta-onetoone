@@ -1,8 +1,8 @@
-package com.eureka.spartaonetoone.domain.cart.application.dtos;
+package com.eureka.spartaonetoone.cart.application.dtos;
 
 import java.util.UUID;
 
-import com.eureka.spartaonetoone.domain.cart.domain.CartItem;
+import com.eureka.spartaonetoone.cart.domain.CartItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;

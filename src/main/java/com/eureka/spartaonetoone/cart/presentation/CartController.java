@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.presentation;
+package com.eureka.spartaonetoone.cart.presentation;
 
 import java.util.UUID;
 
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eureka.spartaonetoone.cart.application.CartService;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
-import com.eureka.spartaonetoone.domain.cart.application.CartService;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemUpdateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.response.CartCreateResponseDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.response.CartSearchResponseDto;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartCreateRequestDto;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartItemCreateRequestDto;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartItemUpdateRequestDto;
+import com.eureka.spartaonetoone.cart.application.dtos.response.CartCreateResponseDto;
+import com.eureka.spartaonetoone.cart.application.dtos.response.CartSearchResponseDto;
 
 import lombok.RequiredArgsConstructor;
 

@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartCreateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemCreateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.dtos.request.CartItemUpdateRequestDto;
-import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartException;
-import com.eureka.spartaonetoone.domain.cart.application.exceptions.CartItemException;
-import com.eureka.spartaonetoone.domain.cart.domain.Cart;
-import com.eureka.spartaonetoone.domain.cart.domain.CartItem;
+import com.eureka.spartaonetoone.cart.application.CartService;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartCreateRequestDto;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartItemCreateRequestDto;
+import com.eureka.spartaonetoone.cart.application.dtos.request.CartItemUpdateRequestDto;
+import com.eureka.spartaonetoone.cart.application.exceptions.CartException;
+import com.eureka.spartaonetoone.cart.application.exceptions.CartItemException;
+import com.eureka.spartaonetoone.cart.domain.Cart;
+import com.eureka.spartaonetoone.cart.domain.CartItem;
 
 import jakarta.transaction.Transactional;
 

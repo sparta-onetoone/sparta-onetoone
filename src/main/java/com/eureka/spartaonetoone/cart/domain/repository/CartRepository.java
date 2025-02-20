@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.domain.repository;
+package com.eureka.spartaonetoone.cart.domain.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.eureka.spartaonetoone.domain.cart.domain.Cart;
+import com.eureka.spartaonetoone.cart.domain.Cart;
 
 public interface CartRepository extends JpaRepository<Cart, UUID> {
 
