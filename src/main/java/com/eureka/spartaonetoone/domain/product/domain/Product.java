@@ -1,8 +1,6 @@
 package com.eureka.spartaonetoone.domain.product.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
-import com.eureka.spartaonetoone.domain.product.application.dtos.ProductCreateRequestDto;
-import com.eureka.spartaonetoone.domain.product.application.dtos.ProductUpdateRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -48,14 +46,15 @@ public class Product extends TimeStamp {
     @NotNull
     private Boolean isDeleted;
 
-    public static Product from(final ProductCreateRequestDto productCreateRequestDto) {
+    public static Product of(final UUID storeId, final String name
+            , final String description, final Integer price, final Integer quantity, final Boolean isDeleted) {
         return Product.builder()
-                .storeId(productCreateRequestDto.getStoreId())
-                .name(productCreateRequestDto.getName())
-                .description(productCreateRequestDto.getDescription())
-                .price(productCreateRequestDto.getPrice())
-                .quantity(productCreateRequestDto.getQuantity())
-                .isDeleted(productCreateRequestDto.getIsDeleted())
+                .storeId(storeId)
+                .name(name)
+                .description(description)
+                .price(price)
+                .quantity(quantity)
+                .isDeleted(isDeleted)
                 .build();
     }
 
@@ -75,18 +74,18 @@ public class Product extends TimeStamp {
         this.quantity = quantity;
     }
 
-    public void updateProduct(ProductUpdateRequestDto productUpdateRequestDto) {
-        if (!this.quantity.equals(productUpdateRequestDto.getQuantity())) {
-            updateQuantity(productUpdateRequestDto.getQuantity());
+    public void updateProduct(final String name, final String description, Integer price, Integer quantity) {
+        if (!this.quantity.equals(quantity)) {
+            updateQuantity(quantity);
         }
-        if (!this.price.equals(productUpdateRequestDto.getPrice())) {
-            updatePrice(productUpdateRequestDto.getPrice());
+        if (!this.price.equals(price)) {
+            updatePrice(price);
         }
-        if (!this.name.equals(productUpdateRequestDto.getName())) {
-            updateName(productUpdateRequestDto.getName());
+        if (!this.name.equals(name)) {
+            updateName(name);
         }
-        if (!this.description.equals(productUpdateRequestDto.getDescription())) {
-            updateDescription(productUpdateRequestDto.getDescription());
+        if (!this.description.equals(description)) {
+            updateDescription(description);
         }
     }
 
