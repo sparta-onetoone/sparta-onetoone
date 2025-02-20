@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.store.application.dto;
+package com.eureka.spartaonetoone.store.application.dtos.response;
 
-import com.eureka.spartaonetoone.store.domain.entity.Store;
+import com.eureka.spartaonetoone.store.domain.Store;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +32,7 @@ public class StoreResponseDto {
 	private LocalDateTime deletedAt;
 
 	// 여기서는 from이 맞다. 하나니깐
-	public static StoreResponseDto of(final Store store) {
+	public static StoreResponseDto from(final Store store) {
 		return Builder()
 			.storeId(store.getId())
 			.userId(store.getUserId())

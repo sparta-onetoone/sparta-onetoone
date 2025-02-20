@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.store.application.dto;
+package com.eureka.spartaonetoone.store.application.dtos.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

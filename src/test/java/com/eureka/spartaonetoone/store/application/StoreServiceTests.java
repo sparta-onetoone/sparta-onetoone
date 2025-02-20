@@ -1,14 +1,13 @@
-package com.eureka.spartaonetoone.store.application.service;
+package com.eureka.spartaonetoone.store.application;
 
 import com.eureka.spartaonetoone.common.client.ReviewClient;
-import com.eureka.spartaonetoone.common.client.dto.ReviewRequest;
-import com.eureka.spartaonetoone.common.client.dto.ReviewResponse;
+import com.eureka.spartaonetoone.common.dtos.response.ReviewResponse;
 import com.eureka.spartaonetoone.store.application.exception.StoreException;
-import com.eureka.spartaonetoone.store.domain.entity.Store;
-import com.eureka.spartaonetoone.store.domain.entity.StoreState;
+import com.eureka.spartaonetoone.store.domain.Store;
+import com.eureka.spartaonetoone.store.domain.StoreState;
 import com.eureka.spartaonetoone.store.domain.repository.StoreRepository;
-import com.eureka.spartaonetoone.store.application.dto.StoreRequestDto;
-import com.eureka.spartaonetoone.store.application.dto.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;
+import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

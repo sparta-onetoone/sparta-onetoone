@@ -1,7 +1,8 @@
-package com.eureka.spartaonetoone.store.domain.entity;
+package com.eureka.spartaonetoone.store.domain;
 
 import jakarta.persistence.*;
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

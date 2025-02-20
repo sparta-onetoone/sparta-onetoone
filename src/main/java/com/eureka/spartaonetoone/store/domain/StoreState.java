@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.store.domain.entity;
+package com.eureka.spartaonetoone.store.domain;
 
 public enum StoreState {
 	OPEN,

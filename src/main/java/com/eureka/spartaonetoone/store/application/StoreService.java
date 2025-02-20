@@ -1,14 +1,14 @@
-package com.eureka.spartaonetoone.store.application.service;
+package com.eureka.spartaonetoone.store.application;
 
 import com.eureka.spartaonetoone.common.client.OrderClient;
 import com.eureka.spartaonetoone.common.client.ReviewClient;
-import com.eureka.spartaonetoone.common.client.dto.ReviewResponse;
+import com.eureka.spartaonetoone.common.dtos.response.ReviewResponse;
 import com.eureka.spartaonetoone.store.application.exception.StoreException;
-import com.eureka.spartaonetoone.store.domain.entity.Store;
-import com.eureka.spartaonetoone.store.domain.entity.StoreState;
+import com.eureka.spartaonetoone.store.domain.Store;
+import com.eureka.spartaonetoone.store.domain.StoreState;
 import com.eureka.spartaonetoone.store.domain.repository.StoreRepository;
-import com.eureka.spartaonetoone.store.application.dto.StoreRequestDto;
-import com.eureka.spartaonetoone.store.application.dto.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;
+import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class StoreService {
 	}
 	// 엔티티 -> DTO 변환 메서드
 	private StoreResponseDto convertEntityToDto(Store store) {
-		return StoreResponseDto.of(store);
+		return StoreResponseDto.from(store);
 	}
 
 	// DTO -> 엔티티 변환 메서드 (Service 내부 변환 로직) - StoreRequestDto의 값을 추출하여, Store 엔티티를 생성하는 데 사용
@@ -48,7 +48,7 @@ public class StoreService {
 			stateEnum = StoreState.OPEN;
 		}
 		// Service 계층에서 필요한 필드만 추출하여 엔티티 생성 (순환참조를 피하기 위해 DTO에 직접 의존하지 않음)
-		return Store.of(
+		return Store.createStore(
 			dto.getUserId(),
 			dto.getName(),
 			stateEnum,
@@ -86,7 +86,7 @@ public class StoreService {
 	public StoreResponseDto updateStore(UUID storeId, StoreRequestDto dto) {
 		// storeId에 해당하는 가게를 조회 (없으면 예외 발생)
 		Store store = storeRepository.findById(storeId)
-			.orElseThrow(() -> new StoreException.StoreNotFoundException());
+			.orElseThrow(StoreException.StoreNotFoundException::new);
 
 		// DTO의 state 값을 대문자로 변환하여 ENUM으로 매핑, 오류 발생 시 기존 값을 사용
 		StoreState stateEnum;

@@ -1,15 +1,14 @@
-package com.eureka.spartaonetoone.store.presentation.controller;
+package com.eureka.spartaonetoone.store.presentation;
 
-import com.eureka.spartaonetoone.store.application.service.StoreService;
-import com.eureka.spartaonetoone.store.application.dto.StoreRequestDto;	//
-import com.eureka.spartaonetoone.store.application.dto.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.StoreService;
+import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;	//
+import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
