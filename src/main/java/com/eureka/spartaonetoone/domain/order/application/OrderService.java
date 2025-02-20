@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eureka.spartaonetoone.common.client.CartClient;
-import com.eureka.spartaonetoone.common.dtos.CartResponse;
+import com.eureka.spartaonetoone.common.dtos.response.CartResponse;
 import com.eureka.spartaonetoone.domain.order.application.dtos.request.OrderCreateRequestDto;
 import com.eureka.spartaonetoone.domain.order.application.dtos.response.OrderSearchResponseDto;
 import com.eureka.spartaonetoone.domain.order.application.exceptions.OrderException;
@@ -81,6 +81,18 @@ public class OrderService {
 		 - User Role 이 USER 일 경우, 본인 주문만 조회 가능
 		 */
 		List<Order> orders = orderRepository.findAllActiveOrder();
+
+		return orders.stream()
+			.map(OrderSearchResponseDto::from)
+			.toList();
+	}
+
+	public List<OrderSearchResponseDto> getOrdersByStore(UUID storeId) {
+		/*
+		TODO : getOrdersByStore
+		 - User Role 이 ADMIN, STORE 일 경우만 조회 가능
+		 */
+		List<Order> orders = orderRepository.findAllActiveOrderByStoreId(storeId);
 
 		return orders.stream()
 			.map(OrderSearchResponseDto::from)

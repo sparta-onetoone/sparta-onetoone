@@ -16,4 +16,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
 	@Query("SELECT o FROM Order o WHERE o.isDeleted = false")
 	List<Order> findAllActiveOrder();
+
+	@Query("SELECT o FROM Order o WHERE o.storeId = :storeId AND o.isDeleted = false")
+	List<Order> findAllActiveOrderByStoreId(UUID storeId);
 }
