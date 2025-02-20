@@ -61,22 +61,46 @@ public class StoreService {
 
 	// 가게 등록 - 클라이언트로부터 전달받은 StoreRequestDto를 변환하여 Store 엔티티로 생성하고, 저장한 후 DTO로 반환
 	public StoreResponseDto createStore(StoreRequestDto dto) {
-		Store store = convertDtoToEntity(dto);
+		// given : DTO의 state 문자열을 파싱하여 ENUM으로 변환
+		StoreState stateEnum = parseStoreState(dto.getState());
+		// given : DTO의 데이터를 이용해 Store 엔티티를 생성 (null 값에 대해 기본값 적용)
+		Store store = Store.createStore(
+			dto.getUserId(),
+			dto.getName(),
+			stateEnum,
+			dto.getTellNumber(),
+			dto.getDescription(),
+			dto.getMinOrderPrice() != null ? dto.getMinOrderPrice() : 0,
+			dto.getDeliveryFee() != null ? dto.getDeliveryFee() : 0,
+			dto.getRating() != null ? dto.getRating() : 0.0f,
+			dto.getReviewCount() != null ? dto.getReviewCount() : 0,
+			dto.getCategoryId()
+		);
+		// when : 엔티티를 Repository를 통해 저장
 		Store savedStore = storeRepository.save(store);
-		return StoreResponseDto.of(savedStore);
+		// then : 저장된 엔티티를 DTO로 변환하여 반환
+		return StoreResponseDto.from(savedStore);
+	}
+	// state 문자열을 ENUM으로 파싱하는 헬퍼 메서드
+	private StoreState parseStoreState(String state) {
+		try {
+			return state != null ? StoreState.valueOf(state.toUpperCase()) : StoreState.OPEN;
+		} catch (IllegalArgumentException e) {
+			return StoreState.OPEN;
+		}
 	}
 
 	// 특정 가게 조회
 	public StoreResponseDto getStoreById(UUID storeId) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(StoreException.StoreNotFoundException::new);
-		return StoreResponseDto.of(store);
+		return StoreResponseDto.from(store);
 	}
 
 	// 전체 가게 조회(페이지네이션 지원) - Pageable을 사용해 Store 엔티티를 페이지 단위로 조회하고, 각 Entity를 DTO로 변환하여 Page 객체로 반환
 	public Page<StoreResponseDto> getAllStores(Pageable pageable) {
 		return storeRepository.findAll(pageable)
-			.map(StoreResponseDto::of);
+			.map(StoreResponseDto::from);
 	}
 
 	// 가게 수정 - 특정 storeId에 해당하는 Entity를 조회한 후, DTO의 값으로 업데이트하고 저장
@@ -104,7 +128,7 @@ public class StoreService {
 			dto.getCategoryId()
 		);
 		Store updatedStore = storeRepository.save(store);
-		return StoreResponseDto.of(updatedStore);
+		return StoreResponseDto.from(updatedStore);
 	}
 
 	// 주어진 storeId로 Entity를 조회한 후, markDeleted()를 호출하여 삭제된 것처럼 표시하고 저장
