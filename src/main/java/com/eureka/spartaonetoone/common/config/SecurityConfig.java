@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.eureka.spartaonetoone.domain.auth.config.JwtSecurityFilter;
-import com.eureka.spartaonetoone.domain.user.infrastructure.security.UserDetailsServiceImpl;
+import com.eureka.spartaonetoone.auth.config.JwtSecurityFilter;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
