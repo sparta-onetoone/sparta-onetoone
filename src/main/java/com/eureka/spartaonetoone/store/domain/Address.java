@@ -1,7 +1,8 @@
-package com.eureka.spartaonetoone.store.domain.entity;
+package com.eureka.spartaonetoone.store.domain;
 
 import jakarta.persistence.*;
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class Address extends TimeStamp {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "adress_id")
+	@Column(name = "address_id")
 	private UUID id;
 
 	// Address가 소유자로서 Store와 1:1 연관관계로 연결됨
@@ -52,8 +53,8 @@ public class Address extends TimeStamp {
 	}
 
 	// 정적 팩토리 메서드
-	public static Address from(Store store, String city, String district, String loadName, String zipCode, String detail) {
-		return Address.builder()
+	public static Address createAddress(Store store, String city, String district, String loadName, String zipCode, String detail) {
+		return builder()
 			.store(store)
 			.city(city)
 			.district(district)
@@ -64,7 +65,7 @@ public class Address extends TimeStamp {
 	}
 
 	// 엔티티 내부 업데이트 메서드
-	public void updateFrom(String city, String district, String loadName, String zipCode, String detail) {
+	public void update(String city, String district, String loadName, String zipCode, String detail) {
 		this.city = city;
 		this.district = district;
 		this.loadName = loadName;

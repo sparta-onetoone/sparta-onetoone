@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.store.application.dto;
+package com.eureka.spartaonetoone.store.application.dtos;
 
-import com.eureka.spartaonetoone.store.domain.entity.Store;
+import com.eureka.spartaonetoone.store.domain.Store;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

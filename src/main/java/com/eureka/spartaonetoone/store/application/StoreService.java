@@ -1,14 +1,15 @@
-package com.eureka.spartaonetoone.store.application.service;
+package com.eureka.spartaonetoone.store.application;
 
 import com.eureka.spartaonetoone.common.client.OrderClient;
 import com.eureka.spartaonetoone.common.client.ReviewClient;
-import com.eureka.spartaonetoone.common.client.dto.ReviewResponse;
+import com.eureka.spartaonetoone.common.dtos.response.ReviewResponse;
+import com.eureka.spartaonetoone.common.dtos.response.OrderResponse;
 import com.eureka.spartaonetoone.store.application.exception.StoreException;
-import com.eureka.spartaonetoone.store.domain.entity.Store;
-import com.eureka.spartaonetoone.store.domain.entity.StoreState;
+import com.eureka.spartaonetoone.store.domain.Store;
+import com.eureka.spartaonetoone.store.domain.StoreState;
 import com.eureka.spartaonetoone.store.domain.repository.StoreRepository;
-import com.eureka.spartaonetoone.store.application.dto.StoreRequestDto;
-import com.eureka.spartaonetoone.store.application.dto.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.dtos.StoreRequestDto;
+import com.eureka.spartaonetoone.store.application.dtos.StoreResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,6 @@ public class StoreService {
 		this.orderClient = orderClient;
 		this.reviewClient = reviewClient;
 	}
-	// 엔티티 -> DTO 변환 메서드
-	private StoreResponseDto convertEntityToDto(Store store) {
-		return StoreResponseDto.of(store);
-	}
 
 	// DTO -> 엔티티 변환 메서드 (Service 내부 변환 로직) - StoreRequestDto의 값을 추출하여, Store 엔티티를 생성하는 데 사용
 	private Store convertDtoToEntity(StoreRequestDto dto) {
@@ -48,7 +45,7 @@ public class StoreService {
 			stateEnum = StoreState.OPEN;
 		}
 		// Service 계층에서 필요한 필드만 추출하여 엔티티 생성 (순환참조를 피하기 위해 DTO에 직접 의존하지 않음)
-		return Store.of(
+		return Store.createStore(
 			dto.getUserId(),
 			dto.getName(),
 			stateEnum,
@@ -66,27 +63,27 @@ public class StoreService {
 	public StoreResponseDto createStore(StoreRequestDto dto) {
 		Store store = convertDtoToEntity(dto);
 		Store savedStore = storeRepository.save(store);
-		return convertEntityToDto(savedStore);
+		return StoreResponseDto.of(savedStore);
 	}
 
 	// 특정 가게 조회
 	public StoreResponseDto getStoreById(UUID storeId) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(StoreException.StoreNotFoundException::new);
-		return convertEntityToDto(store);
+		return StoreResponseDto.of(store);
 	}
 
 	// 전체 가게 조회(페이지네이션 지원) - Pageable을 사용해 Store 엔티티를 페이지 단위로 조회하고, 각 Entity를 DTO로 변환하여 Page 객체로 반환
 	public Page<StoreResponseDto> getAllStores(Pageable pageable) {
 		return storeRepository.findAll(pageable)
-			.map(this::convertEntityToDto);
+			.map(StoreResponseDto::of);
 	}
 
 	// 가게 수정 - 특정 storeId에 해당하는 Entity를 조회한 후, DTO의 값으로 업데이트하고 저장
 	public StoreResponseDto updateStore(UUID storeId, StoreRequestDto dto) {
 		// storeId에 해당하는 가게를 조회 (없으면 예외 발생)
 		Store store = storeRepository.findById(storeId)
-			.orElseThrow(() -> new StoreException.StoreNotFoundException());
+			.orElseThrow(StoreException.StoreNotFoundException::new);
 
 		// DTO의 state 값을 대문자로 변환하여 ENUM으로 매핑, 오류 발생 시 기존 값을 사용
 		StoreState stateEnum;
@@ -107,7 +104,7 @@ public class StoreService {
 			dto.getCategoryId()
 		);
 		Store updatedStore = storeRepository.save(store);
-		return convertEntityToDto(updatedStore);
+		return StoreResponseDto.of(updatedStore);
 	}
 
 	// 주어진 storeId로 Entity를 조회한 후, markDeleted()를 호출하여 삭제된 것처럼 표시하고 저장

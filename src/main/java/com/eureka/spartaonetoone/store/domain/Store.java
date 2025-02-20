@@ -1,7 +1,8 @@
-package com.eureka.spartaonetoone.store.domain.entity;
+package com.eureka.spartaonetoone.store.domain;
 
 import jakarta.persistence.*;
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -77,7 +78,7 @@ public class Store extends TimeStamp {
 
 	// 정적 팩토리 메서드: Service에서 DTO의 값을 추출해 호출할 수 있도록 함
 	// of도 좋지만 createstore
-	public static Store of(UUID userId, String name, StoreState state, String tellNumber,
+	public static Store createStore(UUID userId, String name, StoreState state, String tellNumber,
 		String description, Integer minOrderPrice, Integer deliveryFee,
 		Float rating, Integer reviewCount, UUID categoryId) {
 		return builder()

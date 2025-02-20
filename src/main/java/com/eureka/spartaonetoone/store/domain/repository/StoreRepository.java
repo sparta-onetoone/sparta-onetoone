@@ -1,6 +1,6 @@
 package com.eureka.spartaonetoone.store.domain.repository;
 
-import com.eureka.spartaonetoone.store.domain.entity.Store;
+import com.eureka.spartaonetoone.store.domain.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,15 +1,14 @@
-package com.eureka.spartaonetoone.store.presentation.controller;
+package com.eureka.spartaonetoone.store.presentation;
 
-import com.eureka.spartaonetoone.store.application.service.StoreService;
-import com.eureka.spartaonetoone.store.application.dto.StoreRequestDto;	//
-import com.eureka.spartaonetoone.store.application.dto.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.StoreService;
+import com.eureka.spartaonetoone.store.application.dtos.StoreRequestDto;	//
+import com.eureka.spartaonetoone.store.application.dtos.StoreResponseDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -48,7 +47,8 @@ public class StoreController {
 
 	// 가게 수정
 	@PutMapping("/{store_id}")
-	public ResponseEntity<StoreResponseDto> updateStore(@PathVariable(name = "store_id") UUID storeId, @RequestBody StoreRequestDto storeRequestDto) {
+	public ResponseEntity<StoreResponseDto> updateStore(@PathVariable(name = "store_id") UUID storeId,
+		@RequestBody StoreRequestDto storeRequestDto) {
 		StoreResponseDto responseDto = storeService.updateStore(storeId, storeRequestDto);
 		return ResponseEntity.ok(responseDto);
 	}
