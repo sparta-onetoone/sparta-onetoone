@@ -87,6 +87,7 @@ public class OrderService {
 			.toList();
 	}
 
+	@Transactional(readOnly = true)
 	public List<OrderSearchResponseDto> getOrdersByStore(UUID storeId) {
 		/*
 		TODO : getOrdersByStore
@@ -97,5 +98,14 @@ public class OrderService {
 		return orders.stream()
 			.map(OrderSearchResponseDto::from)
 			.toList();
+	}
+
+	@Transactional
+	public void deleteOrder(UUID orderId) {
+		// TODO : user_id, store_id, role 에 따라 삭제 권한 확인
+		Order order = orderRepository.findActiveOrderById(orderId)
+			.orElseThrow(OrderException.NotFound::new);
+
+		order.delete();
 	}
 }

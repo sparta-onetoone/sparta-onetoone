@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.domain.order.domain;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -50,6 +51,11 @@ public class OrderItem extends TimeStamp {
 
 	@Column(nullable = false)
 	private boolean isDeleted;
+
+	public void delete() {
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
+	}
 
 	public static OrderItem createOrderItem(Order order, UUID productId, String productName, String productImage, int quantity, int price) {
 		return OrderItem.builder()

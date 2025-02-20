@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.domain.order.domain;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -66,6 +67,13 @@ public class Order extends TimeStamp {
 		totalPrice = orderItems.stream()
 			.mapToInt(OrderItem::getPrice)
 			.sum();
+	}
+
+	public void delete() {
+		this.isDeleted = true;
+		this.deletedAt = LocalDateTime.now();
+		this.status = OrderStatus.CANCELED;
+		this.orderItems.forEach(OrderItem::delete);
 	}
 
 	public static Order createOrder(UUID userId, UUID storeId, OrderType type, String requests) {

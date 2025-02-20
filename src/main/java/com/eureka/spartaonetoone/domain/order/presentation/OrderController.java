@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,5 +57,11 @@ public class OrderController {
 			message = "주문 목록 조회 성공";
 		}
 		return ResponseEntity.ok(CommonResponse.success(response, message));
+	}
+
+	@DeleteMapping("/{order_id}")
+	public ResponseEntity<CommonResponse<?>> deleteOrder(@PathVariable("order_id") UUID orderId) {
+		orderService.deleteOrder(orderId);
+		return ResponseEntity.ok(CommonResponse.success(null, "주문 삭제 성공"));
 	}
 }
