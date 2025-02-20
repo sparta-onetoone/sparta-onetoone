@@ -1,11 +1,13 @@
 package com.eureka.spartaonetoone.domain.useraddress.application.dtos.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor//테스트용
 public class UserAddressRequestDto {
 
 	@NotBlank(message = "시/도는 필수 입력 값입니다.")

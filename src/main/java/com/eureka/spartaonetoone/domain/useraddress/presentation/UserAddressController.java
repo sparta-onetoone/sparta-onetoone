@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,5 +63,15 @@ public class UserAddressController {
 
 		UserAddressResponseDto deletedAddress = userAddressService.deleteAddress(addressId);
 		return ResponseEntity.ok(CommonResponse.success(deletedAddress, "주소 삭제 성공"));
+	}
+
+	// 주소 수정
+	@PutMapping("/{address_id}")
+	public ResponseEntity<CommonResponse<UserAddressResponseDto>> updateAddress(
+		@PathVariable("address_id") UUID addressId,
+		@Valid @RequestBody UserAddressRequestDto request) {
+
+		UserAddressResponseDto updatedAddress = userAddressService.updateAddress(addressId, request);
+		return ResponseEntity.ok(CommonResponse.success(updatedAddress, "주소 수정 성공"));
 	}
 }

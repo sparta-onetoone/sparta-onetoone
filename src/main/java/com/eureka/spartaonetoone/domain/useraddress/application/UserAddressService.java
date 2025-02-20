@@ -39,15 +39,15 @@ public class UserAddressService {
 		User user = userRepository.findById(userId)
 			.orElseThrow(UserException.UserNotFoundException::new);
 
-		UserAddress address = UserAddress.builder()
-			.city(request.getCity())
-			.district(request.getDistrict())
-			.roadName(request.getRoadName())
-			.zipCode(request.getZipCode())
-			.detail(request.getDetail())
-			.isDeleted(false)
-			.user(user)
-			.build();
+		UserAddress address = UserAddress.create(
+			request.getCity(),
+			request.getDistrict(),
+			request.getRoadName(),
+			request.getZipCode(),
+			request.getDetail()
+		);
+
+		address.setUser(user);  // 유저와 주소 연결
 
 		UserAddress savedAddress = userAddressRepository.save(address);
 		return UserAddressResponseDto.from(savedAddress);
@@ -67,5 +67,27 @@ public class UserAddressService {
 		userAddressRepository.save(address);
 
 		return UserAddressResponseDto.from(address);
+	}
+
+	// 주소 수정 로직
+	@Transactional
+	public UserAddressResponseDto updateAddress(UUID addressId, UserAddressRequestDto request) {
+		// 주소 아이디로 기존 주소 조회
+		UserAddress address = userAddressRepository.findById(addressId)
+			.orElseThrow(AddressException.AddressNotFoundException::new);
+
+		// 수정할 내용 적용
+		address.updateAddress(
+			request.getCity(),
+			request.getDistrict(),
+			request.getRoadName(),
+			request.getZipCode(),
+			request.getDetail()
+		);
+
+		// 수정된 주소 저장
+		UserAddress updatedAddress = userAddressRepository.save(address);
+
+		return UserAddressResponseDto.from(updatedAddress); // 수정된 주소 반환
 	}
 }

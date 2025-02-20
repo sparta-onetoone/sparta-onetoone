@@ -117,7 +117,7 @@ public class User extends TimeStamp {
 	}
 
 	// 팩토리 메서드 of() 추가
-	public static User of(String username, String email, String password, String nickname, String phoneNumber,
+	public static User create(String username, String email, String password, String nickname, String phoneNumber,
 		UserRole role) {
 		User user = new User();
 		user.username = username;

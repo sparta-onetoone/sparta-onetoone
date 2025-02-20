@@ -82,4 +82,16 @@ public class UserAddress extends TimeStamp {
 			user.getAddresses().add(this); // 양방향 관계 편의 메서드
 		}
 	}
+
+	// 팩토리 메서드 UserAddress 생성
+	public static UserAddress create(String city, String district, String roadName, String zipCode, String detail) {
+		return UserAddress.builder()
+			.city(city)
+			.district(district)
+			.roadName(roadName)
+			.zipCode(zipCode)
+			.detail(detail)
+			.isDeleted(false)  // 기본적으로 삭제되지 않음
+			.build();
+	}
 }

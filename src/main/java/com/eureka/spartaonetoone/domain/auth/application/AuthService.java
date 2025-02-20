@@ -38,7 +38,7 @@ public class AuthService {
 		}
 
 		// User 생성
-		User user = User.of(
+		User user = User.create(
 			request.getUsername(),
 			request.getEmail(),
 			passwordEncoder.encode(request.getPassword()),
@@ -49,13 +49,13 @@ public class AuthService {
 
 		// 회원가입 요청에서 주소 정보 가져오기
 		UserAddressRequestDto addressDto = request.getAddress();
-		UserAddress userAddress = UserAddress.builder()
-			.city(addressDto.getCity())
-			.district(addressDto.getDistrict())
-			.roadName(addressDto.getRoadName())
-			.zipCode(addressDto.getZipCode())
-			.isDeleted(false)
-			.build();
+		UserAddress userAddress = UserAddress.create(
+			addressDto.getCity(),
+			addressDto.getDistrict(),
+			addressDto.getRoadName(),
+			addressDto.getZipCode(),
+			addressDto.getDetail()
+		);
 
 		user.setDefaultAddress(userAddress);
 		userRepository.save(user);
