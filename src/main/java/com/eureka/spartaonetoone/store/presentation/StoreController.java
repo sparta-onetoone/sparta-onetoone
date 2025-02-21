@@ -1,8 +1,8 @@
 package com.eureka.spartaonetoone.store.presentation;
 
 import com.eureka.spartaonetoone.store.application.StoreService;
-import com.eureka.spartaonetoone.store.application.dtos.StoreRequestDto;	//
-import com.eureka.spartaonetoone.store.application.dtos.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;	//
+import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

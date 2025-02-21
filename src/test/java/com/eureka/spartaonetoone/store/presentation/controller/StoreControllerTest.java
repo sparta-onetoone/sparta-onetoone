@@ -1,7 +1,7 @@
 package com.eureka.spartaonetoone.store.presentation.controller;
 
-import com.eureka.spartaonetoone.store.application.dtos.StoreRequestDto;
-import com.eureka.spartaonetoone.store.application.dtos.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;
+import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
