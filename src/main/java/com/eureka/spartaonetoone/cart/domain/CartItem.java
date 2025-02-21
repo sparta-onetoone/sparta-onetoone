@@ -38,6 +38,9 @@ public class CartItem extends TimeStamp {
 	private Cart cart;
 
 	@Column(nullable = false)
+	private UUID storeId;
+
+	@Column(nullable = false)
 	private UUID productId;
 
 	@Column(nullable = false)
@@ -54,8 +57,8 @@ public class CartItem extends TimeStamp {
 	@Column(nullable = false)
 	private boolean isDeleted;
 
-	public void updateQuantity(int quantity) {
-		this.price = (this.price / this.quantity) * quantity; // TODO : 로직 수정
+	public void updateQuantityAndPrice(int quantity) {
+		this.price = (this.price / this.quantity) * quantity;
 		this.quantity = quantity;
 	}
 
@@ -66,10 +69,11 @@ public class CartItem extends TimeStamp {
 		this.deletedAt = LocalDateTime.now();
 	}
 
-	public static CartItem of(Cart cart, UUID productId, String productName, String productImage, int quantity,
+	public static CartItem createCartItem(Cart cart, UUID storeId, UUID productId, String productName, String productImage, int quantity,
 		int price) {
 		return CartItem.builder()
 			.cart(cart)
+			.storeId(storeId)
 			.productId(productId)
 			.productName(productName)
 			.productImage(productImage)

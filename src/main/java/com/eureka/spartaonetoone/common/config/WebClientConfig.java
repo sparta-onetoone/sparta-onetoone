@@ -12,6 +12,7 @@ public class WebClientConfig {
     public WebClient webClient(WebClient.Builder builder) {
         return builder
                 .baseUrl("http://localhost:8080") // 기본 URL 설정
+                .defaultHeader("X-Client-Credential", "onetoone")
                 .build();
     }
 

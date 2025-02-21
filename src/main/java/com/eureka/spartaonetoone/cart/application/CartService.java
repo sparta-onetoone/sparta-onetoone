@@ -16,6 +16,10 @@ import com.eureka.spartaonetoone.cart.application.exceptions.CartItemException;
 import com.eureka.spartaonetoone.cart.domain.Cart;
 import com.eureka.spartaonetoone.cart.domain.CartItem;
 import com.eureka.spartaonetoone.cart.domain.repository.CartRepository;
+import com.eureka.spartaonetoone.common.client.ProductClient;
+import com.eureka.spartaonetoone.common.dtos.response.ProductResponse;
+import com.eureka.spartaonetoone.common.utils.CommonResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,11 +28,13 @@ import lombok.RequiredArgsConstructor;
 public class CartService {
 
 	private final int MIN_QUANTITY = 1;
+	private final String FAIL_CODE = "F000";
 
+	private final ProductClient productClient;
 	private final CartRepository cartRepository;
 
 	public Cart saveCart(CartCreateRequestDto requestDto) {
-		Cart cart = Cart.of(requestDto.getUserId());
+		Cart cart = Cart.createCart(requestDto.getUserId());
 		return cartRepository.save(cart);
 	}
 
@@ -64,9 +70,6 @@ public class CartService {
 			.orElseThrow(CartException.NotFound::new);
 
 		int quantity = requestDto.getQuantity();
-
-		// TODO : Product의 남은 수량을 확인하여 수량이 부족하다면 예외 처리하기
-
 		if(quantity < MIN_QUANTITY) {
 			throw new CartItemException.MinQuantity();
 		}
@@ -76,7 +79,12 @@ public class CartService {
 				.findFirst()
 				.orElseThrow(CartItemException.NotFound::new);
 
-		cart.updateCartItem(cartItem, quantity);
+		ProductResponse.Get product = getProduct(cartItem.getProductId());
+		if (product.getQuantity() < quantity) {
+			throw new CartItemException.NotEnoughStock();
+		}
+
+		cartItem.updateQuantityAndPrice(quantity);
 	}
 
 	@Transactional
@@ -101,18 +109,47 @@ public class CartService {
 	}
 
 	private CartItem createCartItem(Cart cart, CartItemCreateRequestDto requestDto) {
-		/*
-		 TODO-1 : Product domain에서 상품 정보를 가져와 CartItem 생성하기
-		 TODO-2 : 중복된 상품이 있는지 확인하고 중복된 상품이 있다면 수량과 가격만 증가시키기
-		 */
-		UUID productId = UUID.randomUUID();
-		String productName = "상품 이름";
-		String productImage = "상품 이미지";
-		int stock = 0; // 현재 상품의 재고
-		int productPrice = 10000;
-		int quantity = requestDto.getQuantity();
-		int price = quantity * productPrice;
+		ProductResponse.Get product = getProduct(requestDto.getProductId());
+		if(product.getQuantity() < requestDto.getQuantity()) {
+			throw new CartItemException.NotEnoughStock();
+		}
 
-		return CartItem.of(cart, productId, productName, productImage, quantity, price);
+		// 중복된 상품이 있는지 확인하고 중복된 상품이 있다면 수량과 가격만 증가시키기
+		if(isDuplicatedCartItem(cart, requestDto.getProductId())) {
+			CartItem cartItem = cart.getCartItems().stream()
+				.filter(item -> item.getProductId().equals(requestDto.getProductId()))
+				.findFirst()
+				.orElseThrow(CartItemException.NotFoundInCart::new);
+
+			cartItem.updateQuantityAndPrice(cartItem.getQuantity() + requestDto.getQuantity());
+			return cartItem;
+		}
+
+		return CartItem.createCartItem(
+			cart,
+			product.getStoreId(),
+			requestDto.getProductId(),
+			product.getName(),
+			product.getImageUrl(),
+			requestDto.getQuantity(),
+			requestDto.getQuantity() * product.getPrice()
+		);
+	}
+
+	private ProductResponse.Get getProduct(UUID productId) {
+		try {
+			CommonResponse<?> response = productClient.getProduct(productId);
+			if (response.getCode().equals(FAIL_CODE)) {
+				throw new CartItemException.NotEnoughStock();
+			}
+			return (ProductResponse.Get)response.getData();
+		} catch (JsonProcessingException e) {
+			throw new CartItemException.ProductClientError();
+		}
+	}
+
+	private boolean isDuplicatedCartItem(Cart cart, UUID productId) {
+		return cart.getCartItems().stream()
+			.anyMatch(cartItem -> cartItem.getProductId().equals(productId));
 	}
 }

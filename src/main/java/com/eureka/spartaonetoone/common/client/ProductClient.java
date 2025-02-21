@@ -35,7 +35,7 @@ public class ProductClient {
                 .block();
 
 
-        if (productGetResponse.getQuantity() > MIN_QUANTITY) {
+        if (productGetResponse.getQuantity() < MIN_QUANTITY) {
             return CommonResponse.fail();
         }
 

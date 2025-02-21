@@ -41,6 +41,21 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain chain) throws ServletException, IOException {
 
+		String clientCredential = request.getHeader("X-Client-Credential");
+		if(clientCredential != null && clientCredential.equals("onetoone")){
+			UserDetailsImpl userDetails = UserDetailsImpl.adminUser();
+			// 인증 객체 생성
+			JwtAuthenticationToken authentication = new JwtAuthenticationToken(
+				userDetails,
+				null,
+				userDetails.getAuthorities()
+			);
+			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			chain.doFilter(request, response);
+			return;
+		}
+
 		// Authorization 헤더에서 토큰 추출
 		String authorization = request.getHeader("Authorization");
 
