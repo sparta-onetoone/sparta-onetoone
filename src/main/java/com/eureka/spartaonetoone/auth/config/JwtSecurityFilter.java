@@ -41,13 +41,17 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain chain) throws ServletException, IOException {
 
-		request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
-			log.info("Header: {}={}", headerName, request.getHeader(headerName));
-		});
-
 		String clientCredential = request.getHeader("X-Client-Credential");
-		log.info("##### clientCredential: {}", clientCredential);
 		if(clientCredential != null && clientCredential.equals("onetoone")){
+			UserDetailsImpl userDetails = UserDetailsImpl.adminUser();
+			// 인증 객체 생성
+			JwtAuthenticationToken authentication = new JwtAuthenticationToken(
+				userDetails,
+				null,
+				userDetails.getAuthorities()
+			);
+			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 			chain.doFilter(request, response);
 			return;
 		}
