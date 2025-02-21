@@ -1,13 +1,11 @@
 package com.eureka.spartaonetoone.payment.presentation;
 
-import com.eureka.spartaonetoone.common.client.ProductClient;
-import com.eureka.spartaonetoone.common.dtos.ProductResponse;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.payment.application.PaymentService;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentSearchRequestDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

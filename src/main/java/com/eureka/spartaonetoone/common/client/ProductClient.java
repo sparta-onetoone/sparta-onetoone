@@ -1,20 +1,16 @@
 package com.eureka.spartaonetoone.common.client;
 
-import com.eureka.spartaonetoone.common.dtos.ProductRequest;
-import com.eureka.spartaonetoone.common.dtos.ProductResponse;
+import com.eureka.spartaonetoone.common.dtos.request.ProductRequest;
+import com.eureka.spartaonetoone.common.dtos.response.ProductResponse;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Objects;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.util.UUID;
 
 @Component

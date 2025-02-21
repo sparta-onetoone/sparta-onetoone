@@ -1,6 +1,6 @@
 package com.eureka.spartaonetoone.common.client;
 
-import com.eureka.spartaonetoone.common.dtos.PaymentRequest;
+import com.eureka.spartaonetoone.common.dtos.request.PaymentRequest;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
