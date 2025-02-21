@@ -49,7 +49,8 @@ public class AiService {
 		User user) {
 		AiProductRecommendationResponseDto responseDto = getAIResponse(requestDto);
 
-		Ai ai = Ai.fromRequestDtoAndResponseDtoToAI(requestDto, responseDto, user);
+		// 도메인 생성 메서드는 create 사용
+		Ai ai = Ai.create(requestDto, responseDto, user);
 
 		aiRepository.save(ai);
 
@@ -69,7 +70,8 @@ public class AiService {
 
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
-		return fromJSONtoResponseDto(responseEntity.getBody());
+		// 리스폰스 DTO 추출 시 from 사용
+		return AiProductRecommendationResponseDto.from(responseEntity.getBody());
 	}
 
 	/**
@@ -89,33 +91,14 @@ public class AiService {
 	 * Gemini API의 요청 형식에 맞게 데이터를 구성
 	 */
 	private Map<String, Object> buildRequestBody(AiProductRecommendationRequestDto requestDto) {
-        /* Gemini API 요청 json 형식
-        {
-            "contents":[
-            {
-                "parts":[
-                {
-                    "text":"사용자가 입력한 prompt"
-                }]
-            }]
-        }
-        */
-		// Gemini API에 보낼 Request Body
 		Map<String, Object> requestBody = new HashMap<>();
-		// 요청 형식의 "contents" : []
 		Map<String, List<Map<String, Object>>> contents = new HashMap<>();
-		// 요청 형식의 "parts" : []
 		List<Map<String, Object>> parts = new ArrayList<>();
-		// 요청 형식의 parts 내부 part Object, 여기서는 "text" : {}
 		Map<String, Object> part = new HashMap<>();
 
-		// 사용자가 입력한 prompt를 parts 내부 Object에 "text"로 추가
 		part.put("text", requestDto.getPrompt() + MAX_LENGTH_PROMPT_MESSAGE);
-		// "text"로 추가한 part를 parts 배열에 추가
 		parts.add(part);
-		// parts 배열을 contents 배열에 추가
 		contents.put("parts", parts);
-		//requestBody
 		requestBody.put("contents", contents);
 
 		return requestBody;
@@ -126,14 +109,11 @@ public class AiService {
 	 */
 	private AiProductRecommendationResponseDto fromJSONtoResponseDto(String responseEntity) {
 		JSONObject jsonResponse = new JSONObject(responseEntity);
-
-		// 첫 번째 candidates에서 텍스트 추출
 		JSONObject candidate = jsonResponse.getJSONArray("candidates").getJSONObject(0);
 		JSONObject content = candidate.getJSONObject("content");
 		String answer = content.getJSONArray("parts").getJSONObject(0).getString("text");
 
-		// AIResponseDto 객체 생성
-		return new AiProductRecommendationResponseDto(answer);
+		// 리스폰스 DTO 생성 시 from 사용
+		return AiProductRecommendationResponseDto.from(answer);
 	}
 }
-

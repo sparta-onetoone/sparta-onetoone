@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class AiProductRecommendationResponseDto {
 	private String answer;
 
+	// from 메서드 추가
+	public static AiProductRecommendationResponseDto from(String answer) {
+		return new AiProductRecommendationResponseDto(answer);
+	}
+
 }

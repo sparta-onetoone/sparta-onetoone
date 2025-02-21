@@ -47,8 +47,8 @@ public class Ai extends TimeStamp {
 		this.answer = answer;
 	}
 
-	// 정적 팩토리 메서드
-	public static Ai fromRequestDtoAndResponseDtoToAI(AiProductRecommendationRequestDto requestDto,
+	// 도메인 생성 메서드는 create로 명명
+	public static Ai create(AiProductRecommendationRequestDto requestDto,
 		AiProductRecommendationResponseDto responseDto, User user) {
 		return Ai.builder()
 			.prompt(requestDto.getPrompt())
