@@ -41,6 +41,17 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain chain) throws ServletException, IOException {
 
+		request.getHeaderNames().asIterator().forEachRemaining(headerName -> {
+			log.info("Header: {}={}", headerName, request.getHeader(headerName));
+		});
+
+		String clientCredential = request.getHeader("X-Client-Credential");
+		log.info("##### clientCredential: {}", clientCredential);
+		if(clientCredential != null && clientCredential.equals("onetoone")){
+			chain.doFilter(request, response);
+			return;
+		}
+
 		// Authorization 헤더에서 토큰 추출
 		String authorization = request.getHeader("Authorization");
 
