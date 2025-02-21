@@ -83,7 +83,7 @@ public class UserDetailResponseDto {
 		return email;
 	}
 
-	// setter (필요하다면 setter를 추가할 수 있습니다)
+	// setter (필요하다면 setter를 추가할 수 있다)
 	public void setUserId(UUID userId) {
 		this.userId = userId;
 	}
