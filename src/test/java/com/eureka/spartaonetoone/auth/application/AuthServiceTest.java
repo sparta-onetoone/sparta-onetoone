@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.auth.application;
+package com.eureka.spartaonetoone.auth.application;
 
 import static org.assertj.core.api.Assertions.*;
 

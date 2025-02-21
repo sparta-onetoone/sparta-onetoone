@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.user.application;
+package com.eureka.spartaonetoone.user.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 

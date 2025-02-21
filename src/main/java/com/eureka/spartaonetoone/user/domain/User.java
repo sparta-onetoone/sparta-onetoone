@@ -131,10 +131,15 @@ public class User extends TimeStamp {
 		return user;
 	}
 
+
+	// public static User admin() {
+	// 	return User.builder()
+	// 		.username("admin")
+	// 		.role(UserRole.ADMIN)
+	// 		.build();
+	// }
 	public static User admin() {
-		return User.builder()
-			.username("admin")
-			.role(UserRole.ADMIN)
-			.build();
+		return create("admin", "admin@example.com", "admin1234", "관리자", "010-0000-0000", UserRole.ADMIN);
 	}
+
 }
