@@ -49,7 +49,7 @@ class CartControllerTest {
 		CartCreateRequestDto request = CartCreateRequestDto.builder()
 			.userId(userId)
 			.build();
-		Cart savedCart = Cart.of(userId);
+		Cart savedCart = Cart.createCart(userId);
 
 		when(cartService.saveCart(any(CartCreateRequestDto.class))).thenReturn(savedCart);
 

@@ -46,17 +46,13 @@ public class Cart extends TimeStamp {
 		this.cartItems.add(cartItem);
 	}
 
-	public void updateCartItem(CartItem cartItem, int quantity) {
-		cartItem.updateQuantity(quantity);
-	}
-
 	public void delete() {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
 		this.cartItems.forEach(CartItem::delete);
 	}
 
-	public static Cart of(UUID userId) {
+	public static Cart createCart(UUID userId) {
 		return Cart.builder()
 			.userId(userId)
 			.cartItems(new HashSet<>())
