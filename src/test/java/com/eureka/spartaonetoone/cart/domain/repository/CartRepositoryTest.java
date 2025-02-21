@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.domain.repository;
+package com.eureka.spartaonetoone.cart.domain.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,7 +25,7 @@ class CartRepositoryTest {
 	void cart_save_by_user_id_test() {
 		// Given
 		UUID userId = UUID.randomUUID();
-		Cart cart = Cart.of(userId);
+		Cart cart = Cart.createCart(userId);
 		Cart savedCart = cartRepository.save(cart);
 
 		// When & Then
@@ -39,7 +39,7 @@ class CartRepositoryTest {
 	void test() {
 		// Given
 		UUID userId = UUID.randomUUID();
-		Cart cart = Cart.of(userId);
+		Cart cart = Cart.createCart(userId);
 		Cart savedCart = cartRepository.save(cart);
 
 		// When
@@ -56,7 +56,7 @@ class CartRepositoryTest {
 	void cart_soft_delete_test() {
 		// Given
 		UUID userId = UUID.randomUUID();
-		Cart cart = Cart.of(userId);
+		Cart cart = Cart.createCart(userId);
 		Cart savedCart = cartRepository.save(cart);
 
 		// When

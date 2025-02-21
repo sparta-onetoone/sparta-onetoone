@@ -130,4 +130,11 @@ public class User extends TimeStamp {
 		user.addresses = new ArrayList<>();
 		return user;
 	}
+
+	public static User admin() {
+		return User.builder()
+			.username("admin")
+			.role(UserRole.ADMIN)
+			.build();
+	}
 }

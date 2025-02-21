@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.application;
+package com.eureka.spartaonetoone.cart.application;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.eureka.spartaonetoone.cart.application.CartService;
 import com.eureka.spartaonetoone.cart.application.dtos.request.CartCreateRequestDto;
@@ -22,7 +21,6 @@ import com.eureka.spartaonetoone.cart.domain.CartItem;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
-@ActiveProfiles("test")
 class CartServiceTest {
 
 	@Autowired
@@ -76,15 +74,16 @@ class CartServiceTest {
 
 	@DisplayName("수정하는 장바구니 상품의 개수가 1개 미만일 경우, 예외가 발생한다.")
 	@Test
-	void cart_item_update_min_quantity_excepion_test() {
+	void cart_item_update_min_quantity_exception_test() {
 		// Given
 		UUID userId = UUID.randomUUID();
 		CartCreateRequestDto request = CartCreateRequestDto.builder()
 			.userId(userId)
 			.build();
 		Cart savedCart = cartService.saveCart(request);
-		CartItem cartItem = CartItem.of(
+		CartItem cartItem = CartItem.createCartItem(
 			savedCart,
+			UUID.randomUUID(),
 			UUID.randomUUID(),
 			"product",
 			"image",
