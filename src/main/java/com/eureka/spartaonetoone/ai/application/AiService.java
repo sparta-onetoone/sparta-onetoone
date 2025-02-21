@@ -26,12 +26,18 @@ import jakarta.validation.Valid;
 
 @Service
 public class AiService {
-	private static final String AI_REQUEST_URI = "https://generativelanguage.googleapis.com";
-	private static final String AI_REQUEST_PATH = "/v1beta/models/gemini-1.5-flash-latest:generateContent";
-	private static final String MAX_LENGTH_PROMPT_MESSAGE = ", 답변을 최대한 간결하게 50자 이하로";
+	@Value("${gemini.request.uri}")
+	private String aiRequestUri;
+
+	@Value("${gemini.request.path}")
+	private String aiRequestPath;
+
+	@Value("${ai.prompt.max-length-message}")
+	private String maxLengthPromptMessage;
 
 	@Value("${gemini.api.key}")
 	private String geminiApiKey;
+
 	private final RestTemplate restTemplate;
 	private final AiRepository aiRepository;
 
@@ -43,7 +49,7 @@ public class AiService {
 
 	/**
 	 * 제품 이름 추천을 위한 메서드
-	 * 사용자가 입력한 데이터에 대해 AI가 생성한 추천을 받아오고, 이를 DB에 저장
+	 * 사용자가 입력한 데이터에 대해 AI가 생성한 추천을 받아오고 이를 DB에 저장
 	 */
 	public AiProductRecommendationResponseDto recommendProductNames(@Valid AiProductRecommendationRequestDto requestDto,
 		User user) {
@@ -76,8 +82,8 @@ public class AiService {
 	 * AI 요청을 위한 URI를 생성하는 메서드
 	 */
 	private URI buildUri() {
-		return UriComponentsBuilder.fromUriString(AI_REQUEST_URI)
-			.path(AI_REQUEST_PATH)
+		return UriComponentsBuilder.fromUriString(aiRequestUri)
+			.path(aiRequestPath)
 			.queryParam("key", geminiApiKey)
 			.encode()
 			.build()
@@ -110,7 +116,7 @@ public class AiService {
 		Map<String, Object> part = new HashMap<>();
 
 		// 사용자가 입력한 prompt를 parts 내부 Object에 "text"로 추가
-		part.put("text", requestDto.getPrompt() + MAX_LENGTH_PROMPT_MESSAGE);
+		part.put("text", requestDto.getPrompt() + maxLengthPromptMessage);
 		// "text"로 추가한 part를 parts 배열에 추가
 		parts.add(part);
 		// parts 배열을 contents 배열에 추가
@@ -136,5 +142,4 @@ public class AiService {
 		return new AiProductRecommendationResponseDto(answer);
 	}
 }
-
 
