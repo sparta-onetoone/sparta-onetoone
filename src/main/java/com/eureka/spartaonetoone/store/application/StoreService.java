@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import jakarta.validation.Valid;
+
 @Service
-@Validated
 public class StoreService {
 
 	private final StoreRepository storeRepository;
@@ -60,7 +61,7 @@ public class StoreService {
 	}
 
 	// 가게 등록 - 클라이언트로부터 전달받은 StoreRequestDto를 변환하여 Store 엔티티로 생성하고, 저장한 후 DTO로 반환
-	public StoreResponseDto createStore(StoreRequestDto dto) {
+	public StoreResponseDto createStore(@Valid StoreRequestDto dto) {
 		// given : DTO의 state 문자열을 파싱하여 ENUM으로 변환
 		StoreState stateEnum = parseStoreState(dto.getState());
 		// given : DTO의 데이터를 이용해 Store 엔티티를 생성 (null 값에 대해 기본값 적용)
@@ -104,7 +105,7 @@ public class StoreService {
 	}
 
 	// 가게 수정 - 특정 storeId에 해당하는 Entity를 조회한 후, DTO의 값으로 업데이트하고 저장
-	public StoreResponseDto updateStore(UUID storeId, StoreRequestDto dto) {
+	public StoreResponseDto updateStore(UUID storeId, @Valid StoreRequestDto dto) {
 		// storeId에 해당하는 가게를 조회 (없으면 예외 발생)
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(StoreException.StoreNotFoundException::new);

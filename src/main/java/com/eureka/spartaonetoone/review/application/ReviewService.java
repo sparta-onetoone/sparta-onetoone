@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 @Service
-@Validated
 public class ReviewService {
 
 	private final ReviewRepository reviewRepository;
