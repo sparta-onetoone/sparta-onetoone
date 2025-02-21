@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.domain.repository;
+package com.eureka.spartaonetoone.cart.domain.repository;
 
 import static org.assertj.core.api.Assertions.*;
 

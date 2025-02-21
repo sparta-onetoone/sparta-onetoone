@@ -1,4 +1,4 @@
-package com.eureka.spartaonetoone.domain.cart.presentation;
+package com.eureka.spartaonetoone.cart.presentation;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
