@@ -33,6 +33,7 @@ public class AuthService {
 
 	@Transactional
 	public AuthSignupResponseDto signup(AuthSignupRequestDto request) {
+		// 이메일 중복 체크
 		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new AuthException.DuplicateEmail();
 		}
@@ -57,10 +58,14 @@ public class AuthService {
 			addressDto.getDetail()
 		);
 
+		// 기본 주소 설정
 		user.setDefaultAddress(userAddress);
-		userRepository.save(user);
 
-		return AuthSignupResponseDto.from(user);
+		// DB에 저장 후 UUID가 자동으로 생성됨
+		User savedUser = userRepository.save(user);  // DB에 저장된 후 UUID가 할당됨
+
+		// 저장된 user 객체를 사용하여 응답 반환
+		return AuthSignupResponseDto.from(savedUser);  // UUID가 할당된 user 객체를 사용
 	}
 
 	@Transactional

@@ -116,10 +116,11 @@ public class User extends TimeStamp {
 		return authorities;
 	}
 
-	// 팩토리 메서드 of() 추가
+	// 팩토리 메서드 수정, UUID 자동 생성
 	public static User create(String username, String email, String password, String nickname, String phoneNumber,
 		UserRole role) {
 		User user = new User();
+		// user.userId = UUID.randomUUID(); // UUID 생성
 		user.username = username;
 		user.email = email;
 		user.password = password;
