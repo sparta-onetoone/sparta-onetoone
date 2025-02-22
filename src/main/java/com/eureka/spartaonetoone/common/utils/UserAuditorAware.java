@@ -20,6 +20,13 @@ public class UserAuditorAware implements AuditorAware<User> {
 			return Optional.empty();
 		}
 
-		return Optional.of(((UserDetailsImpl) authentication.getPrincipal()).getUser());
+		Object principal = authentication.getPrincipal();
+
+		// ✅ principal이 UserDetailsImpl 타입인지 확인 후 캐스팅
+		if (principal instanceof UserDetailsImpl) {
+			return Optional.of(((UserDetailsImpl)principal).getUser());
+		} else {
+			return Optional.empty(); // 🔥 예상과 다를 경우 안전하게 빈 값 반환
+		}
 	}
 }
