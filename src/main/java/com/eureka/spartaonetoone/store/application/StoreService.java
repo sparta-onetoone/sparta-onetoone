@@ -78,8 +78,10 @@ public class StoreService {
 			dto.getCategoryId()
 		);
 		// when : 엔티티를 Repository를 통해 저장
+	// 가게 등록 - DTO를 엔티티로 변환하고, 가게 정보를 데이터베이스에 저장합니다.
+	public StoreResponseDto createStore(StoreRequestDto dto) {
+		Store store = convertDtoToEntity(dto);
 		Store savedStore = storeRepository.save(store);
-		// then : 저장된 엔티티를 DTO로 변환하여 반환
 		return StoreResponseDto.from(savedStore);
 	}
 	// state 문자열을 ENUM으로 파싱하는 헬퍼 메서드
@@ -91,7 +93,7 @@ public class StoreService {
 		}
 	}
 
-	// 특정 가게 조회
+	// 특정 가게 조회 - 주어진 ID로 가게를 조회합니다. 가게가 존재하지 않을 경우 예외를 발생시킵니다.
 	public StoreResponseDto getStoreById(UUID storeId) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(StoreException.StoreNotFoundException::new);
@@ -100,17 +102,16 @@ public class StoreService {
 
 	// 전체 가게 조회(페이지네이션 지원) - Pageable을 사용해 Store 엔티티를 페이지 단위로 조회하고, 각 Entity를 DTO로 변환하여 Page 객체로 반환
 	public Page<StoreResponseDto> getAllStores(Pageable pageable) {
-		return storeRepository.findAll(pageable)
-			.map(StoreResponseDto::from);
+		return storeRepository.findAll(pageable).map(StoreResponseDto::from);
 	}
 
 	// 가게 수정 - 특정 storeId에 해당하는 Entity를 조회한 후, DTO의 값으로 업데이트하고 저장
+	@Transactional
+	public StoreResponseDto updateStore(UUID storeId, StoreRequestDto dto) {
 	public StoreResponseDto updateStore(UUID storeId, @Valid StoreRequestDto dto) {
 		// storeId에 해당하는 가게를 조회 (없으면 예외 발생)
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(StoreException.StoreNotFoundException::new);
-
-		// DTO의 state 값을 대문자로 변환하여 ENUM으로 매핑, 오류 발생 시 기존 값을 사용
 		StoreState stateEnum;
 		try {
 			stateEnum = (dto.getState() != null) ? StoreState.valueOf(dto.getState().toUpperCase()) : store.getState();
