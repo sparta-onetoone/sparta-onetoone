@@ -1,15 +1,19 @@
 package com.eureka.spartaonetoone.store.presentation;
 
 import com.eureka.spartaonetoone.store.application.StoreService;
-import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;	//
+import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;
 import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/stores")
@@ -24,22 +28,24 @@ public class StoreController {
 
 	// 가게 등록
 	@PostMapping
-	public ResponseEntity<StoreResponseDto> createStore(@RequestBody StoreRequestDto storeRequestDto) {	//
+	@Secured("OWNER")
+	public ResponseEntity<StoreResponseDto> createStore(@Valid @RequestBody StoreRequestDto storeRequestDto) {
 		StoreResponseDto responseDto = storeService.createStore(storeRequestDto);
 		return ResponseEntity.ok(responseDto);
 	}
 
 	// 특정 가게 조회
 	@GetMapping("/{store_id}")
+	@Secured({"CUSTOMER", "OWNER", "ADMIN"})
 	public ResponseEntity<StoreResponseDto> getStore(@PathVariable(name = "store_id") UUID storeId) {
 		StoreResponseDto responseDto = storeService.getStoreById(storeId);
 		return ResponseEntity.ok(responseDto);
-	}		// getStore(@PathVariable(name = "id") UUID id) { // 이렇게 수정 - 스프링이 인식할 수 있도록 / requesst패럴? 찾아보기 / 링크 참고
-	// https://teamsparta.notion.site/RequestParam-PathVariable-Autowired-335787e51fac41418598434fa7f7ed51
+	}
 
 
 	// 전체 가게 목록 조회
 	@GetMapping
+	@Secured({"CUSTOMER", "OWNER", "ADMIN"})
 	public ResponseEntity<Page<StoreResponseDto>> getAllStores(Pageable pageable) {
 		Page<StoreResponseDto> responseDtos = storeService.getAllStores(pageable);
 		return ResponseEntity.ok(responseDtos);
@@ -48,15 +54,27 @@ public class StoreController {
 	// 가게 수정
 	@PutMapping("/{store_id}")
 	public ResponseEntity<StoreResponseDto> updateStore(@PathVariable(name = "store_id") UUID storeId,
-		@RequestBody StoreRequestDto storeRequestDto) {
-		StoreResponseDto responseDto = storeService.updateStore(storeId, storeRequestDto);
-		return ResponseEntity.ok(responseDto);
+		@Valid @RequestBody StoreRequestDto storeRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN")) ||
+			storeId.equals(userDetails.getUserId())) {
+			StoreResponseDto responseDto = storeService.updateStore(storeId, storeRequestDto);
+			return ResponseEntity.ok(responseDto);
+		} else {
+			return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
+		}
 	}
 
 	// 가게 삭제
 	@DeleteMapping("/{store_id}")
-	public ResponseEntity<Void> deleteStore(@PathVariable(name = "store_id") UUID storeId) {
-		storeService.deleteStore(storeId);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<Void> deleteStore(@PathVariable(name = "store_id") UUID storeId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN")) ||
+			storeId.equals(userDetails.getUserId())) {
+			storeService.deleteStore(storeId);
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
+		}
 	}
 }

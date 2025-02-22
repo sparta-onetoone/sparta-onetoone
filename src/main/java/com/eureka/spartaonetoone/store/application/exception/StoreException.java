@@ -28,4 +28,19 @@ public class StoreException extends CustomException {
 			super("S-003", "S-003: 유효하지 않은 가게 상태입니다.", HttpStatus.BAD_REQUEST);
 		}
 	}
+
+
+	// 수정 권한이 없을 때 발생하는 예외
+	public static class NoPermissionToUpdateException extends StoreException {
+		public NoPermissionToUpdateException() {
+			super("S-004", "S-004: 수정 권한이 없습니다.", HttpStatus.FORBIDDEN);
+		}
+	}
+
+	// 삭제 권한이 없을 때 발생하는 예외
+	public static class NoPermissionToDeleteException extends StoreException {
+		public NoPermissionToDeleteException() {
+			super("S-005", "S-005: 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+		}
+	}
 }
