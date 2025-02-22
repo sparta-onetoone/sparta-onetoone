@@ -25,4 +25,27 @@ public class OrderException extends CustomException {
 		}
 	}
 
+	public static class ProductClientError extends OrderException {
+		public ProductClientError() {
+			super("상품 서비스와 통신 중 오류가 발생했습니다.", "O-003", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	public static class ProductQuantityNotEnough extends OrderException {
+		public ProductQuantityNotEnough() {
+			super("상품의 재고가 부족합니다.", "O-004", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	public static class PaymentError extends OrderException {
+		public PaymentError() {
+			super("결제에 실패했습니다.", "O-005", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	public static class DeletePermissionDenied extends OrderException {
+		public DeletePermissionDenied() {
+			super("주문 삭제 권한이 없습니다.", "O-006", HttpStatus.FORBIDDEN);
+		}
+	}
 }
