@@ -2,6 +2,7 @@ package com.eureka.spartaonetoone.auth.config;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -95,7 +96,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			}
 
 		chain.doFilter(request, response);
 	}

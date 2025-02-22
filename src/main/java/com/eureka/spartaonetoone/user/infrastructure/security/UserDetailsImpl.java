@@ -66,8 +66,6 @@ public class UserDetailsImpl implements UserDetails {
 		return true;
 	}
 
-	// getUser() 메서드 추가
-
 	// 정적 메서드 추가: User 객체에서 UserDetailsImpl 생성
 	public static UserDetailsImpl fromUser(User user) {
 		return new UserDetailsImpl(user);

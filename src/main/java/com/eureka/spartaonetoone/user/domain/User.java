@@ -1,4 +1,3 @@
-// User.java
 package com.eureka.spartaonetoone.user.domain;
 
 import java.util.ArrayList;
@@ -92,8 +91,6 @@ public class User extends TimeStamp {
 		this.refreshToken = refreshToken;
 	}
 
-	// ** 사용자 정보 업데이트 메서드 추가 **
-
 	// 사용자 이름 업데이트
 	public void updateUsername(String username) {
 		this.username = username;
@@ -107,6 +104,7 @@ public class User extends TimeStamp {
 	// 논리적 삭제 처리
 	public void markAsDeleted(UUID deletedBy) {
 		this.isDeleted = true;
+		this.deletedBy = deletedBy.toString();  // UUID를 String으로 변환하여 저장
 	}
 
 	// 권한 정보 반환
@@ -116,26 +114,27 @@ public class User extends TimeStamp {
 		return authorities;
 	}
 
-	// 팩토리 메서드 of() 추가
-	public static User create(String username, String email, String password, String nickname, String phoneNumber,
-		UserRole role) {
-		User user = new User();
-		user.username = username;
-		user.email = email;
-		user.password = password;
-		user.nickname = nickname;
-		user.phoneNumber = phoneNumber;
-		user.role = role;
-		user.isDeleted = false;
-		user.addresses = new ArrayList<>();
-		return user;
+	// 팩토리 메서드
+	public static User create(String username, String email, String password, String nickname, String phoneNumber, UserRole role) {
+		return User.builder()
+			.username(username)
+			.email(email)
+			.password(password)
+			.nickname(nickname)
+			.phoneNumber(phoneNumber)
+			.role(role)
+			.grade(UserGrade.SILVER)
+			.isDeleted(false)
+			.addresses(new ArrayList<>())  // 기본 주소는 빈 리스트로 초기화
+			.build();
 	}
 
+	// 관리자 생성 메서드
 	public static User admin() {
 		return User.builder()
 			.username("admin")
 			.role(UserRole.ADMIN)
+			.isDeleted(false)
 			.build();
 	}
-
 }
