@@ -59,7 +59,7 @@ public class UserService {
 		user.updateEmail(request.getEmail());
 
 		return UserUpdateResponseDto.builder()
-			.userId(user.getUserId().toString())
+			.userId(user.getUserId()) // UUID 그대로 유지
 			.username(user.getUsername())
 			.email(user.getEmail())
 			.build();
@@ -78,7 +78,7 @@ public class UserService {
 		user.markAsDeleted(userId); // 삭제 요청자의 ID를 전달
 
 		return UserDeleteResponseDto.builder()
-			.userId(user.getUserId().toString())
+			.userId(user.getUserId()) // UUID 그대로 유지
 			.build();
 	}
 }
