@@ -49,7 +49,7 @@ public class Product extends TimeStamp {
     private Boolean isDeleted;
 
     public static Product createProduct(final UUID storeId, final String name, final String imageUrl
-            , final String description, final Integer price, final Integer quantity, final Boolean isDeleted) {
+            , final String description, final Integer price, final Integer quantity) {
         return Product.builder()
                 .storeId(storeId)
                 .name(name)
@@ -57,7 +57,7 @@ public class Product extends TimeStamp {
                 .description(description)
                 .price(price)
                 .quantity(quantity)
-                .isDeleted(isDeleted)
+                .isDeleted(Boolean.FALSE)
                 .build();
     }
 
