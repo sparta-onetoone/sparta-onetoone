@@ -23,12 +23,13 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/users")
 public class UserController {
 
 	private final UserService userService;
 
 	//회원 단건 조회
-	@GetMapping("/api/v1/users/{user_id}")
+	@GetMapping("/{user_id}")
 	public ResponseEntity<CommonResponse<UserDetailResponseDto>> getUserDetail(
 		@PathVariable("user_id") UUID userId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -43,7 +44,7 @@ public class UserController {
 		}
 	}
 	//회원 다건 조회 (페이지네이션)
-	@GetMapping("/api/v1/users")
+	@GetMapping()
 	public ResponseEntity<CommonResponse<Page<UserListResponseDto>>> getAllUsers(
 		@RequestParam(defaultValue = "0") int page, // 페이지 번호
 		@RequestParam(defaultValue = "10") int size, // 페이지 크기
@@ -60,7 +61,7 @@ public class UserController {
 	}
 
 	//회원 수정
-	@PutMapping("/api/v1/users/{user_id}")
+	@PutMapping("/{user_id}")
 	public ResponseEntity<CommonResponse<UserUpdateResponseDto>> updateUser(
 		@PathVariable("user_id") UUID userId,
 		@Valid @RequestBody UserUpdateRequestDto request,
@@ -76,7 +77,7 @@ public class UserController {
 	}
 
 	//회원 탈퇴
-	@DeleteMapping("/api/v1/users/{user_id}")
+	@DeleteMapping("/{user_id}")
 	public ResponseEntity<CommonResponse<UserDeleteResponseDto>> deleteUser(
 		@PathVariable("user_id") UUID userId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {

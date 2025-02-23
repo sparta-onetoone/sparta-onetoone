@@ -9,13 +9,13 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @WithSecurityContext(factory = WithSecurityContextFactoryImpl.class)
 public @interface MockUser {
-	String id() default "17ff12b3-1ea7-4f1e-8d0a-ed36c82466f6";
+    String id() default "17ff12b3-1ea7-4f1e-8d0a-ed36c82466f6";
 
-	String username() default "mockUser";
+    String username() default "mockUser";
 
-	String password() default "mockPassword";
+    String password() default "mockPassword";
 
-	String email() default "mock@email.com";
+    String email() default "mock@email.com";
 
-	UserRole role() default UserRole.OWNER;
+    UserRole role() default UserRole.CUSTOMER;
 }
