@@ -2,9 +2,8 @@ package com.eureka.spartaonetoone;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.eureka.spartaonetoone")
 public class SpartaOnetooneApplication {
 
 	public static void main(String[] args) {

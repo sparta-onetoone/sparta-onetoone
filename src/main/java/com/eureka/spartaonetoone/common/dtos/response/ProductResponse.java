@@ -16,19 +16,16 @@ public class ProductResponse {
     @AllArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Get {
-        @JsonProperty("name")
         private String name;
 
-        @JsonProperty("imageUrl")
+        @JsonProperty("image_url")
         private String imageUrl;
 
-        @JsonProperty("quantity")
         private Integer quantity;
 
-        @JsonProperty("price")
         private Integer price;
 
-        @JsonProperty("storeId")
+        @JsonProperty("store_id")
         private UUID storeId;
     }
 }
