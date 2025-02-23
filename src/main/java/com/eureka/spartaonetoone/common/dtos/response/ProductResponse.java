@@ -15,7 +15,7 @@ public class ProductResponse {
     public static class Get {
         private String name;
 
-        @JsonProperty("image_Url")
+        @JsonProperty("image_url")
         private String imageUrl;
 
         private Integer quantity;
