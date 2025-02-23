@@ -1,6 +1,7 @@
 package com.eureka.spartaonetoone.product.application.dtos.response;
 
 import com.eureka.spartaonetoone.product.domain.Product;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ProductGetResponseDto {
     private String name;
+    @JsonProperty("image_url")
     private String imageUrl;
     private Integer quantity;
     private Integer price;
