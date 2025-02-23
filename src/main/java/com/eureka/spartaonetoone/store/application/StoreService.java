@@ -60,26 +60,8 @@ public class StoreService {
 		);
 	}
 
-	// 가게 등록 - 클라이언트로부터 전달받은 StoreRequestDto를 변환하여 Store 엔티티로 생성하고, 저장한 후 DTO로 반환
-	public StoreResponseDto createStore(@Valid StoreRequestDto dto) {
-		// given : DTO의 state 문자열을 파싱하여 ENUM으로 변환
-		StoreState stateEnum = parseStoreState(dto.getState());
-		// given : DTO의 데이터를 이용해 Store 엔티티를 생성 (null 값에 대해 기본값 적용)
-		Store store = Store.createStore(
-			dto.getUserId(),
-			dto.getName(),
-			stateEnum,
-			dto.getTellNumber(),
-			dto.getDescription(),
-			dto.getMinOrderPrice() != null ? dto.getMinOrderPrice() : 0,
-			dto.getDeliveryFee() != null ? dto.getDeliveryFee() : 0,
-			dto.getRating() != null ? dto.getRating() : 0.0f,
-			dto.getReviewCount() != null ? dto.getReviewCount() : 0,
-			dto.getCategoryId()
-		);
-		// when : 엔티티를 Repository를 통해 저장
 	// 가게 등록 - DTO를 엔티티로 변환하고, 가게 정보를 데이터베이스에 저장합니다.
-	public StoreResponseDto createStore(StoreRequestDto dto) {
+	public StoreResponseDto createStore(@Valid StoreRequestDto dto) {
 		Store store = convertDtoToEntity(dto);
 		Store savedStore = storeRepository.save(store);
 		return StoreResponseDto.from(savedStore);
@@ -107,7 +89,6 @@ public class StoreService {
 
 	// 가게 수정 - 특정 storeId에 해당하는 Entity를 조회한 후, DTO의 값으로 업데이트하고 저장
 	@Transactional
-	public StoreResponseDto updateStore(UUID storeId, StoreRequestDto dto) {
 	public StoreResponseDto updateStore(UUID storeId, @Valid StoreRequestDto dto) {
 		// storeId에 해당하는 가게를 조회 (없으면 예외 발생)
 		Store store = storeRepository.findById(storeId)
