@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderService {
 
+	private final static String ROLE_ADMIN = "ROLE_ADMIN";
 	private final static String FAIL_CODE = "F000";
 
 	private final CartClient cartClient;
@@ -84,7 +85,7 @@ public class OrderService {
 	public OrderSearchResponseDto getOrder(String userRole, UUID orderId) {
 		Order order;
 
-		if(userRole.equals("ROLE_ADMIN")) {
+		if(userRole.equals(ROLE_ADMIN)) {
 			order = orderRepository.findById(orderId)
 				.orElseThrow(OrderException.NotFound::new);
 		} else {

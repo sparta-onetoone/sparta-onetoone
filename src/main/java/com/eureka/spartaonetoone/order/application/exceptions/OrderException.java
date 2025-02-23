@@ -48,4 +48,10 @@ public class OrderException extends CustomException {
 			super("주문 삭제 권한이 없습니다.", "O-006", HttpStatus.FORBIDDEN);
 		}
 	}
+
+	public static class CancelPermissionDenied extends OrderException {
+		public CancelPermissionDenied() {
+			super("주문 취소 권한이 없습니다.", "O-007", HttpStatus.FORBIDDEN);
+		}
+	}
 }
