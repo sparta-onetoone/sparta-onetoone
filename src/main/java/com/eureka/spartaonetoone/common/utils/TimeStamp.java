@@ -1,36 +1,36 @@
 package com.eureka.spartaonetoone.common.utils;
 
-import java.time.LocalDateTime;
-
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class TimeStamp {
 
-	@CreatedDate
-	protected LocalDateTime createdAt;
+    @CreatedDate
+    protected LocalDateTime createdAt;
 
-	@CreatedBy
-	protected String createdBy;
+    @CreatedBy
+    protected UUID createdBy;
 
-	@LastModifiedDate
-	protected LocalDateTime updatedAt;
+    @LastModifiedDate
+    protected LocalDateTime updatedAt;
 
-	@LastModifiedBy
-	protected String updatedBy;
+    @LastModifiedBy
+    protected UUID updatedBy;
 
-	protected LocalDateTime deletedAt;
+    protected LocalDateTime deletedAt;
 
-	protected String deletedBy;
+    protected UUID deletedBy;
 
 }
