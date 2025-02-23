@@ -51,7 +51,7 @@ public class OrderService {
 		);
 		orderRepository.save(order);
 
-		validateOrderItem(cart);
+		validateOrderItem(cart, order);
 
 		cart.getCartItems().forEach(cartItem ->
 			order.addOrderItem(
@@ -134,13 +134,14 @@ public class OrderService {
 		order.delete();
 	}
 
-	private void validateOrderItem(CartResponse.Read cart) {
+	private void validateOrderItem(CartResponse.Read cart, Order order) {
 		for (CartResponse.CartItemInfo cartItem : cart.getCartItems()) {
 			try {
 				CommonResponse<?> response = productClient.getProduct(cartItem.getProductId());
 				ProductResponse.Get product = (ProductResponse.Get) response.getData();
 
 				if(response.getCode().equals(FAIL_CODE) || product.getQuantity() < cartItem.getQuantity()) {
+					order.cancel();
 					throw new OrderException.ProductQuantityNotEnough();
 				}
 			} catch (JsonProcessingException e) {
@@ -170,7 +171,11 @@ public class OrderService {
 					.toList()
 			);
 
-			productClient.reduceProduct(request);
+			CommonResponse<?> response = productClient.reduceProduct(request);
+			if(response.getCode().equals(FAIL_CODE)) {
+				order.cancel();
+				throw new OrderException.ProductQuantityNotEnough();
+			}
 		} catch (JsonProcessingException e) {
 			throw new OrderException.ProductClientError();
 		}
