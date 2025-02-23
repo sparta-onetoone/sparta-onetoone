@@ -69,6 +69,14 @@ public class Order extends TimeStamp {
 			.sum();
 	}
 
+	public void cancel() {
+		this.status = OrderStatus.CANCELED;
+	}
+
+	public void confirm() {
+		this.status = OrderStatus.CONFIRMED;
+	}
+
 	public void delete() {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();

@@ -77,6 +77,7 @@ public class OrderService {
 
 		orderPaymentRequest(order);
 		productQuantityReduceRequest(order);
+		order.confirm();
 	}
 
 	@Transactional(readOnly = true)
@@ -153,6 +154,7 @@ public class OrderService {
 
 		CommonResponse<?> response = paymentClient.createPayment(request);
 		if(response.getCode().equals(FAIL_CODE)) {
+			order.cancel();
 			throw new OrderException.PaymentError();
 		}
 	}
