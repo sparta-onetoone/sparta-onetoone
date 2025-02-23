@@ -1,9 +1,9 @@
 package com.eureka.spartaonetoone.product.application;
 
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductCreateRequestDto;
-import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetResponseDto;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductUpdateRequestDto;
+import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetResponseDto;
 import com.eureka.spartaonetoone.product.application.exception.ProductException;
 import com.eureka.spartaonetoone.product.domain.Product;
 import com.eureka.spartaonetoone.product.domain.repository.ProductRepository;
@@ -26,15 +26,15 @@ public class ProductService {
     public UUID saveProduct(ProductCreateRequestDto request) {
         Product product = Product.createProduct(request.getStoreId(), request.getName(),
                 request.getImageUrl(), request.getDescription(),
-                request.getPrice(), request.getQuantity(), request.getIsDeleted());
+                request.getPrice(), request.getQuantity());
 
         Boolean isExistsSameProduct = productRepository.existsByStoreIdAndName(product.getStoreId(), product.getName());
         if (isExistsSameProduct) {
             throw new ProductException.ProductAlreadyExistsException();
         }
 
-        productRepository.save(product);
-        return product.getId();
+        Product savedProduct = productRepository.save(product);
+        return savedProduct.getId();
     }
 
     @Transactional(readOnly = true)
