@@ -1,6 +1,6 @@
-package com.eureka.spartaonetoone.user.domain;
+package com.eureka.spartaonetoone.mock;
 
-import com.eureka.spartaonetoone.user.infrastructure.security.WithSecurityContextFactoryImpl;
+import com.eureka.spartaonetoone.user.domain.UserRole;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;
