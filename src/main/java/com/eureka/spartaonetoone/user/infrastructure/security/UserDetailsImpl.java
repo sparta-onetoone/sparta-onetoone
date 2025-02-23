@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import com.eureka.spartaonetoone.user.domain.User;
 
@@ -28,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.username = user.getUsername();
 		this.password = user.getPassword();
 		this.authorities = user.getAuthorities();
-		this.user = user;// User 엔티티의 권한 목록 반환
+		this.user = user;
 	}
 
 	@Override
@@ -66,7 +67,6 @@ public class UserDetailsImpl implements UserDetails {
 		return true;
 	}
 
-	// 정적 메서드 추가: User 객체에서 UserDetailsImpl 생성
 	public static UserDetailsImpl fromUser(User user) {
 		return new UserDetailsImpl(user);
 	}

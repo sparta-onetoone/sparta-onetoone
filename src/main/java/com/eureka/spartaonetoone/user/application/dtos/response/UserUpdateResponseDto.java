@@ -5,11 +5,13 @@ import java.util.UUID;
 import com.eureka.spartaonetoone.user.domain.User;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class UserUpdateResponseDto {
 	private UUID userId;
 	private String username;

@@ -4,11 +4,13 @@ import java.util.UUID;
 
 import com.eureka.spartaonetoone.user.domain.User;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class UserDeleteResponseDto {
 	private UUID userId;
 

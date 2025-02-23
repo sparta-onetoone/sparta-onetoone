@@ -11,8 +11,8 @@ import com.eureka.spartaonetoone.common.utils.UserAuditorAware;
 @EnableJpaAuditing(auditorAwareRef = "userAuditorAware")
 public class JpaAuditingConfig {
 
-	@Bean
-	public AuditorAware<String> userAuditorAware() {
+	@Bean(name = "jpaAuditorAware")
+	public AuditorAware<UUID> userAuditorAware() {
 		return new UserAuditorAware();
 	}
 }

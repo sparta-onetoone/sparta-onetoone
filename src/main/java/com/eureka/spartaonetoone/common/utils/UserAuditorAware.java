@@ -1,17 +1,22 @@
 package com.eureka.spartaonetoone.common.utils;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import com.eureka.spartaonetoone.user.domain.User;
 import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 
-public class UserAuditorAware implements AuditorAware<String> {
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+public class UserAuditorAware implements AuditorAware<UUID> {
+
+	private final String ANONYMOUS_USER = "anonymousUser";
 
 	@Override
 	public Optional<String> getCurrentAuditor() {
@@ -21,11 +26,10 @@ public class UserAuditorAware implements AuditorAware<String> {
 			return Optional.of("SYSTEM");
 		}
 
-		if (authentication.getPrincipal() instanceof UserDetailsImpl) {
-			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-			return Optional.of(userDetails.getUsername());
+		if (authentication.getPrincipal() instanceof UserDetailsImpl userDetails) {
+			return Optional.of(userDetails.getUserId());
 		}
 
-		return Optional.of(authentication.getName());
+		return Optional.empty();
 	}
 }

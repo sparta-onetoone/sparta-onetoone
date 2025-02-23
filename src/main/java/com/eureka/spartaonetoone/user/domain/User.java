@@ -137,4 +137,5 @@ public class User extends TimeStamp {
 			.isDeleted(false)
 			.build();
 	}
+
 }
