@@ -92,6 +92,7 @@ public class OrderController {
 			throw new OrderException.CancelPermissionDenied();
 		}
 
+		orderService.cancelOrder(requestDto.getOrderId(), requestDto.getStoreId());
 		return ResponseEntity.ok(CommonResponse.success(null, "주문 취소 성공"));
 	}
 

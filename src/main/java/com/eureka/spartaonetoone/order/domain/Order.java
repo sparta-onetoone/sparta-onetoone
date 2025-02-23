@@ -77,11 +77,12 @@ public class Order extends TimeStamp {
 		this.status = OrderStatus.CONFIRMED;
 	}
 
-	public void delete() {
+	public void delete(UUID deletedBy) {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
+		this.deletedBy = deletedBy;
 		this.status = OrderStatus.CANCELED;
-		this.orderItems.forEach(OrderItem::delete);
+		this.orderItems.forEach(orderItem -> orderItem.delete(deletedBy));
 	}
 
 	public static Order createOrder(UUID userId, UUID storeId, OrderType type, String requests) {

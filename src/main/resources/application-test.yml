@@ -13,6 +13,13 @@ spring:
 gemini:
   api:
     key: testKey
+  request:
+    uri: https://generativelanguage.googleapis.com
+    path: /v1beta/models/gemini-1.5-flash-latest:generateContent
+
+ai:
+  prompt:
+    max-length-message: ", 답변을 최대한 간결하게 50자 이하로"
 
 jwt:
   secret:

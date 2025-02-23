@@ -88,9 +88,9 @@ class OrderControllerTest {
 			.andExpect(jsonPath("$.message").value("주문 생성 성공"));
 	}
 
-	@DisplayName("고객이 아닌 사용자는 주문을 생성할 수 없다.")
+	@DisplayName("관리자는 주문을 생성할 수 없다.")
 	@Test
-	@MockUser(role = UserRole.OWNER)
+	@MockUser(role = UserRole.ADMIN)
 	void save_order_with_invalid_role_exception_test() throws Exception {
 		User user = getUser();
 		UUID cartId = UUID.randomUUID();

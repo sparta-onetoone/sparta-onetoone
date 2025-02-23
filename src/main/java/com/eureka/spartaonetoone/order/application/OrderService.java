@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.order.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResp
 import com.eureka.spartaonetoone.order.application.exceptions.OrderException;
 import com.eureka.spartaonetoone.order.domain.Order;
 import com.eureka.spartaonetoone.order.domain.OrderItem;
+import com.eureka.spartaonetoone.order.domain.OrderStatus;
 import com.eureka.spartaonetoone.order.domain.repository.OrderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderService {
 
+	private final static int CANCEL_LIMIT_MINUTES = 5;
 	private final static String ROLE_ADMIN = "ROLE_ADMIN";
 	private final static String FAIL_CODE = "F000";
 
@@ -76,6 +79,10 @@ public class OrderService {
 		Order order = orderRepository.findActiveOrderById(orderId)
 			.orElseThrow(OrderException.NotFound::new);
 
+		if(!order.getStatus().equals(OrderStatus.PENDING)) {
+			throw new OrderException.NotPendingStatus();
+		}
+
 		orderPaymentRequest(order);
 		productQuantityReduceRequest(order);
 		order.confirm();
@@ -123,6 +130,22 @@ public class OrderService {
 	}
 
 	@Transactional
+	public void cancelOrder(UUID orderId, UUID storeId) {
+		Order order = orderRepository.findActiveOrderById(orderId)
+			.orElseThrow(OrderException.NotFound::new);
+
+		if(!order.getStoreId().equals(storeId)) {
+			throw new OrderException.CancelPermissionDenied();
+		}
+
+		if(!validateOrderCreateTime(order)) {
+			throw new OrderException.CancelTimeLimit();
+		}
+
+		order.cancel();
+	}
+
+	@Transactional
 	public void deleteOrder(String userRole, UUID orderId, UUID userId) {
 		Order order = orderRepository.findActiveOrderById(orderId)
 			.orElseThrow(OrderException.NotFound::new);
@@ -132,7 +155,7 @@ public class OrderService {
 				throw new OrderException.DeletePermissionDenied();
 			}
 		}
-		order.delete();
+		order.delete(userId);
 	}
 
 	private void validateOrderItem(CartResponse.Read cart, Order order) {
@@ -180,5 +203,9 @@ public class OrderService {
 		} catch (JsonProcessingException e) {
 			throw new OrderException.ProductClientError();
 		}
+	}
+
+	private boolean validateOrderCreateTime(Order order) {
+		return LocalDateTime.now().isBefore(order.getCreatedAt().plusMinutes(CANCEL_LIMIT_MINUTES));
 	}
 }

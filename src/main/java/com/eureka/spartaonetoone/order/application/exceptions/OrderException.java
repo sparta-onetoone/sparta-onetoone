@@ -54,4 +54,16 @@ public class OrderException extends CustomException {
 			super("주문 취소 권한이 없습니다.", "O-007", HttpStatus.FORBIDDEN);
 		}
 	}
+
+	public static class CancelTimeLimit extends OrderException {
+		public CancelTimeLimit() {
+			super("주문 취소 가능 시간이 지났습니다.", "O-008", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	public static class NotPendingStatus extends OrderException {
+		public NotPendingStatus() {
+			super("주문 상태가 처리 대기 중이 아닙니다.", "O-009", HttpStatus.BAD_REQUEST);
+		}
+	}
 }
