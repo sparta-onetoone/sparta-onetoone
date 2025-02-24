@@ -1,5 +1,7 @@
 package com.eureka.spartaonetoone.auth.application.dtos.response;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthRefreshResponseDto {
-
 	private String accessToken;
 	private String refreshToken;
 

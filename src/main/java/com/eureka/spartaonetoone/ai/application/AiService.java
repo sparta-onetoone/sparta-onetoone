@@ -26,12 +26,18 @@ import jakarta.validation.Valid;
 
 @Service
 public class AiService {
-	private static final String AI_REQUEST_URI = "https://generativelanguage.googleapis.com";
-	private static final String AI_REQUEST_PATH = "/v1beta/models/gemini-1.5-flash-latest:generateContent";
-	private static final String MAX_LENGTH_PROMPT_MESSAGE = ", 답변을 최대한 간결하게 50자 이하로";
+	@Value("${gemini.request.uri}")
+	private String aiRequestUri;
+
+	@Value("${gemini.request.path}")
+	private String aiRequestPath;
+
+	@Value("${ai.prompt.max-length-message}")
+	private String maxLengthPromptMessage;
 
 	@Value("${gemini.api.key}")
 	private String geminiApiKey;
+
 	private final RestTemplate restTemplate;
 	private final AiRepository aiRepository;
 
@@ -43,13 +49,12 @@ public class AiService {
 
 	/**
 	 * 제품 이름 추천을 위한 메서드
-	 * 사용자가 입력한 데이터에 대해 AI가 생성한 추천을 받아오고, 이를 DB에 저장
+	 * 사용자가 입력한 데이터에 대해 AI가 생성한 추천을 받아오고 이를 DB에 저장
 	 */
 	public AiProductRecommendationResponseDto recommendProductNames(@Valid AiProductRecommendationRequestDto requestDto,
 		User user) {
 		AiProductRecommendationResponseDto responseDto = getAIResponse(requestDto);
 
-		// 도메인 생성 메서드는 create 사용
 		Ai ai = Ai.create(requestDto, responseDto, user);
 
 		aiRepository.save(ai);
@@ -70,16 +75,15 @@ public class AiService {
 
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
-		// 리스폰스 DTO 추출 시 from 사용
-		return AiProductRecommendationResponseDto.from(responseEntity.getBody());
+		return from(responseEntity.getBody());
 	}
 
 	/**
 	 * AI 요청을 위한 URI를 생성하는 메서드
 	 */
 	private URI buildUri() {
-		return UriComponentsBuilder.fromUriString(AI_REQUEST_URI)
-			.path(AI_REQUEST_PATH)
+		return UriComponentsBuilder.fromUriString(aiRequestUri)
+			.path(aiRequestPath)
 			.queryParam("key", geminiApiKey)
 			.encode()
 			.build()
@@ -91,14 +95,33 @@ public class AiService {
 	 * Gemini API의 요청 형식에 맞게 데이터를 구성
 	 */
 	private Map<String, Object> buildRequestBody(AiProductRecommendationRequestDto requestDto) {
+        /* Gemini API 요청 json 형식
+        {
+            "contents":[
+            {
+                "parts":[
+                {
+                    "text":"사용자가 입력한 prompt"
+                }]
+            }]
+        }
+        */
+		// Gemini API에 보낼 Request Body
 		Map<String, Object> requestBody = new HashMap<>();
+		// 요청 형식의 "contents" : []
 		Map<String, List<Map<String, Object>>> contents = new HashMap<>();
+		// 요청 형식의 "parts" : []
 		List<Map<String, Object>> parts = new ArrayList<>();
+		// 요청 형식의 parts 내부 part Object, 여기서는 "text" : {}
 		Map<String, Object> part = new HashMap<>();
 
-		part.put("text", requestDto.getPrompt() + MAX_LENGTH_PROMPT_MESSAGE);
+		// 사용자가 입력한 prompt를 parts 내부 Object에 "text"로 추가
+		part.put("text", requestDto.getPrompt() + maxLengthPromptMessage);
+		// "text"로 추가한 part를 parts 배열에 추가
 		parts.add(part);
+		// parts 배열을 contents 배열에 추가
 		contents.put("parts", parts);
+		//requestBody
 		requestBody.put("contents", contents);
 
 		return requestBody;
@@ -107,13 +130,16 @@ public class AiService {
 	/**
 	 * API 응답을 JSON 형식에서 AiResponseDto 객체로 변환하는 메서드
 	 */
-	private AiProductRecommendationResponseDto fromJSONtoResponseDto(String responseEntity) {
+	private AiProductRecommendationResponseDto from(String responseEntity) {
 		JSONObject jsonResponse = new JSONObject(responseEntity);
+
+		// 첫 번째 candidates에서 텍스트 추출
 		JSONObject candidate = jsonResponse.getJSONArray("candidates").getJSONObject(0);
 		JSONObject content = candidate.getJSONObject("content");
 		String answer = content.getJSONArray("parts").getJSONObject(0).getString("text");
 
-		// 리스폰스 DTO 생성 시 from 사용
-		return AiProductRecommendationResponseDto.from(answer);
+		// AIResponseDto 객체 생성
+		return new AiProductRecommendationResponseDto(answer);
 	}
 }
+

@@ -56,7 +56,7 @@ public class UserAddress extends TimeStamp {
 	private String detail; // 상세주소
 
 	@Column(name = "is_deleted", nullable = false)
-	private Boolean isDeleted; // 삭제 여부 (논리적 삭제)
+	private Boolean isDeleted;
 
 	// 주소 정보 업데이트 메서드
 	public void updateAddress(String city, String district, String loadName, String zipCode, String detail) {
@@ -71,7 +71,7 @@ public class UserAddress extends TimeStamp {
 	// 논리적 삭제 처리 메서드
 	public void deleteAddress(UUID deletedBy) {
 		this.isDeleted = true;
-		this.deletedBy = String.valueOf(deletedBy);
+		this.deletedBy = deletedBy;
 		this.deletedAt = LocalDateTime.now();
 	}
 

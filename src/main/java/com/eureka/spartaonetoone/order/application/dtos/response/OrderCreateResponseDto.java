@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.eureka.spartaonetoone.order.domain.Order;
 import com.eureka.spartaonetoone.order.domain.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import lombok.Getter;
 @Builder(access = AccessLevel.PRIVATE)
 public class OrderCreateResponseDto {
 
+	@JsonProperty("order_id")
 	private UUID orderId;
 	private OrderStatus status;
 

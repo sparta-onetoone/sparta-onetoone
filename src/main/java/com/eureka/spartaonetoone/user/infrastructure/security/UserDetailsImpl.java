@@ -87,6 +87,14 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+      return true;
+    }
+
+    public static UserDetailsImpl fromUser(User user) {
+      return new UserDetailsImpl(user);
+    }
+
+    public static UserDetailsImpl adminUser() {
+      return new UserDetailsImpl(User.admin());
     }
 }

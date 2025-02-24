@@ -2,12 +2,16 @@ package com.eureka.spartaonetoone.product.application.dtos.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductUpdateRequestDto {
     @NotNull
     @Length(max = 100, min = 1)

@@ -1,4 +1,3 @@
-// User.java
 package com.eureka.spartaonetoone.user.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
@@ -62,64 +61,64 @@ public class User extends TimeStamp {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    // 팩토리 메서드 of() 추가
-    public static User create(String username, String email, String password, String nickname, String phoneNumber,
-                              UserRole role) {
-        User user = new User();
-        user.username = username;
-        user.email = email;
-        user.password = password;
-        user.nickname = nickname;
-        user.phoneNumber = phoneNumber;
-        user.role = role;
-        user.isDeleted = false;
-        user.addresses = new ArrayList<>();
-        return user;
-    }
-
-    public static User admin() {
-        return User.builder()
-                .userId(UUID.randomUUID())
-                .username("admin")
-                .role(UserRole.ADMIN)
-                .build();
-    }
-
-    // ** 사용자 정보 업데이트 메서드 추가 **
-
     // 기본 주소 설정 메서드
     public void setDefaultAddress(UserAddress address) {
-        this.defaultAddress = address;
-        address.setUser(this);
-        if (!this.addresses.contains(address)) {
-            this.addresses.add(address);
-        }
+      this.defaultAddress = address;
+      address.setUser(this);
+      if (!this.addresses.contains(address)) {
+        this.addresses.add(address);
+      }
     }
 
     // 리프레시 토큰 업데이트
     public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+      this.refreshToken = refreshToken;
     }
 
     // 사용자 이름 업데이트
     public void updateUsername(String username) {
-        this.username = username;
+      this.username = username;
     }
 
     // 이메일 업데이트
     public void updateEmail(String email) {
-        this.email = email;
+      this.email = email;
     }
 
     // 논리적 삭제 처리
     public void markAsDeleted(UUID deletedBy) {
-        this.isDeleted = true;
+      this.isDeleted = true;
+      this.deletedBy = deletedBy;
     }
 
     // 권한 정보 반환
     public Collection<SimpleGrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
-        return authorities;
+      List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+      authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+      return authorities;
+    }
+
+    // 팩토리 메서드
+    public static User create(String username, String email, String password, String nickname, String phoneNumber, UserRole role) {
+      return User.builder()
+        .username(username)
+        .email(email)
+        .password(password)
+        .nickname(nickname)
+        .phoneNumber(phoneNumber)
+        .role(role)
+        .grade(UserGrade.SILVER)
+        .isDeleted(false)
+        .addresses(new ArrayList<>())  // 기본 주소는 빈 리스트로 초기화
+        .build();
+    }
+
+    // 관리자 생성 메서드
+    public static User admin() {
+      return User.builder()
+        .username("admin")
+        .role(UserRole.ADMIN)
+        .isDeleted(false)
+        .build();
     }
 }

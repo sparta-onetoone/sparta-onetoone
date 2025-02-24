@@ -37,18 +37,20 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	private final UserRepository userRepository;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request,
+	protected void doFilterInternal(
+		HttpServletRequest request,
 		HttpServletResponse response,
-		FilterChain chain) throws ServletException, IOException {
-
+		FilterChain chain
+	) throws ServletException, IOException {
 		String clientCredential = request.getHeader("X-Client-Credential");
-		if(clientCredential != null && clientCredential.equals("onetoone")){
+		if (clientCredential != null && clientCredential.equals("onetoone")) {
 			UserDetailsImpl userDetails = UserDetailsImpl.adminUser();
 			// 인증 객체 생성
 			JwtAuthenticationToken authentication = new JwtAuthenticationToken(
 				userDetails,
 				null,
 				userDetails.getAuthorities()
+
 			);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -71,7 +73,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			Claims claims = jwtUtil.extractClaims(token);
 
 			String userIdStr = claims.getSubject();
-			log.info("Extracted userId from token: {}", userIdStr);
 
 			UUID userId;
 			try {

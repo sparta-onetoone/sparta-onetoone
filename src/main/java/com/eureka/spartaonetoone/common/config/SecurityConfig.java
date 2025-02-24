@@ -32,8 +32,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 				// 회원가입, 로그인, 리프레시 토큰은 누구나 접근 가능
-				.requestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth/refresh", "/api/v1/ai",
-					"/api/v1/addresses")
+				.requestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth/refresh", "/api/v1/ai", "/api/v1/addresses", "/api/v1/stores", "/api/v1/carts")
 				.permitAll()
 				// 로그아웃은 인증된 사용자만 가능
 				.requestMatchers("/api/v1/auth/signout")
