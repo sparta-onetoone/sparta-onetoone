@@ -28,4 +28,12 @@ public class OrderClient {
 			.collectList()
 			.block();
 	}
+
+	public OrderResponse.GetStoreId getStoreIdOfOrder(UUID orderId) {
+		return webClient.get()
+			.uri(ORDERS_URI + "/{order_id}", orderId)
+			.retrieve()
+			.bodyToMono(OrderResponse.GetStoreId.class)
+			.block();
+	}
 }
