@@ -65,17 +65,26 @@ public class AuthService {
 
 	@Transactional
 	public AuthSigninResponseDto signin(AuthSigninRequestDto request) {
+		// 사용자 조회
 		User user = userRepository.findByEmail(request.getEmail())
-			.orElseThrow(AuthException.UserNotFound::new);
+			.orElseThrow(AuthException.UserNotFound::new); // 사용자가 없으면 예외
 
-		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-			throw new AuthException.InvalidPassword();
+		// 삭제된 사용자 체크
+		if (user.getIsDeleted()) {
+			throw new AuthException.DeletedUserAccessException();  // 삭제된 사용자는 로그인 불가
 		}
 
+		// 비밀번호 확인
+		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+			throw new AuthException.InvalidPassword(); // 비밀번호가 틀리면 예외
+		}
+
+		// 액세스 토큰 및 리프레시 토큰 생성
 		String accessToken = jwtUtil.createAccessToken(user);
 		String refreshToken = jwtUtil.createRefreshToken(user);
-		user.updateRefreshToken(refreshToken);
+		user.updateRefreshToken(refreshToken); // 리프레시 토큰 갱신
 
+		// 응답 DTO 반환
 		return AuthSigninResponseDto.of(accessToken, refreshToken);
 	}
 

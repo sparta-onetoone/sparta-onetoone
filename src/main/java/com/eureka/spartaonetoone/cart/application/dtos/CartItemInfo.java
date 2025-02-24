@@ -16,6 +16,9 @@ public class CartItemInfo {
 	@JsonProperty("cart_item_id")
 	private UUID cartItemId;
 
+	@JsonProperty("store_id")
+	private UUID storeId;
+
 	@JsonProperty("product_id")
 	private UUID productId;
 
@@ -34,6 +37,7 @@ public class CartItemInfo {
 	public static CartItemInfo from(CartItem cartItem) {
 		return CartItemInfo.builder()
 			.cartItemId(cartItem.getCartItemId())
+			.storeId(cartItem.getStoreId())
 			.productId(cartItem.getProductId())
 			.productName(cartItem.getProductName())
 			.productImage(cartItem.getProductImage())

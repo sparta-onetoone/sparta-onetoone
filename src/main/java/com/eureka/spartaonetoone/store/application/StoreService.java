@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final CategoryRepository categoryRepository;
     private final OrderClient orderClient;
     private final ReviewClient reviewClient;
     private final CategoryClient categoryClient;
@@ -41,10 +40,10 @@ public class StoreService {
     @Transactional
     public StoreResponseDto createStore(StoreRequestDto dto) {
         List<Category> categories = categoryClient.getCategoryByIds(dto.getCategoryIds());
-        String categoryIds = categories.stream()
+        List<String> categoryIds = categories.stream()
                 .map(Category::getId) // Category 엔티티에서 ID(UUID) 가져오기
                 .map(UUID::toString)  // UUID를 String으로 변환
-                .collect(Collectors.joining(",")); // 쉼표(,)로 구분된 문자열로 변환
+                .collect(Collectors.toUnmodifiableList()); // 쉼표(,)로 구분된 문자열로 변환
 
         Store store = Store.createStore(
                 dto.getUserId(),

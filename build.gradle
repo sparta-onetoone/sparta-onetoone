@@ -54,41 +54,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-//    implementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    testImplementation 'org.springframework.security:spring-security-test'
-
-
-
 
     implementation 'org.json:json:20210307'
 
 }
-def querydslDir = "$buildDir/generated/querydsl"
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java', querydslDir]
-        }
-    }
-}
-
-configurations {
-    querydsl {
-        extendsFrom compileClasspath
-    }
-}
-
-task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
-    source = sourceSets.main.java
-    classpath = configurations.compileClasspath
-    options.annotationProcessorPath = configurations.querydsl
-    destinationDir = file(querydslDir)
-}
-
-compileJava.dependsOn generateQueryDSL
 
 tasks.named('test') {
     useJUnitPlatform()

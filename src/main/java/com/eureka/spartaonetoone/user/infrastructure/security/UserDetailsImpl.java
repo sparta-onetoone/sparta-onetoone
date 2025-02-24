@@ -27,11 +27,31 @@ public class UserDetailsImpl implements UserDetails {
 
     // 생성자
     public UserDetailsImpl(User user) {
-      this.userId = user.getUserId();
-      this.username = user.getUsername();
-      this.password = user.getPassword();
-      this.authorities = user.getAuthorities();
-      this.user = user;
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.authorities = user.getAuthorities();
+        this.user = user;
+    }
+
+    public UserDetailsImpl(User user, UUID userId) {
+        this.userId = userId;
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.authorities = user.getAuthorities();
+        this.user = user;
+    }
+
+    public static UserDetailsImpl fromUser(User user) {
+        return new UserDetailsImpl(user);
+    }
+
+    public static UserDetailsImpl testUser(User user, UUID userId) {
+        return new UserDetailsImpl(user, userId);
+    }
+
+    public static UserDetailsImpl adminUser() {
+        return new UserDetailsImpl(User.admin());
     }
 
     @Override
@@ -67,13 +87,5 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
       return true;
-    }
-
-    public static UserDetailsImpl fromUser(User user) {
-      return new UserDetailsImpl(user);
-    }
-
-    public static UserDetailsImpl adminUser() {
-      return new UserDetailsImpl(User.admin());
     }
 }

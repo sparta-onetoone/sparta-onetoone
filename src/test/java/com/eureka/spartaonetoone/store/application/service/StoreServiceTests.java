@@ -22,13 +22,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
@@ -70,14 +68,13 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 
 		// CategoryClient가 반환할 가짜 카테고리 객체 생성
 		List<Category> mockCategories = categoryIds.stream()
-				.map(id -> new Category(UUID.fromString(id), "테스트 카테고리"))
+				.map(id -> Category.of("테스트 카테고리"))
 				.collect(Collectors.toList());
 		when(categoryClient.getCategoryByIds(requestDto.getCategoryIds())).thenReturn(mockCategories);
 
 		// 예상되는 categoryIds 문자열 (쉼표로 구분된 UUID)
-		String expectedCategoryIds = String.join(",", categoryIds);
 		Store store = Store.createStore(userId, "테스트 가게", StoreState.OPEN, "010-1234-5678",
-				"테스트 설명", 1500, 700, 4.5f, 10, expectedCategoryIds);
+				"테스트 설명", 1500, 700, 4.5f, 10, categoryIds);
 		when(storeRepository.save(any(Store.class))).thenReturn(store);
 		// when : createStore 메서드 호출
 		StoreResponseDto response = storeService.createStore(requestDto);
@@ -104,7 +101,7 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 				"테스트 설명", 2000, 800, 4.0f, 5, "생성자", invalidCategoryIds
 		);
 		when(categoryClient.getCategoryByIds(requestDto.getCategoryIds()))
-				.thenThrow(new StoreException("Category not found", "Invalid Category"));
+				.thenThrow(new StoreException("RC-2222","Category not found", HttpStatus.NOT_FOUND));
 
 		// when & then
 		assertThatThrownBy(() -> storeService.createStore(requestDto))
@@ -118,7 +115,7 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		UUID userId = UUID.randomUUID();
 		List<String> categoryIds = List.of(UUID.randomUUID().toString());
 		Store store = Store.createStore(userId, "검색 테스트 가게", StoreState.OPEN, "010-2222-3333",
-				"테스트 설명", 1000, 500, 4.5f, 12, String.join(",", categoryIds));
+				"테스트 설명", 1000, 500, 4.5f, 12, categoryIds);
 
 		Page<Store> page = new PageImpl<>(List.of(store));
 		when(storeRepository.findAll(any(BooleanExpression.class), any(Pageable.class))).thenReturn(page);
@@ -148,8 +145,8 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		UUID userId = UUID.randomUUID();
 		UUID categoryId = UUID.randomUUID();
 		Store store = Store.createStore(userId, "테스트 가게", StoreState.OPEN, "010-1234-5678",
-			"테스트 설명", 1000, 500, 4.5f, 10, categoryId);
-		Page<Store> page = new PageImpl<>(Arrays.asList(store));
+			"테스트 설명", 1000, 500, 4.5f, 10, List.of("uuid1","uuid2"));
+		Page<Store> page = new PageImpl<>(Collections.singletonList(store));
 		when(storeRepository.findAll(any(Pageable.class))).thenReturn(page);
 		// when
 		Page<StoreResponseDto> result = storeService.getAllStores(Pageable.unpaged());
@@ -168,10 +165,10 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		// 기존 가게 생성 (평점 4.5, 리뷰 수 10)
 		StoreRequestDto createDto = new StoreRequestDto(
 			userId, "기존 가게", "OPEN",
-			"010-1234-5678", "기존 설명", 1000, 500, 4.5f, 10, "생성자", categoryId
+			"010-1234-5678", "기존 설명", 1000, 500, 4.5f, 10, "생성자", List.of("uuid1", "uuid2")
 		);
 		Store existingStore = Store.createStore(userId, "기존 가게", StoreState.OPEN, "010-1234-5678",
-			"기존 설명", 1000, 500, 4.5f, 10, categoryId);
+			"기존 설명", 1000, 500, 4.5f, 10, List.of("uuid1", "uuid2"));
 		// 리플렉션을 통해 private id 필드에 storeId 주입
 		Field idField = Store.class.getDeclaredField("id");
 		idField.setAccessible(true);
@@ -188,7 +185,7 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		// 수정 DTO 생성 : 평점과 리뷰 수는 미입력 (null)
 		StoreRequestDto updateDto = new StoreRequestDto(
 			userId, "수정된 가게", "CLOSED",
-			"010-9999-8888", "수정된 설명", 1500, 700, null, null, "수정자", categoryId
+			"010-9999-8888", "수정된 설명", 1500, 700, null, null, "수정자", List.of("uuid1", "uuid2")
 		);
 		// when
 		StoreResponseDto updatedResponse = storeService.updateStore(storeId, updateDto);
@@ -211,7 +208,7 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		List<String> categoryIds = List.of(UUID.randomUUID().toString());
 
 		Store store = Store.createStore(ownerId, "삭제할 가게", StoreState.OPEN, "010-1234-5678",
-				"설명", 1000, 500, 4.5f, 10, String.join(",", categoryIds));
+				"설명", 1000, 500, 4.5f, 10, categoryIds);
 		when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
 
 		// when: ADMIN이 삭제 요청
@@ -229,7 +226,7 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		List<String> categoryIds = List.of(UUID.randomUUID().toString());
 
 		Store store = Store.createStore(ownerId, "삭제할 가게", StoreState.OPEN, "010-1234-5678",
-				"설명", 1000, 500, 4.5f, 10, String.join(",", categoryIds));
+				"설명", 1000, 500, 4.5f, 10, categoryIds);
 		when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
 
 		// when & then
@@ -247,7 +244,7 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		UUID userId = UUID.randomUUID();
 		List<String> categoryIds = List.of(UUID.randomUUID().toString());
 		Store store = Store.createStore(userId, "집계 테스트 가게", StoreState.OPEN, "010-0000-0000",
-				"집계 테스트 설명", 1000, 500, 4.5f, 10, String.join(",", categoryIds));
+				"집계 테스트 설명", 1000, 500, 4.5f, 10, categoryIds);
 
 		Field idField = Store.class.getDeclaredField("id");
 		idField.setAccessible(true);

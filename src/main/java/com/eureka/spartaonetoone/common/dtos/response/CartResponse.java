@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
@@ -24,6 +25,7 @@ public class CartResponse {
 	}
 
 	@Getter
+	@AllArgsConstructor
 	public static class CartItemInfo {
 
 		@JsonProperty("store_id")

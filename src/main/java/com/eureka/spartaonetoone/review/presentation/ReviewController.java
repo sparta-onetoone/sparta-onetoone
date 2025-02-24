@@ -37,11 +37,12 @@ public class ReviewController {
 	}
 
 	// 특정주문(orderId)에 속한 리뷰 전체 목록 조회
-	@GetMapping
-	public ResponseEntity<Page<ReviewResponseDto>> getReviewsByOrderId(@RequestParam("order_id") UUID orderId, Pageable pageable) {
+	@GetMapping("/orders/{order_id}")
+	public ResponseEntity<Page<ReviewResponseDto>> getReviewsByOrderId(@PathVariable("order_id") UUID orderId, Pageable pageable) {
 		Page<ReviewResponseDto> responseDtos = reviewService.getReviewsByOrderId(orderId, pageable);
 		return ResponseEntity.ok(responseDtos);
 	}
+
 	@GetMapping
 	public ResponseEntity<Page<Review>> getAllReviews(Pageable pageable) {
 		Page<Review> reviews = reviewService.getAllReviews(pageable);

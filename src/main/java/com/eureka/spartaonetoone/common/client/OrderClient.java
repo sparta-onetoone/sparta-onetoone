@@ -21,7 +21,7 @@ public class OrderClient {
 		return webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path(ORDERS_URI)
-				.queryParam("storeId", storeId)
+				.queryParam("store_id", storeId)
 				.build())
 			.retrieve()
 			.bodyToFlux(OrderResponse.class)

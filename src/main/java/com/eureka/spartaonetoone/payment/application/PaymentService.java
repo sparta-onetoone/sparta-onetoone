@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.payment.application;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentSearchRequestDto;
+import com.eureka.spartaonetoone.payment.application.dtos.PaymentUpdateRequestDto;
 import com.eureka.spartaonetoone.payment.application.exception.PaymentException;
 import com.eureka.spartaonetoone.payment.domain.Payment;
 import com.eureka.spartaonetoone.payment.domain.repository.PaymentRepository;
@@ -23,7 +24,7 @@ public class PaymentService {
     public UUID savePayment(final PaymentCreateRequestDto paymentCreateRequestDto) {
 
         Payment payment = Payment.createPayment(paymentCreateRequestDto.getBank(), paymentCreateRequestDto.getOrderId(),
-                paymentCreateRequestDto.getPrice(), paymentCreateRequestDto.getIsDeleted());
+                paymentCreateRequestDto.getPrice());
         paymentRepository.save(payment);
         return payment.getId();
     }
@@ -41,13 +42,20 @@ public class PaymentService {
         return paymentRepository.getPayments(pageable);
     }
 
-    public UUID deletePayment(final UUID paymentId) {
+    public UUID deletePayment(final UUID paymentId, UUID userId) {
         Payment payment = paymentRepository
                 .findById(paymentId)
                 .orElseThrow(PaymentException.PaymentNotFoundException::new);
-        payment.deleteProduct();
+        payment.deletePayment(userId);
         paymentRepository.save(payment);
         return payment.getId();
+    }
+
+    public void updatePayment(final UUID paymentId,
+                              final PaymentUpdateRequestDto request,
+                              final UUID userId) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(PaymentException.PaymentNotFoundException::new);
+        payment.updatePayment(request.getPrice(), request.getBank(), request.getState());
     }
 
 

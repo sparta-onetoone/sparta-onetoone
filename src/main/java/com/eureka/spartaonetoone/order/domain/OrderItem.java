@@ -52,9 +52,10 @@ public class OrderItem extends TimeStamp {
 	@Column(nullable = false)
 	private boolean isDeleted;
 
-	public void delete() {
+	public void delete(UUID deletedBy) {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
+		this.deletedBy = deletedBy;
 	}
 
 	public static OrderItem createOrderItem(Order order, UUID productId, String productName, String productImage, int quantity, int price) {

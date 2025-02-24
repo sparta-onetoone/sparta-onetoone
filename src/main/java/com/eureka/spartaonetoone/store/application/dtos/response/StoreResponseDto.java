@@ -46,16 +46,16 @@ public class StoreResponseDto {
 			.deliveryFee(store.getDeliveryFee())
 			.rating(store.getRating())
 			.reviewCount(store.getReviewCount())
-			.categoryIds(parseCategoryIds(store.getCategoryIds()))
+			.categoryIds(store.getCategoryIds())
 			.createdAt(store.getCreatedAt())
 			.updatedAt(store.getUpdatedAt())
 			.deletedAt(store.getDeletedAt())
 			.build();
 	}
 
-	private static List<String> parseCategoryIds(String categoryIds) {
-		return (categoryIds != null && !categoryIds.isEmpty())
-				? List.of(categoryIds.split(","))
-				: List.of();
-	}
+//	private static List<String> parseCategoryIds(String categoryIds) {
+//		return (categoryIds != null && !categoryIds.isEmpty())
+//				? List.of(categoryIds.split(","))
+//				: List.of();
+//	}
 }

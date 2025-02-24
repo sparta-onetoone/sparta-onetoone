@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.store.presentation.controller;
 import com.eureka.spartaonetoone.mock.MockUser;
 import com.eureka.spartaonetoone.store.application.StoreService;
 import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;
+import com.eureka.spartaonetoone.user.domain.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class StoreControllerTest {
 
 	private MockMvc mockMvc;
@@ -44,7 +47,7 @@ public class StoreControllerTest {
 
 	@DisplayName("OWNER는 가게를 생성할 수 있다.")
 	@Test
-	@WithMockUser(roles = {"OWNER", "ADMIN"})
+	@MockUser(role = UserRole.OWNER)
 	public void testCreateStore() throws Exception {
 		// given: 카테고리 ID를 리스트로 변경
 		List<String> categoryIds = List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString());

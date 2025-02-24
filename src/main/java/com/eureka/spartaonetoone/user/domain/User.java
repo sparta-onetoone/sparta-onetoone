@@ -88,7 +88,7 @@ public class User extends TimeStamp {
     // 논리적 삭제 처리
     public void markAsDeleted(UUID deletedBy) {
       this.isDeleted = true;
-      this.deletedBy = deletedBy.toString();  // UUID를 String으로 변환하여 저장
+      this.deletedBy = deletedBy;  // UUID를 String으로 변환하여 저장
     }
 
     // 권한 정보 반환
