@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.useraddress.application.UserAddressService;
 import com.eureka.spartaonetoone.useraddress.application.dtos.request.UserAddressRequestDto;
+import com.eureka.spartaonetoone.useraddress.application.dtos.request.UserAddressSearchRequestDto;
 import com.eureka.spartaonetoone.useraddress.application.dtos.response.UserAddressResponseDto;
 
 import jakarta.validation.Valid;
@@ -53,12 +55,14 @@ public class UserAddressController {
 		@PathVariable("user_id") UUID userId,
 		@Valid @RequestBody UserAddressRequestDto request) {
 
-		UserAddressResponseDto addedAddress = userAddressService.addAddress(userId, request);
-		if (addedAddress == null) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "주소 추가 실패");
+		try {
+			UserAddressResponseDto addedAddress = userAddressService.addAddress(userId, request);
+			return ResponseEntity.ok(CommonResponse.success(addedAddress, "주소 추가 성공"));
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "주소 추가 실패", e);
 		}
-		return ResponseEntity.ok(CommonResponse.success(addedAddress, "주소 추가 성공"));
 	}
+
 	// 주소 삭제
 	@DeleteMapping("/{address_id}")
 	public ResponseEntity<CommonResponse<UserAddressResponseDto>> deleteAddress(
@@ -76,5 +80,17 @@ public class UserAddressController {
 
 		UserAddressResponseDto updatedAddress = userAddressService.updateAddress(addressId, request);
 		return ResponseEntity.ok(CommonResponse.success(updatedAddress, "주소 수정 성공"));
+	}
+	//주소 검색
+	@GetMapping("/{userId}/search")
+	public ResponseEntity<CommonResponse<Page<UserAddressResponseDto>>> searchUserAddresses(
+		@PathVariable UUID userId,
+		@ModelAttribute UserAddressSearchRequestDto request,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		Page<UserAddressResponseDto> addresses = userAddressService.searchUserAddresses(userId, request, pageable);
+		return ResponseEntity.ok(CommonResponse.success(addresses, "주소 검색 성공"));
 	}
 }

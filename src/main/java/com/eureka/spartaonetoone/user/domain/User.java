@@ -2,6 +2,8 @@ package com.eureka.spartaonetoone.user.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 import com.eureka.spartaonetoone.useraddress.domain.UserAddress;
+import com.querydsl.core.annotations.QueryEntity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;

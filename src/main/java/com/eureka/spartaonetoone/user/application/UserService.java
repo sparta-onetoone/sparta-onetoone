@@ -4,9 +4,11 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eureka.spartaonetoone.user.application.dtos.request.UserSearchRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.request.UserUpdateRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDeleteResponseDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDetailResponseDto;
@@ -80,5 +82,20 @@ public class UserService {
 		return UserDeleteResponseDto.builder()
 			.userId(user.getUserId()) // UUID 그대로 유지
 			.build();
+	}
+
+	// 회원 검색 서비스 로직 (검색 조건 및 페이지네이션 적용)
+	public Page<UserListResponseDto> searchUsers(final UserSearchRequestDto request, final Pageable pageable) {
+		// UserRepository에서 검색 조건을 기반으로 데이터를 조회
+		Pageable updatedPageable = userRepository.applySortAndPageSize(request, pageable);
+
+		Page<User> userPage = userRepository.searchByCondition(
+			request.getUsername(),
+			request.getEmail(),
+			updatedPageable
+		);
+
+		// 조회된 결과를 Page<UserListResponseDto>로 변환하여 반환
+		return userPage.map(UserListResponseDto::from);
 	}
 }

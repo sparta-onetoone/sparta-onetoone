@@ -59,10 +59,10 @@ public class UserAddress extends TimeStamp {
 	private Boolean isDeleted;
 
 	// 주소 정보 업데이트 메서드
-	public void updateAddress(String city, String district, String loadName, String zipCode, String detail) {
+	public void updateAddress(String city, String district, String roadName, String zipCode, String detail) {
 		this.city = city;
 		this.district = district;
-		this.roadName = loadName;
+		this.roadName = roadName;
 		this.zipCode = zipCode;
 		this.detail = detail;
 		this.updatedAt = LocalDateTime.now();

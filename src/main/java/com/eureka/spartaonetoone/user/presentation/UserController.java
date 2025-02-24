@@ -2,6 +2,7 @@ package com.eureka.spartaonetoone.user.presentation;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.user.application.UserService;
+import com.eureka.spartaonetoone.user.application.dtos.request.UserSearchRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.request.UserUpdateRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDeleteResponseDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDetailResponseDto;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,5 +91,11 @@ public class UserController {
 		} else {
 			throw new UserException.UserNotFoundException();  // 권한 없으면 예외 처리
 		}
+	}
+	// 회원 검색 API
+	@GetMapping("/search")
+	public Page<UserListResponseDto> searchUsers(
+		UserSearchRequestDto request, Pageable pageable) {
+		return userService.searchUsers(request, pageable);
 	}
 }
