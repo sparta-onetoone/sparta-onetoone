@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -26,7 +27,7 @@ public class StoreResponseDto {
 	private Integer deliveryFee;
 	private Float rating;
 	private Integer reviewCount;
-	private UUID categoryId;
+	private List<String>  categoryIds;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private LocalDateTime deletedAt;
@@ -45,10 +46,16 @@ public class StoreResponseDto {
 			.deliveryFee(store.getDeliveryFee())
 			.rating(store.getRating())
 			.reviewCount(store.getReviewCount())
-			.categoryId(store.getCategoryId())
+			.categoryIds(parseCategoryIds(store.getCategoryIds()))
 			.createdAt(store.getCreatedAt())
 			.updatedAt(store.getUpdatedAt())
 			.deletedAt(store.getDeletedAt())
 			.build();
+	}
+
+	private static List<String> parseCategoryIds(String categoryIds) {
+		return (categoryIds != null && !categoryIds.isEmpty())
+				? List.of(categoryIds.split(","))
+				: List.of();
 	}
 }

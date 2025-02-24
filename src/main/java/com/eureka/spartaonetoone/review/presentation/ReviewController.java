@@ -4,6 +4,7 @@ import com.eureka.spartaonetoone.review.application.ReviewService;
 import com.eureka.spartaonetoone.review.application.dtos.request.ReviewRequestDto;
 import com.eureka.spartaonetoone.review.application.dtos.response.ReviewResponseDto;
 
+import com.eureka.spartaonetoone.review.domain.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,11 @@ public class ReviewController {
 	public ResponseEntity<Page<ReviewResponseDto>> getReviewsByOrderId(@RequestParam("order_id") UUID orderId, Pageable pageable) {
 		Page<ReviewResponseDto> responseDtos = reviewService.getReviewsByOrderId(orderId, pageable);
 		return ResponseEntity.ok(responseDtos);
+	}
+	@GetMapping
+	public ResponseEntity<Page<Review>> getAllReviews(Pageable pageable) {
+		Page<Review> reviews = reviewService.getAllReviews(pageable);
+		return ResponseEntity.ok(reviews);
 	}
 
 	// 리뷰 수정

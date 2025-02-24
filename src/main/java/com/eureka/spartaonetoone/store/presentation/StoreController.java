@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.store.presentation;
 import com.eureka.spartaonetoone.store.application.StoreService;
 import com.eureka.spartaonetoone.store.application.dtos.request.StoreRequestDto;
 import com.eureka.spartaonetoone.store.application.dtos.response.StoreResponseDto;
+import com.eureka.spartaonetoone.store.application.exception.StoreException;
 import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 
 import org.springframework.data.domain.Page;
@@ -42,7 +43,15 @@ public class StoreController {
 		StoreResponseDto responseDto = storeService.getStoreById(storeId);
 		return ResponseEntity.ok(responseDto);
 	}
+	@GetMapping("/search")
+	public ResponseEntity<Page<StoreResponseDto>> searchStores(
+			@RequestParam(required = false) String category,
+			@RequestParam(required = false) String name,
+			Pageable pageable) {
 
+		Page<StoreResponseDto> responseDtos = storeService.searchStores(category, name, pageable);
+		return ResponseEntity.ok(responseDtos);
+	}
 
 	// 전체 가게 목록 조회
 	@GetMapping
@@ -66,8 +75,16 @@ public class StoreController {
 	@DeleteMapping("/{store_id}")
 	@PreAuthorize("hasAnyRole('ADMIN', 'OWNER') and (#storeId == #userDetails.userId)")
 	public ResponseEntity<Void> deleteStore(@PathVariable(name = "store_id") UUID storeId,
-		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		storeService.deleteStore(storeId);
+											@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+		String userRole = userDetails.getAuthorities().stream()
+				.findFirst()
+				.orElseThrow(StoreException.NoPermissionToDeleteException::new)
+				.getAuthority();
+		UUID userId = userDetails.getUserId();
+
+		storeService.deleteStore(userRole, storeId, userId);
 		return ResponseEntity.noContent().build();
 	}
 }
+

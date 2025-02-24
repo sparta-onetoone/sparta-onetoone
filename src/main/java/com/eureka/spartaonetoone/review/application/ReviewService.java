@@ -52,6 +52,10 @@ public class ReviewService {
 		return new PageImpl<>(dtoList, pageable, dtoList.size());
 	}
 
+	public Page<Review> getAllReviews(Pageable pageable) {
+		return reviewRepository.findAll(pageable);
+	}
+
 	// 리뷰 수정 - 특정 reviewId에 해당하는 Review 엔티티를 조회한 후, DTO의 값으로 업데이트하고 저장
 	public ReviewResponseDto updateReview(UUID reviewId, @Valid ReviewRequestDto dto) {
 		Review review = reviewRepository.findById(reviewId)

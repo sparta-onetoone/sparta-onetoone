@@ -2,6 +2,8 @@ package com.eureka.spartaonetoone.review.domain;
 
 import jakarta.persistence.*;
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +27,10 @@ public class Review extends TimeStamp {
 	@Column(name = "order_id", nullable = false)
 	private UUID orderId;
 
+
 	@Column(name = "rating", nullable = false)
+	@Min(1)
+	@Max(5)
 	private Integer rating;
 
 	@Column(name = "content", columnDefinition = "TEXT", nullable = false)
