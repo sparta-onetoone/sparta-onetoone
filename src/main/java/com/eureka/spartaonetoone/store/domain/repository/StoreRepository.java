@@ -23,9 +23,6 @@ public interface StoreRepository extends JpaRepository<Store, UUID>, QuerydslPre
 //	@Query("SELECT s FROM Store s JOIN s.categoryIds c WHERE c.id = :categoryId AND s.isDeleted = false")
 //	List<Store> findByCategoryIdAndActive(@Param("categoryIds") UUID categoryId);
 
-	// 소프트 삭제되지 않은 상점을 검색하는 표준 JPA 메서드
-	List<Store> findByIsDeletedFalse();
-
 	// 보다 복잡한 쿼리 요구사항에 대응하기 위한 사양(Specification) 사용 (선택적)
 	List<Store> findAll(Specification<Store> spec);
 }

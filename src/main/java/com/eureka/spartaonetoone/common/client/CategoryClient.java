@@ -20,7 +20,7 @@ public class CategoryClient {
 
     public List<Category> getCategoryByIds(List<String> categoryIds) {
         return webClient.post()
-                .uri(CATEGORIES_URI + "/batch") // 엔드포인트 변경 (POST 요청)
+                .uri(CATEGORIES_URI + "/search") // 엔드포인트 변경 (POST 요청)
                 .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .bodyValue(categoryIds) // JSON 배열로 전송
                 .retrieve()

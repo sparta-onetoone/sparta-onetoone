@@ -88,7 +88,7 @@ public class CartService {
 	}
 
 	@Transactional
-	public void deleteCartItem(UUID cartId, UUID cartItemId) {
+	public void deleteCartItem(UUID cartId, UUID cartItemId, UUID userId) {
 		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
@@ -97,15 +97,15 @@ public class CartService {
 			.findFirst()
 			.orElseThrow(CartItemException.NotFoundInCart::new);
 
-		cartItem.delete();
+		cartItem.delete(userId);
 	}
 
 	@Transactional
-	public void deleteCart(UUID cartId) {
+	public void deleteCart(UUID cartId, UUID userId) {
 		Cart cart = cartRepository.findActiveCartById(cartId)
 			.orElseThrow(CartException.NotFound::new);
 
-		cart.delete();
+		cart.delete(userId);
 	}
 
 	private CartItem createCartItem(Cart cart, CartItemCreateRequestDto requestDto) {

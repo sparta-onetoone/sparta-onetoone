@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.category.application;
 
+import com.eureka.spartaonetoone.category.application.dtos.CategoryDto;
 import com.eureka.spartaonetoone.category.application.exception.CategoryNotFoundException;
 import com.eureka.spartaonetoone.category.domain.Category;
 import com.eureka.spartaonetoone.category.domain.QCategory;
@@ -8,6 +9,10 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -47,6 +52,11 @@ public class CategoryService {
             predicate = predicate.and(qCategory.name.containsIgnoreCase(name));
         }
         return predicate;
+    }
+
+    // categoryIds를 이용한 검색 메서드 (핵심 요구사항
+    public Page<CategoryDto> searchCategoriesByIds(List<UUID> categoryIds, Pageable pageable) {
+        return categoryRepository.searchCategories(categoryIds, pageable);
     }
 }
 

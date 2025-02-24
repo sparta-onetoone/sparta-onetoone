@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -62,5 +63,12 @@ public class ReviewController {
 	public ResponseEntity<Void> deleteReview(@PathVariable("review_id") UUID reviewId) {
 		reviewService.deleteReview(reviewId);
 		return ResponseEntity.noContent().build();
+	}
+
+	// 리뷰 검색: 여러 orderIds를 받아 페이징 처리된 결과 반환
+	@PostMapping("/search")
+	public ResponseEntity<Page<ReviewResponseDto>> searchReviews(@RequestBody List<UUID> orderIds, Pageable pageable) {
+		Page<ReviewResponseDto> reviews = reviewService.searchReviewsByOrderIds(orderIds, pageable);
+		return ResponseEntity.ok(reviews);
 	}
 }

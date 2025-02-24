@@ -30,7 +30,7 @@ public class StoreController {
 
 	// 가게 등록
 	@PostMapping
-	@Secured("OWNER")
+	@Secured("ROLE_OWNER")
 	public ResponseEntity<StoreResponseDto> createStore(@Valid @RequestBody StoreRequestDto storeRequestDto) {
 		StoreResponseDto responseDto = storeService.createStore(storeRequestDto);
 		return ResponseEntity.ok(responseDto);
@@ -38,11 +38,12 @@ public class StoreController {
 
 	// 특정 가게 조회
 	@GetMapping("/{store_id}")
-	@Secured({"CUSTOMER", "OWNER", "ADMIN"})
+	@Secured({"ROLE_CUSTOMER", "ROLE_OWNER", "ROLE_ADMIN"})
 	public ResponseEntity<StoreResponseDto> getStore(@PathVariable(name = "store_id") UUID storeId) {
 		StoreResponseDto responseDto = storeService.getStoreById(storeId);
 		return ResponseEntity.ok(responseDto);
 	}
+
 	@GetMapping("/search")
 	public ResponseEntity<Page<StoreResponseDto>> searchStores(
 			@RequestParam(required = false) String category,
@@ -55,7 +56,7 @@ public class StoreController {
 
 	// 전체 가게 목록 조회
 	@GetMapping
-	@Secured({"CUSTOMER", "OWNER", "ADMIN"})
+	@Secured({"ROLE_CUSTOMER", "ROLE_OWNER", "ROLE_ADMIN"})
 	public ResponseEntity<Page<StoreResponseDto>> getAllStores(Pageable pageable) {
 		Page<StoreResponseDto> responseDtos = storeService.getAllStores(pageable);
 		return ResponseEntity.ok(responseDtos);
@@ -63,7 +64,7 @@ public class StoreController {
 
 	// 가게 수정
 	@PutMapping("/{store_id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'OWNER') and (#storeId == #userDetails.userId)")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER') and (#storeId == #userDetails.userId)")
 	public ResponseEntity<StoreResponseDto> updateStore(@PathVariable(name = "store_id") UUID storeId,
 		@Valid @RequestBody StoreRequestDto storeRequestDto,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -73,7 +74,7 @@ public class StoreController {
 
 	// 가게 삭제
 	@DeleteMapping("/{store_id}")
-	@PreAuthorize("hasAnyRole('ADMIN', 'OWNER') and (#storeId == #userDetails.userId)")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER') and (#storeId == #userDetails.userId)")
 	public ResponseEntity<Void> deleteStore(@PathVariable(name = "store_id") UUID storeId,
 											@AuthenticationPrincipal UserDetailsImpl userDetails) {
 

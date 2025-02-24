@@ -43,7 +43,7 @@ public class StoreService {
         List<String> categoryIds = categories.stream()
                 .map(Category::getId) // Category 엔티티에서 ID(UUID) 가져오기
                 .map(UUID::toString)  // UUID를 String으로 변환
-                .collect(Collectors.toUnmodifiableList()); // 쉼표(,)로 구분된 문자열로 변환
+                .toList(); // 쉼표(,)로 구분된 문자열로 변환
 
         Store store = Store.createStore(
                 dto.getUserId(),

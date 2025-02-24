@@ -1,7 +1,6 @@
 package com.eureka.spartaonetoone.product.infrastructure;
 
 import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetResponseDto;
-import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.product.domain.Product;
 import com.eureka.spartaonetoone.product.domain.QProduct;
 import com.eureka.spartaonetoone.product.domain.repository.CustomProductRepository;

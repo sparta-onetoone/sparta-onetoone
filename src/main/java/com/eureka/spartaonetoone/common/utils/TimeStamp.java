@@ -1,7 +1,6 @@
 package com.eureka.spartaonetoone.common.utils;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,6 +31,5 @@ public abstract class TimeStamp {
 
     protected LocalDateTime deletedAt;
 
-    protected UUID deletedBy;
-
+	protected UUID deletedBy;
 }

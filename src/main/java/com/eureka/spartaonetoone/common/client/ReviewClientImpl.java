@@ -19,7 +19,7 @@ public class ReviewClientImpl implements ReviewClient {
 	@Override
 	public List<ReviewResponse> getReviews(List<UUID> orderIds) {
 		return webClient.post()
-			.uri(REVIEWS_BY_ORDERS_URI)  // 상수로 정의된 URI 사용
+			.uri(REVIEWS_BY_ORDERS_URI + "/search")  // 상수로 정의된 URI 사용
 			.header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
 			.bodyValue(orderIds)         // 주문 ID 목록을 JSON 배열로 전송
 			.retrieve()
