@@ -39,4 +39,10 @@ public class AuthException extends CustomException {
             super("AU-005", "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
         }
     }
+    // 삭제된 사용자 접근 예외 추가
+    public static class DeletedUserAccessException extends AuthException {
+        public DeletedUserAccessException() {
+            super("AU-006", "삭제된 사용자는 시스템에 접근할 수 없습니다.", HttpStatus.FORBIDDEN);
+        }
+    }
 }

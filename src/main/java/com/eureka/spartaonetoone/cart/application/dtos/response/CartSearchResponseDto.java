@@ -12,7 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 public class CartSearchResponseDto {
 
 	@JsonProperty("cart_id")

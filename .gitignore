@@ -33,4 +33,4 @@ out/
 .vscode/
 ### yml ###
 *.yml
-*.log
+*.log.DS_Store

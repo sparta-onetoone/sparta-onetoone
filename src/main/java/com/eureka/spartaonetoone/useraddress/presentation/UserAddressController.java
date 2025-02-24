@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.useraddress.application.UserAddressService;
@@ -46,16 +48,17 @@ public class UserAddressController {
 		return ResponseEntity.ok(CommonResponse.success(addresses, "사용자 주소 조회 성공"));
 	}
 
-	// 주소 추가
 	@PostMapping("/{user_id}")
 	public ResponseEntity<CommonResponse<UserAddressResponseDto>> addAddress(
 		@PathVariable("user_id") UUID userId,
 		@Valid @RequestBody UserAddressRequestDto request) {
 
 		UserAddressResponseDto addedAddress = userAddressService.addAddress(userId, request);
+		if (addedAddress == null) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "주소 추가 실패");
+		}
 		return ResponseEntity.ok(CommonResponse.success(addedAddress, "주소 추가 성공"));
 	}
-
 	// 주소 삭제
 	@DeleteMapping("/{address_id}")
 	public ResponseEntity<CommonResponse<UserAddressResponseDto>> deleteAddress(

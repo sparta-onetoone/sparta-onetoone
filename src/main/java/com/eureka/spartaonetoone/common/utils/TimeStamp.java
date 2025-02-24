@@ -1,6 +1,7 @@
 package com.eureka.spartaonetoone.common.utils;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,20 +18,20 @@ import lombok.Getter;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class TimeStamp {
 
-	@CreatedDate
-	protected LocalDateTime createdAt;
+    @CreatedDate
+    protected LocalDateTime createdAt;
 
-	@CreatedBy
-	protected String createdBy;
+    @CreatedBy
+    protected UUID createdBy;
 
-	@LastModifiedDate
-	protected LocalDateTime updatedAt;
+    @LastModifiedDate
+    protected LocalDateTime updatedAt;
 
-	@LastModifiedBy
-	protected String updatedBy;
+    @LastModifiedBy
+    protected UUID updatedBy;
 
 	protected LocalDateTime deletedAt;
 
-	protected String deletedBy;
+	protected UUID deletedBy;
 
 }

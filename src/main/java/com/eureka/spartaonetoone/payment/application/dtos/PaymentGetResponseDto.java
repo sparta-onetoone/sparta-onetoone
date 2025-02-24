@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -16,16 +15,12 @@ public class PaymentGetResponseDto {
     private UUID paymentId;
     private UUID orderId;
     private String paymentState;
-    private String deletedBy;
-    private LocalDateTime deletedAt;
 
     public static PaymentGetResponseDto from(Payment payment) {
         return PaymentGetResponseDto.builder()
                 .paymentId(payment.getId())
                 .orderId(payment.getOrderId())
                 .paymentState(payment.getState().toString())
-                .deletedBy(payment.getDeletedBy())
-                .deletedAt(payment.getDeletedAt())
                 .build();
     }
 
