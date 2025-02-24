@@ -19,7 +19,7 @@ import java.util.UUID;
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "p_user", uniqueConstraints = {@UniqueConstraint(name = "unique_email", columnNames = "email")})
 public class User extends TimeStamp {
-  
+
     @Id
     @UuidGenerator
     @Column(name = "user_id", columnDefinition = "UUID", updatable = false, nullable = false)
@@ -88,7 +88,7 @@ public class User extends TimeStamp {
     // 논리적 삭제 처리
     public void markAsDeleted(UUID deletedBy) {
       this.isDeleted = true;
-      this.deletedBy = deletedBy.toString();  // UUID를 String으로 변환하여 저장
+      this.deletedBy = deletedBy;
     }
 
     // 권한 정보 반환
