@@ -62,10 +62,11 @@ public class CartItem extends TimeStamp {
 		this.quantity = quantity;
 	}
 
-	public void delete() {
+	public void delete(UUID userId) {
 		this.quantity = 0;
 		this.price = 0;
 		this.isDeleted = true;
+		this.deletedBy = userId;
 		this.deletedAt = LocalDateTime.now();
 	}
 

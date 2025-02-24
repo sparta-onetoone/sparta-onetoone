@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +32,8 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**")
+				.permitAll()
 				// 회원가입, 로그인, 리프레시 토큰은 누구나 접근 가능
 				.requestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth/refresh", "/api/v1/ai", "/api/v1/addresses", "/api/v1/stores", "/api/v1/carts")
 				.permitAll()
