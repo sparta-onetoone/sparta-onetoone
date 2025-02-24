@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import com.eureka.spartaonetoone.user.application.UserService;
 import com.eureka.spartaonetoone.user.application.dtos.request.UserUpdateRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDeleteResponseDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDetailResponseDto;
@@ -21,6 +20,7 @@ import com.eureka.spartaonetoone.user.application.exception.UserException;
 import com.eureka.spartaonetoone.user.domain.User;
 import com.eureka.spartaonetoone.user.domain.UserRole;
 import com.eureka.spartaonetoone.user.domain.repository.UserRepository;
+
 
 @SpringBootTest
 class UserServiceTest {
@@ -56,7 +56,7 @@ class UserServiceTest {
 		// 삭제된 사용자 생성
 		User user = User.create("testuser", "testuser@example.com", "encodedPassword", "TestUser", "010-1234-5678",
 			UserRole.CUSTOMER);
-		user.markAsDeleted(user.getUserId()); // 사용자 삭제 처리
+		user.markAsDeleted(UUID.randomUUID()); // 사용자 삭제 처리
 		userRepository.save(user);
 
 		// When & Then
@@ -116,8 +116,7 @@ class UserServiceTest {
 		assertThatThrownBy(() -> userService.updateUser(nonExistentUserId, requestDto))
 			.isInstanceOf(UserException.UserNotFoundException.class);
 	}
-
-	// 회원 탈퇴 테스트
+	//회원탈퇴
 	@DisplayName("회원 탈퇴 시, 정상적으로 탈퇴된 사용자 정보가 반환된다.")
 	@Test
 	void deleteUser_test() {
@@ -131,9 +130,9 @@ class UserServiceTest {
 
 		// Then
 		assertThat(response).isNotNull();
-		assertThat(response.getUserId()).isEqualTo(user.getUserId().toString());
+		// UUID 객체를 직접 비교합니다.
+		assertThat(response.getUserId()).isEqualTo(user.getUserId());  // UUID 비교
 	}
-
 	// 존재하지 않는 사용자 탈퇴 시 예외 발생 테스트
 	@DisplayName("존재하지 않는 사용자 탈퇴 시, 예외가 발생한다.")
 	@Test
@@ -145,5 +144,4 @@ class UserServiceTest {
 		assertThatThrownBy(() -> userService.deleteUser(nonExistentUserId))
 			.isInstanceOf(UserException.UserNotFoundException.class);
 	}
-
 }

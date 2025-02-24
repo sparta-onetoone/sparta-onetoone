@@ -42,7 +42,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain chain
 	) throws ServletException, IOException {
-
 		String clientCredential = request.getHeader("X-Client-Credential");
 		if (clientCredential != null && clientCredential.equals("onetoone")) {
 			UserDetailsImpl userDetails = UserDetailsImpl.adminUser();
@@ -51,6 +50,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				userDetails,
 				null,
 				userDetails.getAuthorities()
+
 			);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(authentication);

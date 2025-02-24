@@ -33,11 +33,10 @@ public class UserAddressService {
 		return addresses.map(UserAddressResponseDto::from); // 엔티티 -> DTO 변환
 	}
 
-	//주소 추가 로직
 	@Transactional
 	public UserAddressResponseDto addAddress(UUID userId, UserAddressRequestDto request) {
 		User user = userRepository.findById(userId)
-			.orElseThrow(UserException.UserNotFoundException::new);
+			.orElseThrow(UserException.UserNotFoundException::new);  // 유저 없을 때 예외 발생
 
 		UserAddress address = UserAddress.create(
 			request.getCity(),
@@ -49,10 +48,9 @@ public class UserAddressService {
 
 		address.setUser(user);  // 유저와 주소 연결
 
-		UserAddress savedAddress = userAddressRepository.save(address);
+		UserAddress savedAddress = userAddressRepository.save(address);  // DB에 저장
 		return UserAddressResponseDto.from(savedAddress);
 	}
-
 	// 주소 삭제 로직 (논리적 삭제)
 	@Transactional
 	public UserAddressResponseDto deleteAddress(UUID addressId) {

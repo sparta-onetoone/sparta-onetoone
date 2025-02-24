@@ -2,6 +2,8 @@ package com.eureka.spartaonetoone.auth.application;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.eureka.spartaonetoone.auth.application.AuthService;
 import com.eureka.spartaonetoone.auth.application.dtos.request.AuthSigninRequestDto;
 import com.eureka.spartaonetoone.auth.application.dtos.request.AuthSignupRequestDto;
 import com.eureka.spartaonetoone.auth.application.dtos.response.AuthSigninResponseDto;
@@ -57,7 +58,8 @@ class AuthServiceTest {
 		assertThat(response.getRole()).isEqualTo(requestDto.getRole());
 
 		// Verify the user is saved in the repository
-		User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new AuthException.UserNotFound());
+		User user = userRepository.findByEmail(requestDto.getEmail())
+			.orElseThrow(() -> new AuthException.UserNotFound());
 		assertThat(user.getUsername()).isEqualTo(requestDto.getUsername());
 		assertThat(user.getRole()).isEqualTo(UserRole.CUSTOMER);
 	}
@@ -67,7 +69,8 @@ class AuthServiceTest {
 	void signin_test() {
 		// Given
 		String encodedPassword = passwordEncoder.encode("Password@123");
-		User user = User.create("testuser", "testuser@example.com", encodedPassword, "TestUser", "010-1234-5678", UserRole.CUSTOMER);
+		User user = User.create("testuser", "testuser@example.com", encodedPassword, "TestUser", "010-1234-5678",
+			UserRole.CUSTOMER);
 		userRepository.save(user);
 
 		AuthSigninRequestDto requestDto = new AuthSigninRequestDto("testuser@example.com", "Password@123");
@@ -86,7 +89,8 @@ class AuthServiceTest {
 	void signin_invalid_password_test() {
 		// Given
 		String encodedPassword = passwordEncoder.encode("Password@123");
-		User user = User.create("testuser", "testuser@example.com", encodedPassword, "TestUser", "010-1234-5678", UserRole.CUSTOMER);
+		User user = User.create("testuser", "testuser@example.com", encodedPassword, "TestUser", "010-1234-5678",
+			UserRole.CUSTOMER);
 		userRepository.save(user);
 
 		AuthSigninRequestDto requestDto = new AuthSigninRequestDto("testuser@example.com", "WrongPassword");
@@ -106,4 +110,5 @@ class AuthServiceTest {
 		assertThatThrownBy(() -> authService.signin(requestDto))
 			.isInstanceOf(AuthException.UserNotFound.class);
 	}
+
 }
