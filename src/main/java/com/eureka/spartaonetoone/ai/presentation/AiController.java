@@ -34,4 +34,3 @@ public class AiController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(aiResponseDto);
 	}
 }
-

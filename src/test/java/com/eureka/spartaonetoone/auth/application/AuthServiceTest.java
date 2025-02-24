@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.eureka.spartaonetoone.auth.application.dtos.request.AuthSigninRequestDto;
 import com.eureka.spartaonetoone.auth.application.dtos.request.AuthSignupRequestDto;
@@ -22,6 +24,7 @@ import com.eureka.spartaonetoone.user.domain.repository.UserRepository;
 import com.eureka.spartaonetoone.useraddress.application.dtos.request.UserAddressRequestDto;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class AuthServiceTest {
 
 	@Autowired
@@ -32,6 +35,11 @@ class AuthServiceTest {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+	@AfterEach
+	void tearDown() {
+		userRepository.deleteAll();
+	}
 
 	@DisplayName("회원가입 시, 유효한 입력으로 회원이 생성된다.")
 	@Test

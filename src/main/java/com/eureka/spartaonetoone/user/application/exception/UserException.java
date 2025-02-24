@@ -17,7 +17,7 @@ public class UserException extends CustomException {
 
     public static class DeletedUserAccessException extends UserException {
         public DeletedUserAccessException() {
-            super("U-002", "삭제된 사용자에 접근할 수 없습니다.", HttpStatus.FORBIDDEN);
+            super("U-002", "삭제된 사용자에 접근할 수 없습니다.", HttpStatus.NOT_FOUND);
         }
     }
 
