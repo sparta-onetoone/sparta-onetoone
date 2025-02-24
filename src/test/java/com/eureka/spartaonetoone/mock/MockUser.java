@@ -17,5 +17,5 @@ public @interface MockUser {
 
     String email() default "mock@email.com";
 
-    UserRole role() default UserRole.CUSTOMER;
+    UserRole role() default UserRole.ADMIN;
 }

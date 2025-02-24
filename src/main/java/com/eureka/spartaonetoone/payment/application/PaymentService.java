@@ -1,5 +1,7 @@
 package com.eureka.spartaonetoone.payment.application;
 
+import com.eureka.spartaonetoone.common.client.OrderClient;
+import com.eureka.spartaonetoone.common.client.StoreClient;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentSearchRequestDto;
@@ -7,6 +9,7 @@ import com.eureka.spartaonetoone.payment.application.dtos.PaymentUpdateRequestDt
 import com.eureka.spartaonetoone.payment.application.exception.PaymentException;
 import com.eureka.spartaonetoone.payment.domain.Payment;
 import com.eureka.spartaonetoone.payment.domain.repository.PaymentRepository;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,8 @@ import java.util.UUID;
 @Transactional
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final OrderClient orderClient;
+    private final StoreClient storeClient;
 
     public UUID savePayment(final PaymentCreateRequestDto paymentCreateRequestDto) {
 
@@ -42,20 +47,49 @@ public class PaymentService {
         return paymentRepository.getPayments(pageable);
     }
 
-    public UUID deletePayment(final UUID paymentId, UUID userId) {
+    public UUID deletePayment(final UUID paymentId, final UserDetailsImpl userDetails) {
         Payment payment = paymentRepository
                 .findById(paymentId)
                 .orElseThrow(PaymentException.PaymentNotFoundException::new);
-        payment.deletePayment(userId);
-        paymentRepository.save(payment);
-        return payment.getId();
+
+        if (userDetails.getUser().getRole().toString().equals("ADMIN")) {
+            payment.deletePayment(userDetails.getUserId());
+            return payment.getId();
+        }
+
+        UUID storeId = orderClient.getStoreIdOfOrder(payment.getOrderId());
+        UUID ownerId = storeClient.getOwnerId(storeId);
+
+        if (userDetails.getUserId().equals(ownerId)) {
+            payment.deletePayment(userDetails.getUserId());
+            return payment.getId();
+        }
+
+        throw new PaymentException.PaymentAccessDeniedException();
     }
 
     public void updatePayment(final UUID paymentId,
                               final PaymentUpdateRequestDto request,
-                              final UUID userId) {
-        Payment payment = paymentRepository.findById(paymentId).orElseThrow(PaymentException.PaymentNotFoundException::new);
-        payment.updatePayment(request.getPrice(), request.getBank(), request.getState());
+                              final UserDetailsImpl userDetails) {
+
+        Payment payment = paymentRepository
+                .findById(paymentId)
+                .orElseThrow(PaymentException.PaymentNotFoundException::new);
+
+        if (userDetails.getUser().getRole().toString().equals("ADMIN")) {
+            payment.updatePayment(request.getPrice(), request.getBank(), request.getState());
+            return;
+        }
+
+        UUID storeId = orderClient.getStoreIdOfOrder(payment.getOrderId());
+        UUID ownerId = storeClient.getOwnerId(storeId);
+
+        if (userDetails.getUserId().equals(ownerId)) {
+            payment.updatePayment(request.getPrice(), request.getBank(), request.getState());
+        }
+
+        throw new PaymentException.PaymentAccessDeniedException();
+
     }
 
 

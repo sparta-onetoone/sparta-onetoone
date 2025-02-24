@@ -1,6 +1,8 @@
 package com.eureka.spartaonetoone.payment.integration;
 
 import com.eureka.spartaonetoone.mock.MockUser;
+import com.eureka.spartaonetoone.order.domain.OrderType;
+import com.eureka.spartaonetoone.order.domain.repository.OrderRepository;
 import com.eureka.spartaonetoone.payment.application.PaymentService;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
@@ -8,6 +10,9 @@ import com.eureka.spartaonetoone.payment.application.dtos.PaymentUpdateRequestDt
 import com.eureka.spartaonetoone.payment.application.exception.PaymentException;
 import com.eureka.spartaonetoone.payment.domain.Payment;
 import com.eureka.spartaonetoone.payment.domain.repository.PaymentRepository;
+import com.eureka.spartaonetoone.store.domain.Store;
+import com.eureka.spartaonetoone.store.domain.StoreState;
+import com.eureka.spartaonetoone.store.domain.repository.StoreRepository;
 import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.UUID;
 
+import static com.eureka.spartaonetoone.order.domain.Order.createOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@MockUser
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PaymentIntegrationTest {
@@ -29,6 +36,10 @@ public class PaymentIntegrationTest {
     PaymentService paymentService;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    StoreRepository storeRepository;
+    @Autowired
+    OrderRepository orderRepository;
     private UUID savedPaymentId = null;
 
 
@@ -44,9 +55,21 @@ public class PaymentIntegrationTest {
     void test1() {
 
         // given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        Store store = Store.createStore(userDetails.getUserId(), "임시주문", StoreState.OPEN, "010-1111-1111",
+                "임시설명", 20000, 50000, 3.0f, 5, UUID.randomUUID());
+
+        UUID savedStoreId = storeRepository.save(store).getId();
+
+        com.eureka.spartaonetoone.order.domain.Order order = createOrder(userDetails.getUserId(), store.getId(), OrderType.DELIVERY, "임시요청사항");
+
+        UUID savedOrderId = orderRepository.save(order).getOrderId();
+
         PaymentCreateRequestDto request = PaymentCreateRequestDto.builder()
                 .bank("국민은행")
-                .orderId(UUID.randomUUID())
+                .orderId(savedOrderId)
                 .price(5000)
                 .build();
 
@@ -121,7 +144,7 @@ public class PaymentIntegrationTest {
                 .build();
 
         // when
-        paymentService.updatePayment(savedPaymentId, request, userDetails.getUserId());
+        paymentService.updatePayment(savedPaymentId, request, userDetails);
         Payment updatedPayment = paymentRepository.findById(savedPaymentId).get();
 
         // then
@@ -143,7 +166,7 @@ public class PaymentIntegrationTest {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         // when
-        paymentService.deletePayment(savedPaymentId, userDetails.getUserId());
+        paymentService.deletePayment(savedPaymentId, userDetails);
         Payment softDeletedPayment = paymentRepository
                 .findById(savedPaymentId)
                 .orElseThrow(PaymentException.PaymentNotFoundException::new);
