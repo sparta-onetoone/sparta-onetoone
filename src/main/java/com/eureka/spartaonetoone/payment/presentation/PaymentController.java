@@ -5,13 +5,15 @@ import com.eureka.spartaonetoone.payment.application.PaymentService;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentSearchRequestDto;
-
+import com.eureka.spartaonetoone.payment.application.dtos.PaymentUpdateRequestDto;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -56,10 +58,17 @@ public class PaymentController {
         return PageRequest.of(page - 1, pageSize);
     }
 
+    @PutMapping("{payment_id}")
+    public ResponseEntity<?> deletePayment(@PathVariable(name = "payment_id") final UUID payment_id,
+                                           @Valid @RequestBody PaymentUpdateRequestDto request,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        paymentService.updatePayment(payment_id, request, userDetails.getUserId());
+        return ResponseEntity.ok(CommonResponse.success(null, "결제내역이 수정되었습니다."));
+    }
 
     @DeleteMapping("{payment_id}")
-    public ResponseEntity<?> deletePayment(@PathVariable(name = "payment_id") final UUID payment_id) {
-        UUID deletePaymentId = paymentService.deletePayment(payment_id);
+    public ResponseEntity<?> deletePayment(@PathVariable(name = "payment_id") final UUID payment_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UUID deletePaymentId = paymentService.deletePayment(payment_id, userDetails.getUserId());
         return ResponseEntity.ok(CommonResponse.success(deletePaymentId, "결제내역이 삭제되었습니다."));
     }
 
