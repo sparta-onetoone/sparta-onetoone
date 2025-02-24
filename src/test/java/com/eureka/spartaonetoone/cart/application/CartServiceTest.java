@@ -116,7 +116,7 @@ class CartServiceTest {
 		Cart savedCart = cartService.saveCart(request);
 
 		// When
-		cartService.deleteCart(savedCart.getCartId());
+		cartService.deleteCart(savedCart.getCartId(), userId);
 
 		// Then
 		assertThat(savedCart).isNotNull()
