@@ -62,13 +62,13 @@ public class PaymentController {
     public ResponseEntity<?> deletePayment(@PathVariable(name = "payment_id") final UUID payment_id,
                                            @Valid @RequestBody PaymentUpdateRequestDto request,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        paymentService.updatePayment(payment_id, request, userDetails.getUser().getUserId());
+        paymentService.updatePayment(payment_id, request, userDetails.getUserId());
         return ResponseEntity.ok(CommonResponse.success(null, "결제내역이 수정되었습니다."));
     }
 
     @DeleteMapping("{payment_id}")
     public ResponseEntity<?> deletePayment(@PathVariable(name = "payment_id") final UUID payment_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UUID deletePaymentId = paymentService.deletePayment(payment_id, userDetails.getUser().getUserId());
+        UUID deletePaymentId = paymentService.deletePayment(payment_id, userDetails.getUserId());
         return ResponseEntity.ok(CommonResponse.success(deletePaymentId, "결제내역이 삭제되었습니다."));
     }
 
