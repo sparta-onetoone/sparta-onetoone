@@ -1,9 +1,16 @@
 package com.eureka.spartaonetoone.user.infrastructure.security;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.UUID;
+
 import com.eureka.spartaonetoone.user.domain.User;
 import lombok.Getter;
+
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -24,13 +31,23 @@ public class UserDetailsImpl implements UserDetails {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.authorities = user.getAuthorities();
-        this.user = user;// User 엔티티의 권한 목록 반환
+        this.user = user;
     }
 
+    public UserDetailsImpl(User user, UUID userId) {
+        this.userId = userId;
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.authorities = user.getAuthorities();
+        this.user = user;
+    }
 
-    // 정적 메서드 추가: User 객체에서 UserDetailsImpl 생성
     public static UserDetailsImpl fromUser(User user) {
         return new UserDetailsImpl(user);
+    }
+
+    public static UserDetailsImpl testUser(User user, UUID userId) {
+        return new UserDetailsImpl(user, userId);
     }
 
     public static UserDetailsImpl adminUser() {
@@ -39,35 +56,34 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+      return authorities;
     }
 
     @Override
     public String getPassword() {
-        return password;
+      return password;
     }
 
     @Override
     public String getUsername() {
-        return username;
+      return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+      return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+      return true;
     }
-
-    // getUser() 메서드 추가
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+      return true;
     }
+
 
     @Override
     public boolean isEnabled() {
