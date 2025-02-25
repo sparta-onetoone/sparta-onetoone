@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.eureka.spartaonetoone.order.domain.Order.createOrder;
@@ -59,7 +60,7 @@ public class PaymentIntegrationTest {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         Store store = Store.createStore(userDetails.getUserId(), "임시주문", StoreState.OPEN, "010-1111-1111",
-                "임시설명", 20000, 50000, 3.0f, 5, UUID.randomUUID());
+                "임시설명", 20000, 50000, 3.0f, 5, List.of(UUID.randomUUID().toString()));
 
         UUID savedStoreId = storeRepository.save(store).getId();
 
