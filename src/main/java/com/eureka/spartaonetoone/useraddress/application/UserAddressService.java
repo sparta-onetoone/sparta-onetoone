@@ -33,6 +33,7 @@ public class UserAddressService {
 		return addresses.map(UserAddressResponseDto::from); // 엔티티 -> DTO 변환
 	}
 
+	//주소 추가
 	@Transactional
 	public UserAddressResponseDto addAddress(UUID userId, UserAddressRequestDto request) {
 		User user = userRepository.findById(userId)
@@ -49,8 +50,14 @@ public class UserAddressService {
 		address.setUser(user);  // 유저와 주소 연결
 
 		UserAddress savedAddress = userAddressRepository.save(address);  // DB에 저장
+
+		if (savedAddress == null) {
+			throw new RuntimeException("주소 추가 실패");
+		}
+
 		return UserAddressResponseDto.from(savedAddress);
 	}
+
 	// 주소 삭제 로직 (논리적 삭제)
 	@Transactional
 	public UserAddressResponseDto deleteAddress(UUID addressId) {
@@ -88,4 +95,5 @@ public class UserAddressService {
 
 		return UserAddressResponseDto.from(updatedAddress); // 수정된 주소 반환
 	}
+
 }

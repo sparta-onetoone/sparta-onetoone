@@ -17,9 +17,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
-@Validated
 public class ReviewService {
 
 	private final ReviewRepository reviewRepository;
@@ -44,13 +44,20 @@ public class ReviewService {
 
 	// 특정 주문(orderId)에 속한 리뷰 목록 조회
 	// ReviewRepository의 findByOrderId()를 사용하여 해당 주문의 모든 리뷰를 조회
-	// 리스트를 Pageable로 감싸서 반환
 	public Page<ReviewResponseDto> getReviewsByOrderId(UUID orderId, Pageable pageable) {
 		List<Review> reviews = reviewRepository.findByOrderId(orderId);
 		List<ReviewResponseDto> dtoList = reviews.stream()
 			.map(ReviewResponseDto::from)
 			.collect(Collectors.toList());
 		return new PageImpl<>(dtoList, pageable, dtoList.size());
+	}
+
+	public Page<Review> getAllReviews(Pageable pageable) {
+		return reviewRepository.findAll(pageable);
+	}
+
+	public Page<ReviewResponseDto> searchReviewsByOrderIds(List<UUID> orderIds, Pageable pageable) {
+		return reviewRepository.searchReviews(orderIds, pageable);
 	}
 
 	// 리뷰 수정 - 특정 reviewId에 해당하는 Review 엔티티를 조회한 후, DTO의 값으로 업데이트하고 저장

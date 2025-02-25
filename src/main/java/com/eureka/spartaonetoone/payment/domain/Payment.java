@@ -1,7 +1,6 @@
 package com.eureka.spartaonetoone.payment.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
-//import com.eureka.spartaonetoone.domain.payment.application.dtos.PaymentCreateRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -40,18 +40,44 @@ public class Payment extends TimeStamp {
     private Boolean isDeleted;
 
 
-    public static Payment createPayment(final String bank, final UUID orderId, Integer price, Boolean isDeleted) {
+    public static Payment createPayment(final String bank, final UUID orderId, Integer price) {
         return Payment.builder()
                 .bank(bank)
                 .orderId(orderId)
                 .price(price)
-                .isDeleted(isDeleted)
+                .isDeleted(Boolean.FALSE)
                 .state(State.SUCCESS)
                 .build();
     }
 
-    public void deleteProduct() {
+    public void deletePayment(UUID deletedBy) {
         this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+        this.deletedBy = deletedBy;
+    }
+
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
+
+    public void updateBank(String bank) {
+        this.bank = bank;
+    }
+
+    public void updateState(Payment.State state) {
+        this.state = state;
+    }
+
+    public void updatePayment(Integer price, String bank, Payment.State state) {
+        if (price != null) {
+            updatePrice(price);
+        }
+        if (bank != null) {
+            updateBank(bank);
+        }
+        if (state != null) {
+            updateState(state);
+        }
     }
 
     @Getter

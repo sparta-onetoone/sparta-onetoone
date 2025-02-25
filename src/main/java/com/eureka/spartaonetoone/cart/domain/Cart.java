@@ -46,10 +46,11 @@ public class Cart extends TimeStamp {
 		this.cartItems.add(cartItem);
 	}
 
-	public void delete() {
+	public void delete(UUID userId) {
 		this.isDeleted = true;
 		this.deletedAt = LocalDateTime.now();
-		this.cartItems.forEach(CartItem::delete);
+		this.deletedBy = userId;
+		this.cartItems.forEach(cartItem -> cartItem.delete(userId));
 	}
 
 	public static Cart createCart(UUID userId) {

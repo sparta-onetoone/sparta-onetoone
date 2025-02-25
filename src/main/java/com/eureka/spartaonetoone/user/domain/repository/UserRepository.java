@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.eureka.spartaonetoone.user.domain.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID>, UserRepositoryCustom {
 	boolean existsByEmail(String email); // 이메일 중복 체크
 
 	Optional<User> findByEmail(String email); // 로그인 이메일로 유저를 조회

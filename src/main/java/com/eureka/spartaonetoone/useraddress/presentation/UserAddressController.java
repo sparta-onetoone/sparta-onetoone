@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/addresses")
-public class UserAddressController {
+public class UserAddressController implements UserAddressApi {
 
 	private final UserAddressService userAddressService;
 
@@ -53,12 +53,14 @@ public class UserAddressController {
 		@PathVariable("user_id") UUID userId,
 		@Valid @RequestBody UserAddressRequestDto request) {
 
-		UserAddressResponseDto addedAddress = userAddressService.addAddress(userId, request);
-		if (addedAddress == null) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "주소 추가 실패");
+		try {
+			UserAddressResponseDto addedAddress = userAddressService.addAddress(userId, request);
+			return ResponseEntity.ok(CommonResponse.success(addedAddress, "주소 추가 성공"));
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "주소 추가 실패", e);
 		}
-		return ResponseEntity.ok(CommonResponse.success(addedAddress, "주소 추가 성공"));
 	}
+
 	// 주소 삭제
 	@DeleteMapping("/{address_id}")
 	public ResponseEntity<CommonResponse<UserAddressResponseDto>> deleteAddress(

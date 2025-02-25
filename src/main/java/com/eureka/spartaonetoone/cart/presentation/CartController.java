@@ -3,6 +3,7 @@ package com.eureka.spartaonetoone.cart.presentation;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +19,14 @@ import com.eureka.spartaonetoone.cart.application.dtos.request.CartItemCreateReq
 import com.eureka.spartaonetoone.cart.application.dtos.request.CartItemUpdateRequestDto;
 import com.eureka.spartaonetoone.cart.application.dtos.response.CartCreateResponseDto;
 import com.eureka.spartaonetoone.cart.application.dtos.response.CartSearchResponseDto;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/carts")
 @RequiredArgsConstructor
-public class CartController {
+public class CartController implements CartApi {
 
 	private final CartService cartService;
 
@@ -41,8 +43,12 @@ public class CartController {
 	}
 
 	@DeleteMapping("/{cart_id}")
-	public ResponseEntity<CommonResponse<?>> deleteCart(@PathVariable("cart_id") UUID cartId) {
-		cartService.deleteCart(cartId);
+	public ResponseEntity<CommonResponse<?>> deleteCart(
+		@PathVariable("cart_id") UUID cartId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		UUID userId = userDetails.getUserId();
+		cartService.deleteCart(cartId, userId);
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 삭제 성공"));
 	}
 
@@ -68,9 +74,11 @@ public class CartController {
 	@DeleteMapping("/{cart_id}/items/{cart_item_id}")
 	public ResponseEntity<CommonResponse<?>> deleteCartItem(
 		@PathVariable("cart_id") UUID cartId,
-		@PathVariable("cart_item_id") UUID cartItemId
+		@PathVariable("cart_item_id") UUID cartItemId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		cartService.deleteCartItem(cartId, cartItemId);
+		UUID userId = userDetails.getUserId();
+		cartService.deleteCartItem(cartId, cartItemId, userId);
 		return ResponseEntity.ok(CommonResponse.success(null, "장바구니 상품 삭제 성공"));
 	}
 }

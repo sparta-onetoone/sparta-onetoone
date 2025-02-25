@@ -29,9 +29,8 @@ public class AiController {
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
 		AiProductRecommendationResponseDto aiResponseDto = aiService.recommendProductNames(requestDto,
-			userDetails.getUser());
+			userDetails.getUser().getUserId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(aiResponseDto);
 	}
 }
-

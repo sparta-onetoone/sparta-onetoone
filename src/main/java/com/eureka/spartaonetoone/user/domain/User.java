@@ -2,6 +2,8 @@ package com.eureka.spartaonetoone.user.domain;
 
 import com.eureka.spartaonetoone.common.utils.TimeStamp;
 import com.eureka.spartaonetoone.useraddress.domain.UserAddress;
+import com.querydsl.core.annotations.QueryEntity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -19,7 +21,7 @@ import java.util.UUID;
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "p_user", uniqueConstraints = {@UniqueConstraint(name = "unique_email", columnNames = "email")})
 public class User extends TimeStamp {
-
+  
     @Id
     @UuidGenerator
     @Column(name = "user_id", columnDefinition = "UUID", updatable = false, nullable = false)
@@ -113,6 +115,7 @@ public class User extends TimeStamp {
         .build();
     }
 
+
     // 관리자 생성 메서드
     public static User admin() {
       return User.builder()
@@ -121,4 +124,5 @@ public class User extends TimeStamp {
         .isDeleted(false)
         .build();
     }
+
 }

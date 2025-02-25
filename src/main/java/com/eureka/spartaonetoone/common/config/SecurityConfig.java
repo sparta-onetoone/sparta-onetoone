@@ -28,16 +28,29 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-			.csrf(csrf -> csrf.disable())
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.csrf(csrf -> csrf.disable())  // CSRF 비활성화
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless 세션 관리
 			.authorizeHttpRequests(auth -> auth
-				// 회원가입, 로그인, 리프레시 토큰은 누구나 접근 가능
-				.requestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth/refresh", "/api/v1/ai", "/api/v1/addresses", "/api/v1/stores", "/api/v1/carts")
+				// 공개 API 경로: 누구나 접근 가능
+				.requestMatchers(
+					"/api/v1/auth/signup",//
+					"/api/v1/auth/signin",//
+					"/api/v1/auth/refresh",
+					"/api/v1/ai", //
+					"/api/v1/addresses", //정리
+					"/api/v1/stores", //정리
+					"/api/v1/carts"//정리
+				).permitAll()
+
+				// Swagger UI 및 API 문서 경로를 공개
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**")
 				.permitAll()
-				// 로그아웃은 인증된 사용자만 가능
-				.requestMatchers("/api/v1/auth/signout")
-				.authenticated()
-				// 회원 상세 조회는 '고객', '가게 주인', '관리자'만 가능
+
+				// 인증된 사용자만 접근 가능한 API
+				.requestMatchers("/api/v1/auth/signout").authenticated()
+				.requestMatchers(HttpMethod.GET, "/api/v1/users/search").permitAll()
+
+				// 고객, 가게 주인, 관리자 접근 가능한 API
 				.requestMatchers(HttpMethod.GET, "/api/v1/users/{user_id}")
 				.hasAnyRole("CUSTOMER", "OWNER", "ADMIN")
 				// 회원 전체 조회는 '관리자'만 가능
@@ -49,14 +62,26 @@ public class SecurityConfig {
 				// 회원 탈퇴는 '고객', '가게 주인', '관리자'만 가능
 				.requestMatchers(HttpMethod.DELETE, "/api/v1/users/{user_id}")
 				.hasAnyRole("CUSTOMER", "OWNER", "ADMIN")
-				// 나머지 요청은 인증 필요
-				.anyRequest()
-				.authenticated()
+
+				// 관리자, 오너 접근 가능한 API
+				.requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
+				.requestMatchers(HttpMethod.DELETE, "/api/v1/products/{productId}")
+				.hasAnyRole("ADMIN", "OWNER")
+				.requestMatchers(HttpMethod.PUT, "/api/v1/products/{productId}")
+				.hasAnyRole("ADMIN", "OWNER")
+				.requestMatchers("/api/v1/products/reduce-product")
+				.hasAnyRole("ADMIN", "OWNER")
+				.requestMatchers(HttpMethod.DELETE, "/api/v1/payments/{payments_id}")
+				.hasAnyRole("ADMIN", "OWNER")
+				.requestMatchers(HttpMethod.PUT, "/api/v1/payments/{payments_id}")
+				.hasAnyRole("ADMIN", "OWNER")
+
+				// 나머지 요청은 인증이 필요
+				.anyRequest().authenticated()
 			)
-			.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
 			.build();
 	}
-
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

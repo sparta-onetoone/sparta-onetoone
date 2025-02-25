@@ -66,4 +66,10 @@ public class OrderException extends CustomException {
 			super("주문 상태가 처리 대기 중이 아닙니다.", "O-009", HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	public static class SearchPermissionDenied extends OrderException {
+		public SearchPermissionDenied() {
+			super("주문 조회 권한이 없습니다.", "O-010", HttpStatus.FORBIDDEN);
+		}
+	}
 }

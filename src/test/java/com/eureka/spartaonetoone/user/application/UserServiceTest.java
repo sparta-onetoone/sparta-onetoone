@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.eureka.spartaonetoone.user.application.dtos.request.UserUpdateRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDeleteResponseDto;
@@ -23,6 +24,7 @@ import com.eureka.spartaonetoone.user.domain.repository.UserRepository;
 
 
 @SpringBootTest
+@ActiveProfiles("test")
 class UserServiceTest {
 
 	@Autowired

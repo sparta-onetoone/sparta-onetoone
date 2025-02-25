@@ -4,17 +4,13 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import com.eureka.spartaonetoone.common.utils.TimeStamp;
 import com.eureka.spartaonetoone.ai.application.dto.request.AiProductRecommendationRequestDto;
 import com.eureka.spartaonetoone.ai.application.dto.response.AiProductRecommendationResponseDto;
-import com.eureka.spartaonetoone.user.domain.User;
+import com.eureka.spartaonetoone.common.utils.TimeStamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,9 +26,8 @@ public class Ai extends TimeStamp {
 	@Column(name = "ai_id")
 	private UUID id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_username", nullable = false)
-	private User user;
+	@Column(nullable = false)
+	private UUID userId;
 
 	@Column(nullable = false)
 	private String prompt;
@@ -41,19 +36,19 @@ public class Ai extends TimeStamp {
 	private String answer;
 
 	@Builder
-	private Ai(User user, String prompt, String answer) {
-		this.user = user;
+	private Ai(UUID userID, String prompt, String answer) {
+		this.userId = userID;
 		this.prompt = prompt;
 		this.answer = answer;
 	}
 
 	// 정적 팩토리 메서드
 	public static Ai create(AiProductRecommendationRequestDto requestDto,
-		AiProductRecommendationResponseDto responseDto, User user) {
+		AiProductRecommendationResponseDto responseDto, UUID userId) {
 		return Ai.builder()
 			.prompt(requestDto.getPrompt())
 			.answer(responseDto.getAnswer())
-			.user(user)
+			.userID(userId)
 			.build();
 	}
 }

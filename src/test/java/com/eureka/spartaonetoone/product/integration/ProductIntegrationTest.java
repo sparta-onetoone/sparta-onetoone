@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.product.integration;
 
+import com.eureka.spartaonetoone.mock.MockUser;
 import com.eureka.spartaonetoone.product.application.ProductService;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductCreateRequestDto;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
@@ -8,12 +9,15 @@ import com.eureka.spartaonetoone.product.application.exception.ProductException;
 import com.eureka.spartaonetoone.product.domain.Product;
 import com.eureka.spartaonetoone.product.domain.repository.ProductRepository;
 import com.eureka.spartaonetoone.product.infrastructure.ProductRepositoryImpl;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +44,7 @@ public class ProductIntegrationTest {
     @Test
     @Order(1)
     @DisplayName("신규 상품 생성")
+    @MockUser
     void test1() {
 
         // given
@@ -66,6 +71,7 @@ public class ProductIntegrationTest {
     @Test
     @Order(2)
     @DisplayName("등록된 상품 조회")
+    @MockUser
     void test2() {
 
         // when
@@ -78,6 +84,7 @@ public class ProductIntegrationTest {
     @Test
     @Order(3)
     @DisplayName("상품 여러 개 생성")
+    @MockUser
     void test3() {
         // given
         for (int i = 0; i < 15; i++) {
@@ -103,6 +110,7 @@ public class ProductIntegrationTest {
     @Test
     @Order(4)
     @DisplayName("상품 검색")
+    @MockUser
     void test4() {
         // given
         List<ProductCreateRequestDto> requestDtoList = List.of(ProductCreateRequestDto.builder()
@@ -142,6 +150,7 @@ public class ProductIntegrationTest {
     @Order(5)
     @Test
     @DisplayName("상품 수정")
+    @MockUser
     void test5() {
         // when
         Product product = productRepository.findById(savedProductId).orElseThrow(ProductException.ProductNotFoundException::new);
@@ -160,11 +169,15 @@ public class ProductIntegrationTest {
     @Order(6)
     @Test
     @DisplayName("상품 삭제")
+    @MockUser
     void test6() {
+        // given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         // when
         Product product = productRepository.findById(savedProductId).orElseThrow(ProductException.ProductNotFoundException::new);
-        product.deleteProduct();
+        product.deleteProduct(userDetails.getUserId());
         productRepository.saveAndFlush(product);
         Product deletedProduct = productRepository.findById(savedProductId).get();
 

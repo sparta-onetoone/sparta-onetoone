@@ -16,6 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eureka.spartaonetoone.common.client.CartClient;
@@ -24,6 +27,7 @@ import com.eureka.spartaonetoone.common.dtos.response.CartResponse;
 import com.eureka.spartaonetoone.common.dtos.response.ProductResponse;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.order.application.dtos.request.OrderCreateRequestDto;
+import com.eureka.spartaonetoone.order.application.dtos.request.OrderSearchRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResponseDto;
 import com.eureka.spartaonetoone.order.application.exceptions.OrderException;
 import com.eureka.spartaonetoone.order.domain.Order;
@@ -123,15 +127,20 @@ class OrderServiceTest {
 	@DisplayName("사용자 ID로 주문 목록 조회 시 주문 목록이 반환되어야 한다")
 	void get_orders_by_user_id_test() {
 		// given
-		List<Order> mockOrders = Arrays.asList(createMockOrder(), createMockOrder());
-		when(orderRepository.findAllActiveOrderByUserId(userId)).thenReturn(mockOrders);
+		Page<Order> mockOrders = new PageImpl<>(Arrays.asList(createMockOrder(), createMockOrder()));
+		String userRole = "ROLE_CUSTOMER";
+		OrderSearchRequestDto requestDto = OrderSearchRequestDto.builder()
+			.storeId(storeId)
+			.userId(userId)
+			.build();
+
+		when(orderRepository.searchOrders(userRole, storeId, userId, null)).thenReturn(mockOrders);
 
 		// when
-		List<OrderSearchResponseDto> result = orderService.getOrdersByUserId(userId);
+		Page<OrderSearchResponseDto> result = orderService.getOrders(userRole, requestDto, null);
 
 		// then
 		assertThat(result).hasSize(2);
-		verify(orderRepository).findAllActiveOrderByUserId(userId);
 	}
 
 	@Test
