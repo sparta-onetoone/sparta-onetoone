@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import com.eureka.spartaonetoone.ai.application.dto.request.AiProductRecommendat
 import com.eureka.spartaonetoone.ai.application.dto.response.AiProductRecommendationResponseDto;
 import com.eureka.spartaonetoone.ai.domain.Ai;
 import com.eureka.spartaonetoone.ai.domain.repository.AiRepository;
-import com.eureka.spartaonetoone.user.domain.User;
 
 import jakarta.validation.Valid;
 
@@ -52,10 +52,10 @@ public class AiService {
 	 * 사용자가 입력한 데이터에 대해 AI가 생성한 추천을 받아오고 이를 DB에 저장
 	 */
 	public AiProductRecommendationResponseDto recommendProductNames(@Valid AiProductRecommendationRequestDto requestDto,
-		User user) {
+		UUID userId) {
 		AiProductRecommendationResponseDto responseDto = getAIResponse(requestDto);
 
-		Ai ai = Ai.create(requestDto, responseDto, user);
+		Ai ai = Ai.create(requestDto, responseDto, userId);
 
 		aiRepository.save(ai);
 
