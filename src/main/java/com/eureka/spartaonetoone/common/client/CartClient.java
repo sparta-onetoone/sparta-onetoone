@@ -28,4 +28,13 @@ public class CartClient {
 			.map(CommonResponse::getData)
 			.block();
 	}
+
+	public void deleteCart(UUID cartId, UUID userId) {
+		webClient.delete()
+			.uri(CART_URL + "/{cart_id}", cartId)
+			.header("X-User-Id", userId.toString())
+			.retrieve()
+			.bodyToMono(Void.class)
+			.block();
+	}
 }

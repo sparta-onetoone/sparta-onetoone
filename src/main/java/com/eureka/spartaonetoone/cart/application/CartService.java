@@ -33,7 +33,12 @@ public class CartService {
 	private final ProductClient productClient;
 	private final CartRepository cartRepository;
 
+	@Transactional
 	public Cart saveCart(CartCreateRequestDto requestDto) {
+		if(cartRepository.existsActiveCartByUserId(requestDto.getUserId())) {
+			throw new CartException.AlreadyExists();
+		}
+
 		Cart cart = Cart.createCart(requestDto.getUserId());
 		return cartRepository.save(cart);
 	}

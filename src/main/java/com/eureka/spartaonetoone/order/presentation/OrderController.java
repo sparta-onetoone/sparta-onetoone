@@ -3,6 +3,10 @@ package com.eureka.spartaonetoone.order.presentation;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,12 +23,14 @@ import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.order.application.OrderService;
 import com.eureka.spartaonetoone.order.application.dtos.request.OrderCreateRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.request.OrderRequestDto;
+import com.eureka.spartaonetoone.order.application.dtos.request.OrderSearchRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderCancelRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderCreateResponseDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResponseDto;
 import com.eureka.spartaonetoone.order.application.exceptions.OrderException;
 import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -54,26 +60,37 @@ public class OrderController implements OrderApi {
 		return ResponseEntity.ok(CommonResponse.success(orderService.getOrder(userRole, orderId), "주문 조회 성공"));
 	}
 
-	@GetMapping
+	@GetMapping("/search")
 	public ResponseEntity<CommonResponse<?>> getOrders(
-		@RequestParam(value = "store_id", required = false) UUID storeId,
+		@RequestBody OrderSearchRequestDto requestDto,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "createdAt") String sortBy,
+		@RequestParam(defaultValue = "false") boolean isAsc,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
+		Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+		Sort sort = Sort.by(direction, sortBy);
+		Pageable pageable = PageRequest.of(page, validatePageSize(size), sort);
+
 		String userRole = getUserRole(userDetails);
 		List<OrderSearchResponseDto> response;
-		String message;
 
-		if (storeId != null && userRole.equals("ROLE_OWNER")) {
-			response = orderService.getOrdersByStore(storeId);
-			message = "가게 주문 목록 조회 성공";
-		} else if (userRole.equals("ROLE_CUSTOMER")) {
-			response = orderService.getOrdersByUserId(userDetails.getUserId());
-			message = "주문 목록 조회 성공";
-		} else {
-			response = orderService.getAllOrders();
-			message = "전체 주문 목록 조회 성공";
+		if(userRole.equals("ROLE_CUSTOMER")) {
+			if (!userDetails.getUserId().equals(requestDto.getUserId())) {
+				throw new OrderException.SearchPermissionDenied();
+			}
 		}
-		return ResponseEntity.ok(CommonResponse.success(response, message));
+		response = orderService.getOrders(userRole, requestDto, pageable).getContent();
+
+		return ResponseEntity.ok(CommonResponse.success(response, "주문 목록 조회 성공"));
+	}
+
+	@Hidden
+	@GetMapping
+	public ResponseEntity<CommonResponse<?>> getOrders(@RequestParam(value = "store_id") UUID storeId) {
+		List<OrderSearchResponseDto> response = orderService.getOrdersByStore(storeId);
+		return ResponseEntity.ok(CommonResponse.success(response, "가게 주문 목록 조회 성공"));
 	}
 
 	@PostMapping("/request")
@@ -110,5 +127,9 @@ public class OrderController implements OrderApi {
 
 	private String getUserRole(UserDetailsImpl userDetails) {
 		return userDetails.getAuthorities().stream().findFirst().get().getAuthority();
+	}
+
+	private int validatePageSize(int size) {
+		return (size == 30 || size == 50) ? size : 10;
 	}
 }
