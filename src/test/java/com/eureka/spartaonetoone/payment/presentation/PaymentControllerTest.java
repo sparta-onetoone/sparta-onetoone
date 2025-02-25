@@ -204,7 +204,7 @@ class PaymentControllerTest {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         Store store = Store.createStore(userDetails.getUserId(), "임시주문", StoreState.OPEN, "010-1111-1111",
-                "임시설명", 20000, 50000, 3.0f, 5, UUID.randomUUID());
+                "임시설명", 20000, 50000, 3.0f, 5, List.of(UUID.randomUUID().toString()));
 
         UUID savedStoreId = storeRepository.save(store).getId();
 
@@ -251,7 +251,7 @@ class PaymentControllerTest {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         Store store = Store.createStore(userDetails.getUserId(), "임시주문", StoreState.OPEN, "010-1111-1111",
-                "임시설명", 20000, 50000, 3.0f, 5, UUID.randomUUID());
+                "임시설명", 20000, 50000, 3.0f, 5, List.of(UUID.randomUUID().toString()));
 
         UUID savedStoreId = storeRepository.save(store).getId();
 
