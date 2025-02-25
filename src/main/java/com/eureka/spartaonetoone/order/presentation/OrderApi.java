@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.eureka.spartaonetoone.cart.application.dtos.response.CartCreateResponseDto;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.order.application.dtos.request.OrderCreateRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.request.OrderRequestDto;
+import com.eureka.spartaonetoone.order.application.dtos.request.OrderSearchRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderCancelRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderCreateResponseDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResponseDto;
@@ -46,7 +48,8 @@ public interface OrderApi {
 		@ApiResponse(responseCode = "200", description = "주문 조회 성공",
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderSearchResponseDto.class))))
 	})
-	ResponseEntity<CommonResponse<?>> getOrders(UUID storeId, UserDetailsImpl userDetails);
+	ResponseEntity<CommonResponse<?>> getOrders(OrderSearchRequestDto requestDto,
+		int page, int size, String sortBy, boolean isAsc,UserDetailsImpl userDetails);
 
 	@Operation(summary = "주문 요청", description = "주문을 요청하는 API입니다.")
 	@ApiResponses(value = {

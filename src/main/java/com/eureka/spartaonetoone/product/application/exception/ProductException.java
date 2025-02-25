@@ -19,4 +19,10 @@ public class ProductException extends CustomException {
             super("PR-002", "해당 상점에 동일한 상품이 존재합니다.", HttpStatus.BAD_REQUEST);
         }
     }
+
+    public static class ProductAccessDeniedException extends ProductException {
+        public ProductAccessDeniedException() {
+            super("PR-003", "해당 상품에 대한 수정, 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+    }
 }

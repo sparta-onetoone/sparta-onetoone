@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -26,7 +27,7 @@ public class StoreResponseDto {
 	private Integer deliveryFee;
 	private Float rating;
 	private Integer reviewCount;
-	private UUID categoryId;
+	private List<String> categoryIds;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private LocalDateTime deletedAt;
@@ -34,21 +35,21 @@ public class StoreResponseDto {
 
 	public static StoreResponseDto from(final Store store) {
 		return Builder()
-			.storeId(store.getId())
-			.userId(store.getUserId())
-			.name(store.getName())
-			.state(store.getState().name()) // ENUM -> String
-			.tellNumber(store.getTellNumber())
-			.addressId(store.getAddress() != null ? store.getAddress().getId() : null)
-			.description(store.getDescription())
-			.minOrderPrice(store.getMinOrderPrice())
-			.deliveryFee(store.getDeliveryFee())
-			.rating(store.getRating())
-			.reviewCount(store.getReviewCount())
-			.categoryId(store.getCategoryId())
-			.createdAt(store.getCreatedAt())
-			.updatedAt(store.getUpdatedAt())
-			.deletedAt(store.getDeletedAt())
-			.build();
+				.storeId(store.getId())
+				.userId(store.getUserId())
+				.name(store.getName())
+				.state(store.getState().name()) // ENUM -> String
+				.tellNumber(store.getTellNumber())
+				.addressId(store.getAddress() != null ? store.getAddress().getId() : null)
+				.description(store.getDescription())
+				.minOrderPrice(store.getMinOrderPrice())
+				.deliveryFee(store.getDeliveryFee())
+				.rating(store.getRating())
+				.reviewCount(store.getReviewCount())
+				.categoryIds(store.getCategoryIds())
+				.createdAt(store.getCreatedAt())
+				.updatedAt(store.getUpdatedAt())
+				.deletedAt(store.getDeletedAt())
+				.build();
 	}
 }

@@ -1,5 +1,6 @@
 package com.eureka.spartaonetoone.product.application;
 
+import com.eureka.spartaonetoone.common.client.StoreClient;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductCreateRequestDto;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductUpdateRequestDto;
@@ -7,7 +8,7 @@ import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetRes
 import com.eureka.spartaonetoone.product.application.exception.ProductException;
 import com.eureka.spartaonetoone.product.domain.Product;
 import com.eureka.spartaonetoone.product.domain.repository.ProductRepository;
-import jakarta.validation.Valid;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
+    private final StoreClient storeClient;
 
     public UUID saveProduct(ProductCreateRequestDto request) {
         Product product = Product.createProduct(request.getStoreId(), request.getName(),
@@ -48,24 +50,51 @@ public class ProductService {
         return productRepository.getProducts(pageable);
     }
 
-    public UUID updateProduct(UUID productId, @Valid ProductUpdateRequestDto request) {
+    public UUID updateProduct(UUID productId,
+                              ProductUpdateRequestDto request,
+                              UserDetailsImpl userDetails) {
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(ProductException.ProductNotFoundException::new);
 
-        product.updateProduct(request.getName(), request.getDescription(),
-                request.getPrice(), request.getQuantity());
+        if (userDetails.getUser().getRole().toString().equals("ADMIN")) {
+            product.updateProduct(request.getName(), request.getDescription(),
+                    request.getPrice(), request.getQuantity());
+            productRepository.save(product);
+            return product.getId();
+        }
 
-        productRepository.save(product);
+        UUID ownerId = storeClient.getOwnerId(product.getStoreId());
 
-        return product.getId();
+        if (userDetails.getUserId().equals(ownerId)) {
+            product.updateProduct(request.getName(), request.getDescription(),
+                    request.getPrice(), request.getQuantity());
+            productRepository.save(product);
+            return product.getId();
+        }
+
+        throw new ProductException.ProductAccessDeniedException();
+
     }
 
-    public UUID deleteProduct(UUID productId) {
+    public UUID deleteProduct(UUID productId, UserDetailsImpl userDetails) {
         Product product = productRepository.findById(productId).orElseThrow(ProductException.ProductNotFoundException::new);
-        product.deleteProduct();
-        productRepository.save(product);
-        return product.getId();
+
+        if (userDetails.getUser().getRole().toString().equals("ADMIN")) {
+            product.deleteProduct(userDetails.getUserId());
+            productRepository.save(product);
+            return product.getId();
+        }
+
+        UUID ownerId = storeClient.getOwnerId(product.getStoreId());
+
+        if (userDetails.getUserId().equals(ownerId)) {
+            product.deleteProduct(userDetails.getUserId());
+            productRepository.save(product);
+            return product.getId();
+        }
+        
+        throw new ProductException.ProductAccessDeniedException();
     }
 
     public Page<ProductGetResponseDto> searchProducts(final ProductSearchRequestDto request, final Pageable pageable) {

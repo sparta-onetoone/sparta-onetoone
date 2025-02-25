@@ -7,12 +7,14 @@ import com.eureka.spartaonetoone.product.application.dtos.request.ProductReduceR
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductUpdateRequestDto;
 import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetResponseDto;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements ProductApi {
     private final ProductService productService;
 
     @PostMapping
@@ -37,6 +39,7 @@ public class ProductController {
         return ResponseEntity.ok(CommonResponse.success(product, "상품이 성공적으로 조회되었습니다."));
     }
 
+
     @GetMapping
     public ResponseEntity<?> getProducts(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "limit", defaultValue = "10") int limit) {
         Pageable pageable = getPageable(page, limit);
@@ -50,15 +53,15 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<?> updateProduct(@PathVariable(name = "productId") UUID product_id, @RequestBody @Valid ProductUpdateRequestDto request) {
-        UUID updatedProductId = productService.updateProduct(product_id, request);
+    public ResponseEntity<?> updateProduct(@PathVariable(name = "productId") UUID product_id, @RequestBody @Valid ProductUpdateRequestDto request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UUID updatedProductId = productService.updateProduct(product_id, request, userDetails);
         return ResponseEntity.ok(CommonResponse.success(updatedProductId, "상품이 성공적으로 수정되었습니다."));
 
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable(name = "productId") UUID product_id) {
-        UUID deletedProductId = productService.deleteProduct(product_id);
+    public ResponseEntity<?> deleteProduct(@PathVariable(name = "productId") UUID product_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UUID deletedProductId = productService.deleteProduct(product_id, userDetails);
         return ResponseEntity.ok(CommonResponse.success(deletedProductId, "상품이 성공적으로 삭제되었습니다."));
     }
 

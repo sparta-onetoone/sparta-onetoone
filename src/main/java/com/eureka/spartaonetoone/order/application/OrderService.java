@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import com.eureka.spartaonetoone.common.dtos.response.CartResponse;
 import com.eureka.spartaonetoone.common.dtos.response.ProductResponse;
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.order.application.dtos.request.OrderCreateRequestDto;
+import com.eureka.spartaonetoone.order.application.dtos.request.OrderSearchRequestDto;
 import com.eureka.spartaonetoone.order.application.dtos.response.OrderSearchResponseDto;
 import com.eureka.spartaonetoone.order.application.exceptions.OrderException;
 import com.eureka.spartaonetoone.order.domain.Order;
@@ -70,6 +73,7 @@ public class OrderService {
 			)
 		);
 		order.calculateTotalPrice();
+		cartClient.deleteCart(requestDto.getCartId(), cart.getUserId());
 
 		return order;
 	}
@@ -103,15 +107,6 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<OrderSearchResponseDto> getOrdersByUserId(UUID userId) {
-		List<Order> orders = orderRepository.findAllActiveOrderByUserId(userId);
-
-		return orders.stream()
-			.map(OrderSearchResponseDto::from)
-			.toList();
-	}
-
-	@Transactional(readOnly = true)
 	public List<OrderSearchResponseDto> getOrdersByStore(UUID storeId) {
 		List<Order> orders = orderRepository.findAllActiveOrderByStoreId(storeId);
 
@@ -121,12 +116,11 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<OrderSearchResponseDto> getAllOrders() {
-		List<Order> orders = orderRepository.findAll();
+	public Page<OrderSearchResponseDto> getOrders(String userRole, OrderSearchRequestDto requestDto, Pageable pageable) {
+		Page<Order> orders = orderRepository
+			.searchOrders(userRole, requestDto.getStoreId(), requestDto.getUserId(), pageable);
 
-		return orders.stream()
-			.map(OrderSearchResponseDto::from)
-			.toList();
+		return orders.map(OrderSearchResponseDto::from);
 	}
 
 	@Transactional
@@ -177,7 +171,7 @@ public class OrderService {
 	private void orderPaymentRequest(Order order) {
 		PaymentRequest.Create request = new PaymentRequest.Create(order.getOrderId(), order.getTotalPrice());
 
-		CommonResponse<?> response = paymentClient.createPayment(request);
+		CommonResponse<?> response = paymentClient.createPayment(request, order.getUserId());
 		if(response.getCode().equals(FAIL_CODE)) {
 			order.cancel();
 			throw new OrderException.PaymentError();

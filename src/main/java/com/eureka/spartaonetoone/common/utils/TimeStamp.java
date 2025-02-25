@@ -30,8 +30,7 @@ public abstract class TimeStamp {
     @LastModifiedBy
     protected UUID updatedBy;
 
-	protected LocalDateTime deletedAt;
+    protected LocalDateTime deletedAt;
 
 	protected UUID deletedBy;
-
 }

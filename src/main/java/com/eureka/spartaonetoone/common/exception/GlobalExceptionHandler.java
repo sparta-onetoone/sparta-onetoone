@@ -34,7 +34,6 @@ public class GlobalExceptionHandler {
 
     }
 
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> dataIntegrityViolationExceptionHandle(final DataIntegrityViolationException ex) {
         log.error(ex.getMessage());
@@ -78,8 +77,5 @@ public class GlobalExceptionHandler {
             private String field;
             private String message;
         }
-
     }
-
-
 }
