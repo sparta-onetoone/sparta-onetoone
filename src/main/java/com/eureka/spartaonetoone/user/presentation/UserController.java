@@ -2,12 +2,10 @@ package com.eureka.spartaonetoone.user.presentation;
 
 import com.eureka.spartaonetoone.common.utils.CommonResponse;
 import com.eureka.spartaonetoone.user.application.UserService;
-import com.eureka.spartaonetoone.user.application.dtos.request.UserSearchRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.request.UserUpdateRequestDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDeleteResponseDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserDetailResponseDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserListResponseDto;
-import com.eureka.spartaonetoone.user.application.dtos.response.UserSearchResponseDto;
 import com.eureka.spartaonetoone.user.application.dtos.response.UserUpdateResponseDto;
 import com.eureka.spartaonetoone.user.application.exception.UserException;
 import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
