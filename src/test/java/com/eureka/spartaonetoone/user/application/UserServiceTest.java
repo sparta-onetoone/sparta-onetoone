@@ -24,7 +24,6 @@ import com.eureka.spartaonetoone.user.domain.repository.UserRepository;
 
 
 @SpringBootTest
-@ActiveProfiles("test")
 class UserServiceTest {
 
 	@Autowired

@@ -98,17 +98,4 @@ public class UserAddressService {
 
 		return UserAddressResponseDto.from(updatedAddress); // 수정된 주소 반환
 	}
-
-	// 사용자 주소 조회 (검색 조건 및 정렬 기능 추가)
-	public Page<UserAddressResponseDto> searchUserAddresses(UUID userId, UserAddressSearchRequestDto request, Pageable pageable) {
-		// UserAddressRepository에서 커스텀 메서드를 호출
-		return userAddressRepository.searchUserAddresses(
-			userId,
-			request.getCity(),
-			request.getDistrict(),
-			request.getRoadName(),
-			request.getZipCode(),
-			pageable
-		).map(UserAddressResponseDto::from);  // UserAddressResponseDto로 변환
-	}
 }

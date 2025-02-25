@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.eureka.spartaonetoone.useraddress.domain.UserAddress;
 
-public interface UserAddressRepository extends JpaRepository<UserAddress, UUID>, CustomUserAddressRepository {
+public interface UserAddressRepository extends JpaRepository<UserAddress, UUID> {
 	Page<UserAddress> findByUser_UserId(UUID userId, Pageable pageable);
 }
