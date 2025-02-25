@@ -13,6 +13,18 @@
 ### application.yml
 ```yml
 spring:
+  profiles:
+    active: prod
+
+webclient:
+  base-url: {{현재 프로젝트의 base-url}}
+
+---
+spring:
+  config:
+    activate:
+     on-profile: prod
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://{{db-host}}/{{database}}
@@ -36,8 +48,34 @@ ai:
   prompt:
     max-length-message: ", 답변을 최대한 간결하게 50자 이하로"
 
-webclient:
-  base-url: {{현재 프로젝트의 base-url}}
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=TRUE
+    username: sa
+    password:
+
+gemini:
+  api:
+    key: testKey
+  request:
+    uri: https://generativelanguage.googleapis.com
+    path: /v1beta/models/gemini-1.5-flash-latest:generateContent
+
+ai:
+  prompt:
+    max-length-message: ", 답변을 최대한 간결하게 50자 이하로"
+
+jwt:
+  secret:
+    key: testKeytestKeytestKeytestKeytestKeytestKeytestKe
+  access-token-expiration-time: 3600000  # 1시간 (밀리초 단위)
+  refresh-token-expiration-time: 604800000  # 7일 (밀리초 단위)
 
 ```
 
