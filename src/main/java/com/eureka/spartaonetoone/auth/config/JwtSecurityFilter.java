@@ -44,7 +44,14 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	) throws ServletException, IOException {
 		String clientCredential = request.getHeader("X-Client-Credential");
 		if (clientCredential != null && clientCredential.equals("onetoone")) {
-			UserDetailsImpl userDetails = UserDetailsImpl.adminUser();
+			UserDetailsImpl userDetails;
+
+			if (request.getHeader("X-User-Id") != null) {
+				userDetails = UserDetailsImpl.connectUser(UUID.fromString(request.getHeader("X-User-Id")));
+			} else {
+				userDetails = UserDetailsImpl.adminUser();
+			}
+
 			// 인증 객체 생성
 			JwtAuthenticationToken authentication = new JwtAuthenticationToken(
 				userDetails,

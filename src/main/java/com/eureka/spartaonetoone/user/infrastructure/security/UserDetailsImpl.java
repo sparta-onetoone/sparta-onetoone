@@ -54,6 +54,10 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(User.admin());
     }
 
+    public static UserDetailsImpl connectUser(UUID userId) {
+        return new UserDetailsImpl(User.admin(), userId);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
       return authorities;
