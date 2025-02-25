@@ -1,14 +1,18 @@
 package com.eureka.spartaonetoone.product.application;
 
+import com.eureka.spartaonetoone.mock.MockUser;
 import com.eureka.spartaonetoone.product.application.dtos.request.ProductCreateRequestDto;
 import com.eureka.spartaonetoone.product.application.exception.ProductException;
 import com.eureka.spartaonetoone.product.domain.Product;
 import com.eureka.spartaonetoone.product.domain.repository.ProductRepository;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.UUID;
 
@@ -25,6 +29,7 @@ class ProductServiceTest {
 
     @DisplayName("상품 생성 성공")
     @Test
+    @MockUser
     void saveProduct() {
 
         // given
@@ -103,6 +108,7 @@ class ProductServiceTest {
 
     @DisplayName("상품 수정 성공")
     @Test
+    @MockUser
     void updateProduct() {
 
         //given
@@ -131,8 +137,12 @@ class ProductServiceTest {
 
     @DisplayName("상품 삭제 성공")
     @Test
+    @MockUser
     void deleteProduct() {
         //given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
         ProductCreateRequestDto request = ProductCreateRequestDto.builder()
                 .storeId(UUID.randomUUID())
                 .price(5000)
@@ -145,7 +155,7 @@ class ProductServiceTest {
         //when
         UUID saveProductId = productService.saveProduct(request);
         Product product = productRepository.findById(saveProductId).get();
-        product.deleteProduct();
+        product.deleteProduct(userDetails.getUserId());
         productRepository.saveAndFlush(product);
         Product deletedProduct = productRepository.findById(saveProductId).get();
 
