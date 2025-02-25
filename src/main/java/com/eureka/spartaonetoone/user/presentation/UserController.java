@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
-public class UserController {
+public class UserController implements UserApi {
 
 	private final UserService userService;
 
@@ -89,5 +90,22 @@ public class UserController {
 		} else {
 			throw new UserException.UserNotFoundException();  // 권한 없으면 예외 처리
 		}
+	}
+	// 회원 검색
+	@GetMapping("/search")
+	public ResponseEntity<CommonResponse<Page<UserSearchResponseDto>>> searchUsers(
+		UserSearchRequestDto requestDto,
+		@RequestParam(defaultValue = "0") int page, // 페이지 번호
+		@RequestParam(defaultValue = "10") int size, // 페이지 크기
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+		// Pageable 객체를 생성
+		Pageable pageable = PageRequest.of(page, size);
+
+		// 회원 검색 서비스 호출
+		Page<UserSearchResponseDto> userPage = userService.searchUsers(requestDto, pageable);
+
+		// CommonResponse를 사용하여 응답 생성
+		return ResponseEntity.ok(CommonResponse.success(userPage, "회원 검색 성공"));
 	}
 }
