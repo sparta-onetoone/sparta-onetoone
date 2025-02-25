@@ -54,7 +54,7 @@ public interface CartApi {
 	@Operation(summary = "장바구니 상품 수정", description = "장바구니에 존재하는 상품을 수정하는 API입니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "장바구니 상품 수정 성공",
-			content = @Content())
+			content = @Content(schema = @Schema(implementation = Json.class)))
 	})
 	ResponseEntity<CommonResponse<?>> updateCartItem(UUID cartId, UUID cartItemId, CartItemUpdateRequestDto requestDto);
 

@@ -82,7 +82,6 @@ public class SecurityConfig {
 			.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
 			.build();
 	}
-
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

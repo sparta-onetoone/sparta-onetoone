@@ -18,14 +18,12 @@ public class ProductResponse {
     public static class Get {
         private String name;
 
-        @JsonProperty("image_url")
         private String imageUrl;
 
         private Integer quantity;
 
         private Integer price;
 
-        @JsonProperty("store_id")
         private UUID storeId;
     }
 }

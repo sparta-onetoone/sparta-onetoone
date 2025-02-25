@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -92,8 +93,10 @@ public class Product extends TimeStamp {
         }
     }
 
-    public void deleteProduct() {
+    public void deleteProduct(UUID deletedBy) {
         this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+        this.deletedBy = deletedBy;
     }
 
 }

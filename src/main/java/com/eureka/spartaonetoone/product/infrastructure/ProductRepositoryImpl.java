@@ -1,9 +1,7 @@
 package com.eureka.spartaonetoone.product.infrastructure;
 
 import com.eureka.spartaonetoone.product.application.dtos.response.ProductGetResponseDto;
-import com.eureka.spartaonetoone.product.application.dtos.request.ProductSearchRequestDto;
 import com.eureka.spartaonetoone.product.domain.Product;
-import com.eureka.spartaonetoone.product.domain.QProduct;
 import com.eureka.spartaonetoone.product.domain.repository.CustomProductRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,6 +15,8 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.UUID;
 
+import static com.eureka.spartaonetoone.product.domain.QProduct.product;
+
 @Repository
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements CustomProductRepository {
@@ -26,10 +26,11 @@ public class ProductRepositoryImpl implements CustomProductRepository {
 
     @Override
     public Page<ProductGetResponseDto> getProducts(Pageable pageable) {
-        List<Product> products = queryFactory.selectFrom(QProduct.product)
-                .from(QProduct.product)
+        List<Product> products = queryFactory.selectFrom(product)
+                .from(product)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(product.createdAt.asc(), product.updatedAt.asc())
                 .fetch();
 
         List<ProductGetResponseDto> responseDtos = products
@@ -44,12 +45,13 @@ public class ProductRepositoryImpl implements CustomProductRepository {
     public Page<ProductGetResponseDto> searchByCondition(UUID storeId, Integer minPrice, Integer maxPrice, String name, Pageable pageable) {
 
         List<Product> products = queryFactory
-                .selectFrom(QProduct.product)
-                .from(QProduct.product)
+                .selectFrom(product)
+                .from(product)
                 .where(searchByMaxPrice(maxPrice), searchByMinPrice(minPrice),
                         searchByName(name), searchByStore(storeId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(product.createdAt.asc(), product.updatedAt.asc())
                 .fetch();
 
 
@@ -64,18 +66,18 @@ public class ProductRepositoryImpl implements CustomProductRepository {
 
 
     BooleanExpression searchByMaxPrice(Integer maxPrice) {
-        return maxPrice != null ? QProduct.product.price.loe(maxPrice) : null;
+        return maxPrice != null ? product.price.loe(maxPrice) : null;
     }
 
     BooleanExpression searchByMinPrice(Integer minPrice) {
-        return minPrice != null ? QProduct.product.price.goe(minPrice) : null;
+        return minPrice != null ? product.price.goe(minPrice) : null;
     }
 
     BooleanExpression searchByName(final String name) {
-        return StringUtils.hasText(name) ? QProduct.product.name.contains(name) : null;
+        return StringUtils.hasText(name) ? product.name.contains(name) : null;
     }
 
     BooleanExpression searchByStore(final UUID storeId) {
-        return storeId != null ? QProduct.product.storeId.eq(storeId) : null;
+        return storeId != null ? product.storeId.eq(storeId) : null;
     }
 }
