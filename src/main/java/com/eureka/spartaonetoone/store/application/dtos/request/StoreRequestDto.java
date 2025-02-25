@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -21,5 +22,5 @@ public class StoreRequestDto {
 	private Integer reviewCount;
 	private String createdBy;
 	// 카테고리 엔티티와 연관된 값을 전달받기 위한 필드
-	private UUID categoryId;
+	private List<String> categoryIds;
 }

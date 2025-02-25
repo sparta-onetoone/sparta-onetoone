@@ -19,7 +19,7 @@ import java.util.UUID;
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "p_user", uniqueConstraints = {@UniqueConstraint(name = "unique_email", columnNames = "email")})
 public class User extends TimeStamp {
-
+  
     @Id
     @UuidGenerator
     @Column(name = "user_id", columnDefinition = "UUID", updatable = false, nullable = false)
