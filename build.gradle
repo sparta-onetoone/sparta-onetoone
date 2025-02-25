@@ -38,6 +38,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
     implementation 'io.jsonwebtoken:jjwt:0.12.6' //WT 토큰을 생성하고, 서명하고, 검증하는 기능
 
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
     //Querydsl
     // TODO : Q-Class config
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

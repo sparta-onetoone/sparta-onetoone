@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
-public class OrderController {
+public class OrderController implements OrderApi {
 
 	private final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
 	private final String ROLE_ADMIN = "ROLE_ADMIN";
