@@ -21,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payments")
 @RestController
-public class PaymentController {
+public class PaymentController implements PaymentApi {
     private final PaymentService paymentService;
 
     @PostMapping
@@ -59,7 +59,7 @@ public class PaymentController {
     }
 
     @PutMapping("{payment_id}")
-    public ResponseEntity<?> deletePayment(@PathVariable(name = "payment_id") final UUID payment_id,
+    public ResponseEntity<?> updatePayment(@PathVariable(name = "payment_id") final UUID payment_id,
                                            @Valid @RequestBody PaymentUpdateRequestDto request,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         paymentService.updatePayment(payment_id, request, userDetails);
