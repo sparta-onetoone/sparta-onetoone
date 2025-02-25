@@ -27,7 +27,7 @@ public class StoreResponseDto {
 	private Integer deliveryFee;
 	private Float rating;
 	private Integer reviewCount;
-	private List<String>  categoryIds;
+	private List<String> categoryIds;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private LocalDateTime deletedAt;
@@ -35,27 +35,21 @@ public class StoreResponseDto {
 
 	public static StoreResponseDto from(final Store store) {
 		return Builder()
-			.storeId(store.getId())
-			.userId(store.getUserId())
-			.name(store.getName())
-			.state(store.getState().name()) // ENUM -> String
-			.tellNumber(store.getTellNumber())
-			.addressId(store.getAddress() != null ? store.getAddress().getId() : null)
-			.description(store.getDescription())
-			.minOrderPrice(store.getMinOrderPrice())
-			.deliveryFee(store.getDeliveryFee())
-			.rating(store.getRating())
-			.reviewCount(store.getReviewCount())
-			.categoryIds(store.getCategoryIds())
-			.createdAt(store.getCreatedAt())
-			.updatedAt(store.getUpdatedAt())
-			.deletedAt(store.getDeletedAt())
-			.build();
+				.storeId(store.getId())
+				.userId(store.getUserId())
+				.name(store.getName())
+				.state(store.getState().name()) // ENUM -> String
+				.tellNumber(store.getTellNumber())
+				.addressId(store.getAddress() != null ? store.getAddress().getId() : null)
+				.description(store.getDescription())
+				.minOrderPrice(store.getMinOrderPrice())
+				.deliveryFee(store.getDeliveryFee())
+				.rating(store.getRating())
+				.reviewCount(store.getReviewCount())
+				.categoryIds(store.getCategoryIds())
+				.createdAt(store.getCreatedAt())
+				.updatedAt(store.getUpdatedAt())
+				.deletedAt(store.getDeletedAt())
+				.build();
 	}
-
-//	private static List<String> parseCategoryIds(String categoryIds) {
-//		return (categoryIds != null && !categoryIds.isEmpty())
-//				? List.of(categoryIds.split(","))
-//				: List.of();
-//	}
 }

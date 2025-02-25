@@ -1,14 +1,5 @@
 package com.eureka.spartaonetoone.review.presentation;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.List;
-import java.util.UUID;
-
-import com.eureka.spartaonetoone.review.application.ReviewService;
 import com.eureka.spartaonetoone.review.application.dtos.request.ReviewRequestDto;
 import com.eureka.spartaonetoone.review.application.dtos.response.ReviewResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +15,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+import java.util.UUID;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest
 @ActiveProfiles("test")
 public class ReviewControllerTest {
@@ -33,9 +33,6 @@ public class ReviewControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private ReviewService reviewService;
 
     private MockMvc mockMvc;
 
@@ -58,7 +55,7 @@ public class ReviewControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").value("Integration review"))
+                .andExpect(jsonPath("$.data.content").value("Integration review"))
                 .andExpect(jsonPath("$.message").value("리뷰 생성 성공"));
     }
 
@@ -77,15 +74,16 @@ public class ReviewControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ReviewResponseDto createdReview = objectMapper.readValue(createResponse, ReviewResponseDto.class);
-        UUID reviewId = createdReview.getReviewId();
+        TemporaryDto createdReview = objectMapper.readValue(createResponse, TemporaryDto.class);
+        UUID reviewId = createdReview.getData().getReviewId();
 
         mockMvc.perform(get("/api/v1/reviews/{review_id}", reviewId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.reviewId").value(reviewId.toString()))
-                .andExpect(jsonPath("$.content").value("Review to get"));
+                .andExpect(jsonPath("$.data.reviewId").value(reviewId.toString()))
+                .andExpect(jsonPath("$.data.content").value("Review to get"));
     }
+
 
     @DisplayName("사용자는 리뷰를 수정할 수 있다.")
     @Test
@@ -102,8 +100,8 @@ public class ReviewControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ReviewResponseDto createdReview = objectMapper.readValue(createResponse, ReviewResponseDto.class);
-        UUID reviewId = createdReview.getReviewId();
+        TemporaryDto createdReview = objectMapper.readValue(createResponse, TemporaryDto.class);
+        UUID reviewId = createdReview.getData().getReviewId();
 
         // 수정 요청
         ReviewRequestDto updateDto = new ReviewRequestDto(orderId, 5, "Updated review", "http://new.img");
@@ -113,11 +111,10 @@ public class ReviewControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").value("Updated review"))
-                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.data.content").value("Updated review"))
+                .andExpect(jsonPath("$.data.rating").value(5))
                 .andExpect(jsonPath("$.message").value("리뷰 수정 성공"));
     }
-
     @DisplayName("사용자는 리뷰를 삭제할 수 있다.")
     @Test
     @WithMockUser(username = "customer", roles = {"CUSTOMER"})
@@ -133,12 +130,12 @@ public class ReviewControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        ReviewResponseDto createdReview = objectMapper.readValue(createResponse, ReviewResponseDto.class);
-        UUID reviewId = createdReview.getReviewId();
+        TemporaryDto createdReview = objectMapper.readValue(createResponse, TemporaryDto.class);
+        UUID reviewId = createdReview.getData().getReviewId();
 
         mockMvc.perform(delete("/api/v1/reviews/{review_id}", reviewId)
                         .with(csrf()))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("사용자는 여러 orderId를 기반으로 리뷰를 검색할 수 있다.")
@@ -168,8 +165,16 @@ public class ReviewControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(orderIdsJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.data.content.length()").value(2))
                 .andExpect(jsonPath("$.message").value("리뷰 검색 성공"));
+    }
+
+    private static class TemporaryDto {
+        private ReviewResponseDto data;
+
+        public ReviewResponseDto getData() {
+            return data;
+        }
     }
 }

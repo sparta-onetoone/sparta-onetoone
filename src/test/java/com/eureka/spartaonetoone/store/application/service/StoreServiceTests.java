@@ -6,6 +6,7 @@ import com.eureka.spartaonetoone.common.client.OrderClient;
 import com.eureka.spartaonetoone.common.client.ReviewClient;
 import com.eureka.spartaonetoone.common.dtos.response.ReviewResponse;
 import com.eureka.spartaonetoone.common.dtos.response.OrderResponse;
+import com.eureka.spartaonetoone.mock.MockUser;
 import com.eureka.spartaonetoone.store.application.StoreService;
 import com.eureka.spartaonetoone.store.application.exception.StoreException;
 import com.eureka.spartaonetoone.store.domain.Store;
@@ -110,6 +111,18 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 	}
 
 	@Test
+	public void testGetStoreByIdNotFound() {
+		// given: 존재하지 않는 가게 ID를 생성하고, repository.findById()가 빈 Optional을 반환하도록 모의
+		UUID storeId = UUID.randomUUID();
+		when(storeRepository.findById(storeId)).thenReturn(Optional.empty());
+
+		// when & then: StoreNotFoundException이 발생하는지 검증하고, 에러 코드가 "S-001"인지 확인
+		assertThatThrownBy(() -> storeService.getStoreById(storeId))
+				.isInstanceOf(StoreException.StoreNotFoundException.class)
+				.hasMessageContaining("S-001");
+	}
+
+	@Test
 	public void testSearchStoresByCategoryName() {
 		// given
 		UUID userId = UUID.randomUUID();
@@ -126,36 +139,9 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		assertThat(result.getTotalElements()).isEqualTo(1);
 	}
 
-	@Test
-	public void testGetStoreByIdNotFound() {
-		// given: 존재하지 않는 가게 ID를 생성하고, repository.findById()가 빈 Optional을 반환하도록 모의
-		UUID storeId = UUID.randomUUID();
-		when(storeRepository.findById(storeId)).thenReturn(Optional.empty());
-
-		// when & then: StoreNotFoundException이 발생하는지 검증하고, 에러 코드가 "S-001"인지 확인
-		assertThatThrownBy(() -> storeService.getStoreById(storeId))
-				.isInstanceOf(StoreException.StoreNotFoundException.class)
-				.hasMessageContaining("S-001");
-	}
-
 	// 전체 가게 조회 (페이지네이션) 성공
-	@Test
-	public void testGetAllStores() {
-		// given
-		UUID userId = UUID.randomUUID();
-		UUID categoryId = UUID.randomUUID();
-		Store store = Store.createStore(userId, "테스트 가게", StoreState.OPEN, "010-1234-5678",
-			"테스트 설명", 1000, 500, 4.5f, 10, List.of("uuid1","uuid2"));
-		Page<Store> page = new PageImpl<>(Collections.singletonList(store));
-		when(storeRepository.findAll(any(Pageable.class))).thenReturn(page);
-		// when
-		Page<StoreResponseDto> result = storeService.getAllStores(Pageable.unpaged());
-		// then
-		assertThat(result).isNotNull();
-		assertThat(result.getTotalElements()).isEqualTo(1);
-	}
-
 	// 가게 수정 성공 (평점과 리뷰 수는 기존 값을 유지)
+
 	@Test
 	public void testUpdateStoreSuccess() throws Exception {
 		// given
@@ -197,8 +183,8 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		assertThat(updatedResponse.getRating()).isEqualTo(4.5f);
 		assertThat(updatedResponse.getReviewCount()).isEqualTo(10);
 	}
-
 	// 가게 삭제 성공
+
 	@Test
 	public void testDeleteStore_AsAdmin_Success() {
 		// given: ADMIN 권한을 가진 사용자
@@ -215,6 +201,21 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		storeService.deleteStore("ADMIN", storeId, adminId);
 		// then: 삭제 후 deletedAt 필드가 설정되어 있는지 확인
 		assertThat(store.getDeletedAt()).isNotNull();
+	}
+	@Test
+	public void testGetAllStores() {
+		// given
+		UUID userId = UUID.randomUUID();
+		UUID categoryId = UUID.randomUUID();
+		Store store = Store.createStore(userId, "테스트 가게", StoreState.OPEN, "010-1234-5678",
+				"테스트 설명", 1000, 500, 4.5f, 10, List.of("uuid1","uuid2"));
+		Page<Store> page = new PageImpl<>(Collections.singletonList(store));
+		when(storeRepository.findAll(any(Pageable.class))).thenReturn(page);
+		// when
+		Page<StoreResponseDto> result = storeService.getAllStores(Pageable.unpaged());
+		// then
+		assertThat(result).isNotNull();
+		assertThat(result.getTotalElements()).isEqualTo(1);
 	}
 	// 가게 삭제 실패 (다른 사용자 가게 삭제 시도)
 	@Test
@@ -235,7 +236,6 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 	}
 
 	// 기존 테스트들은 생략하고, 여기서는 리뷰 집계 업데이트를 검증하는 테스트 케이스입니다.
-	// 리뷰 집계 업데이트 성공
 	@Test
 	@Transactional
 	public void testUpdateStoreReview() throws Exception {
@@ -272,4 +272,5 @@ public class StoreServiceTests { // StoreServiceTests  나중에 수정할 것
 		assertThat(store.getRating()).isEqualTo(4.5f);
 		assertThat(store.getReviewCount()).isEqualTo(2);
 	}
+	// 리뷰 집계 업데이트 성공
 }

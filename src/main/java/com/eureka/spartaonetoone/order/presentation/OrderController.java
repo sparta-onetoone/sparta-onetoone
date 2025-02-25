@@ -36,9 +36,6 @@ public class OrderController implements OrderApi {
 	private final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
 	private final String ROLE_ADMIN = "ROLE_ADMIN";
 
-	private final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
-	private final String ROLE_ADMIN = "ROLE_ADMIN";
-
 	private final OrderService orderService;
 
 	@PostMapping

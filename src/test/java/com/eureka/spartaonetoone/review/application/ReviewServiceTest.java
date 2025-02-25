@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.eureka.spartaonetoone.mock.MockUser;
 import com.eureka.spartaonetoone.review.application.dtos.request.ReviewRequestDto;
 import com.eureka.spartaonetoone.review.application.dtos.response.ReviewResponseDto;
 import com.eureka.spartaonetoone.review.application.exception.ReviewException;
@@ -61,6 +62,8 @@ public class ReviewServiceTest{
     }
 
     @Test
+
+
     public void testGetReviewById_Found() {
         UUID reviewId = UUID.randomUUID();
         Review review = Review.createReview(UUID.randomUUID(), 4, "Nice", "http://image.url");
