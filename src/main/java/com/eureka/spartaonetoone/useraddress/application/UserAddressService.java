@@ -3,9 +3,7 @@ package com.eureka.spartaonetoone.useraddress.application;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +11,6 @@ import com.eureka.spartaonetoone.user.application.exception.UserException;
 import com.eureka.spartaonetoone.user.domain.User;
 import com.eureka.spartaonetoone.user.domain.repository.UserRepository;
 import com.eureka.spartaonetoone.useraddress.application.dtos.request.UserAddressRequestDto;
-import com.eureka.spartaonetoone.useraddress.application.dtos.request.UserAddressSearchRequestDto;
 import com.eureka.spartaonetoone.useraddress.application.dtos.response.UserAddressResponseDto;
 import com.eureka.spartaonetoone.useraddress.application.exception.AddressException;
 import com.eureka.spartaonetoone.useraddress.domain.UserAddress;
@@ -99,16 +96,4 @@ public class UserAddressService {
 		return UserAddressResponseDto.from(updatedAddress); // 수정된 주소 반환
 	}
 
-	// 사용자 주소 조회 (검색 조건 및 정렬 기능 추가)
-	public Page<UserAddressResponseDto> searchUserAddresses(UUID userId, UserAddressSearchRequestDto request, Pageable pageable) {
-		// UserAddressRepository에서 커스텀 메서드를 호출
-		return userAddressRepository.searchUserAddresses(
-			userId,
-			request.getCity(),
-			request.getDistrict(),
-			request.getRoadName(),
-			request.getZipCode(),
-			pageable
-		).map(UserAddressResponseDto::from);  // UserAddressResponseDto로 변환
-	}
 }
