@@ -29,6 +29,7 @@ public class PaymentRepositoryImpl implements CustomPaymentRepository {
                 .from(payment)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(payment.createdAt.asc(), payment.updatedAt.asc())
                 .fetch();
 
         List<PaymentGetResponseDto> paymentGetResponseDtos = payments.stream()
@@ -48,6 +49,7 @@ public class PaymentRepositoryImpl implements CustomPaymentRepository {
                 .where(searchByPrice(price), searchByBank(bank), searchByState(state))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(payment.createdAt.asc(), payment.updatedAt.asc())
                 .fetch();
 
         List<PaymentGetResponseDto> paymentGetResponseDtos = payments
@@ -70,5 +72,5 @@ public class PaymentRepositoryImpl implements CustomPaymentRepository {
         return state != null ? payment.state.eq(state) : null;
     }
 
-
+    
 }

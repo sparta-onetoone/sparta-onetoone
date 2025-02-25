@@ -1,11 +1,18 @@
 package com.eureka.spartaonetoone.payment.presentation;
 
 import com.eureka.spartaonetoone.mock.MockUser;
+import com.eureka.spartaonetoone.order.domain.Order;
+import com.eureka.spartaonetoone.order.domain.OrderType;
+import com.eureka.spartaonetoone.order.domain.repository.OrderRepository;
 import com.eureka.spartaonetoone.payment.application.PaymentService;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentCreateRequestDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentGetResponseDto;
 import com.eureka.spartaonetoone.payment.application.dtos.PaymentUpdateRequestDto;
 import com.eureka.spartaonetoone.payment.domain.Payment;
+import com.eureka.spartaonetoone.store.domain.Store;
+import com.eureka.spartaonetoone.store.domain.StoreState;
+import com.eureka.spartaonetoone.store.domain.repository.StoreRepository;
+import com.eureka.spartaonetoone.user.infrastructure.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +22,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 import java.util.UUID;
 
+import static com.eureka.spartaonetoone.order.domain.Order.createOrder;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -39,6 +49,10 @@ class PaymentControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private StoreRepository storeRepository;
 
 
     private static List<PaymentCreateRequestDto> paymentCreateRequestDtos() {
@@ -186,6 +200,18 @@ class PaymentControllerTest {
     void updatePayment() throws Exception {
 
         // given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        Store store = Store.createStore(userDetails.getUserId(), "임시주문", StoreState.OPEN, "010-1111-1111",
+                "임시설명", 20000, 50000, 3.0f, 5, UUID.randomUUID());
+
+        UUID savedStoreId = storeRepository.save(store).getId();
+
+        Order order = createOrder(userDetails.getUserId(), store.getId(), OrderType.DELIVERY, "임시요청사항");
+
+        UUID savedOrderId = orderRepository.save(order).getOrderId();
+
         PaymentCreateRequestDto request = PaymentCreateRequestDto.builder()
                 .orderId(UUID.randomUUID())
                 .bank("국민은행")
@@ -221,6 +247,18 @@ class PaymentControllerTest {
     void deletePayment() throws Exception {
 
         // given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        Store store = Store.createStore(userDetails.getUserId(), "임시주문", StoreState.OPEN, "010-1111-1111",
+                "임시설명", 20000, 50000, 3.0f, 5, UUID.randomUUID());
+
+        UUID savedStoreId = storeRepository.save(store).getId();
+
+        com.eureka.spartaonetoone.order.domain.Order order = createOrder(userDetails.getUserId(), store.getId(), OrderType.DELIVERY, "임시요청사항");
+
+        UUID savedOrderId = orderRepository.save(order).getOrderId();
+
         PaymentCreateRequestDto request = PaymentCreateRequestDto.builder()
                 .orderId(UUID.randomUUID())
                 .bank("국민은행")
